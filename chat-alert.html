@@ -11,6 +11,10 @@
 
 </div>
 
+<audio id=audio_alert autoplay="none">
+	<source src="bell.ogg" type="audio/ogg">
+	<source src="bell.mp3" type="audio/mpeg">
+</audio>
 
 <style>
 .hide{
@@ -20,7 +24,6 @@
 
 <script>
 const connection=new WebSocket("wss://irc-ws.chat.twitch.tv/");
-const default_audio=new Audio("bell.ogg");
 connect_button.classList.toggle("hide",true);
 
 connection.onopen=()=>{
@@ -42,7 +45,7 @@ connection.onerror=(e)=>{
 };
 connection.onmessage=(event)=>{
 	console.log(event.data);
-	default_audio.Play();
+	audio_alert.Play();
 }
 </script>
 </body>
