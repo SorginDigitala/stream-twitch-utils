@@ -1,0 +1,28 @@
+<script>
+const connection=new WebSocket("wss://irc-ws.chat.twitch.tv/");
+
+connection.onopen=()=>{
+    console.log("[sorgindigitala] open");
+        connection.send("CAP REQ :twitch.tv/tags twitch.tv/commands");
+  connection.send("PASS SCHMOOPIIE");
+connection.send("NICK justinfan29530");
+connection.send("USER justinfan29530 8 * :justinfan29530");
+};
+connection.onclose=()=>{
+    console.log("[sorgindigitala] closed");
+};
+connection.onerror=(e)=>{
+    console.log("[sorgindigitala] error:",e);
+};
+connection.onmessage=(event)=>{
+    console.log(event)
+    //console.log('[sorgindigitala] received: '+event.data);
+    if( event.data.includes( "Welcome" ) ){
+      connection.send("JOIN #seyacat");
+    }
+    /*var data=JSON.parse(event.data);
+    if(!data)
+        return;
+    console.log(data)*/
+}
+</script>
