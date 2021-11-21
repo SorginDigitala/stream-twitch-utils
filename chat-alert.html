@@ -11,8 +11,6 @@
 
 </div>
 
-	<audio id=audio_alert autoplay="none" src="bell.mp3"></audio>
-
 <style>
 .hide{
 	display:none;
@@ -22,6 +20,7 @@
 <script>
 const connection=new WebSocket("wss://irc-ws.chat.twitch.tv/");
 connect_button.classList.toggle("hide",true);
+var audio_alert=new Audio("bell.mp3");
 
 connection.onopen=()=>{
 	console.log("[irc-ws.chat] open");
