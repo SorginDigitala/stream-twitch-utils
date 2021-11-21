@@ -11,6 +11,10 @@
 
 </div>
 
+<audio id=audio_alert autoplay="none">
+	<source src="bell.ogg" type="audio/ogg">
+	<source src="bell.mp3" type="audio/mpeg">
+</audio>
 
 <style>
 .hide{
@@ -40,8 +44,8 @@ connection.onerror=(e)=>{
 	console.log("[irc-ws.chat] error:",e);
 };
 connection.onmessage=(event)=>{
-	console.log(event.data)
-
+	console.log(event.data);
+	audio_alert.Play();
 }
 </script>
 </body>
