@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang=es>
+<head>
+	<meta charset=utf-8>
+	<meta name=viewport content="width=device-width,initial-scale=1">
+	<title>Stream - Twitch - Utils - Chat Alerts</title>
+</head>
+<body>
+<div>
+<input id=connect_button type=button value="Connect">
+
+</div>
+
+
+<style>
+.hide{
+	display:none;
+}
+</style>
+
+<script>
+const connection=new WebSocket("wss://irc-ws.chat.twitch.tv/");
+connect_button.classList.toggle("hide",true);
+
+connection.onopen=()=>{
+	console.log("[irc-ws.chat] open");
+	connection.send("CAP REQ :twitch.tv/tags twitch.tv/commands");
+	connection.send("PASS SCHMOOPIIE");
+	connection.send("NICK justinfan29530");
+	connection.send("USER justinfan29530 8 * :justinfan29530");
+	
+	connect_button.onclick=e=>{connection.send("JOIN #seyacat")};
+	connect_button.classList.toggle("hide",false);
+};
+connection.onclose=()=>{
+	console.log("[irc-ws.chat] closed");
+	connect_button.classList.toggle("hide",true);
+};
+connection.onerror=(e)=>{
+	console.log("[irc-ws.chat] error:",e);
+};
+connection.onmessage=(event)=>{
+	console.log(event.data)
+
+}
+</script>
+</body>
+</html>
