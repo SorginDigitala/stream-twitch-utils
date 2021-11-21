@@ -20,6 +20,7 @@
 
 <script>
 const connection=new WebSocket("wss://irc-ws.chat.twitch.tv/");
+const default_audio=new Audio("bell.ogg");
 connect_button.classList.toggle("hide",true);
 
 connection.onopen=()=>{
@@ -40,8 +41,8 @@ connection.onerror=(e)=>{
 	console.log("[irc-ws.chat] error:",e);
 };
 connection.onmessage=(event)=>{
-	console.log(event.data)
-
+	console.log(event.data);
+	default_audio.Play();
 }
 </script>
 </body>
