@@ -4,138 +4,50 @@
 	<meta charset=utf-8>
 	<meta name=viewport content="width=device-width,initial-scale=1">
 	<title>Stream - Twitch - Utils - Chat Alerts</title>
-	<link rel=stylesheet href="./assets/main.css" media=all>
+	<link rel=stylesheet href="./assets/chat-alerts.css" media=all>
+	<script async src="./assets/chat-alerts.js"></script>
 </head>
 <body>
 
-<div id=panel>
-	<div>
-		<h1>Chat config</h1>
+<div id=panel class=hide>
+	<input id=hide_button type=button value="X">
+	<fieldset>
+		<legend>Chat config</legend>
 		<form method=post id=channel_form>
 			<div id=ws_status></div>
-			<input type=text name=channel placeholder="nombre del canal">
-			<input type=button value="Connect">
+			<input type=text name=channels placeholder="nombre del canal">
+			<input type=submit value="Connect">
 		</form>
 
-		<select id=config_mode>
+		<select id=mode_select>
+			<option value=none>No Alerts</option>
 			<option value=alerts>Alerts</option>
 			<option value=tts>Text to Speech</option>
 		</select>
-	</div>
+	</fieldset>
 
-	<details>
-		<summary>Alerts config</summary>
-		<select>
-			<option value="custom">custom</option>
-			<option value="bell">bell</option>
-			<option value="beep">beep</option>
+	<fieldset>
+		<legend>Alerts config</legend>
+		<select id=sound_alert>
+			<option value=custom>custom</option>
+			<option value=bell>bell</option>
+			<option value=beep>beep</option>
 		</select>
-	</details>
+		<input type=text id=custom_sound placeholder="Pon url del sonido">
+	</fieldset>
 
-	<details>
-		<summary>TTS config</summary>
-	</details>
+	<fieldset>
+		<legend>TTS config</legend>
+	</fieldset>
 
-	<details>
-		<summary>Rewards config</summary>
-	</details>
+	<fieldset>
+		<legend>Rewards config</legend>
+	</fieldset>
+
+	<fieldset>
+		<legend>import / export</legend>
+	</fieldset>
+
 </div>
-
-
-<script>
-const config={
-	"channels"		:["seyacat","presuntamente"],
-	"mode"			:"alerts",
-
-	"alerts"		:{
-		"sound_alert"	:"custom",
-		"custom_sound"	:"https://www.soundjay.com/buttons/beep-07a.mp3",
-		"groups"		:["broadcaster","vip","moderator","staff","admin","global_mod","viewer"],
-		"ignores"		:[]
-	},
-
-	"tts"			:{
-		"groups"		:["broadcaster","vip","moderator","staff","admin","global_mod","viewer"],
-		"ignores"		:[],
-		"ignore_urls"	:true,		//ignora las url.
-		"short_urls"	:true,		//dice el nombre de dominio, no la url entera.
-		"rate_range"	:[.5,2],	//max rate allowed ( https://mdn.github.io/web-speech-api/speak-easy-synthesis/ )
-		"pitch_range"	:[0,2],		//max pitch allowed
-	},
-
-	"chat"			:{
-		"enable"		:false,	//display chat
-	},
-
-	"rewards"			:{
-		"enable"		:false,	//enable reward events
-		"reward_list"	:[],
-	},
-};
-
-var ws;
-var audio_alert=new Audio("");
-
-channel_form.onsubmit=e=>{
-	e.preventDefault();
-	console.log("aoeu");
-}
-
-
-
-function load_config(){
-	audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
-
-}
-
-function start_ws(){
-	ws=new WebSocket("wss://irc-ws.chat.twitch.tv/");
-	ws.onopen=()=>{
-		console.log("[irc-ws.chat] open");
-		ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/reward");//se requiere para obtener info sobre los chatters
-		ws.send("PASS SCHMOOPIIE");
-		ws.send("NICK justinfan29530");
-		ws.send("USER justinfan29530 8 * :justinfan29530");
-
-		config.channels.forEach(e=>join(e));
-	};
-	ws.onclose=()=>{
-		console.log("[irc-ws.chat] closed");
-		//try to reconnect
-	};
-	ws.onerror=(e)=>{
-		console.log("[irc-ws.chat] error:",e);
-	};
-	ws.onmessage=(e)=>{
-		if(e.data.trim().startsWith("PING"))
-			ws.send("PONG");
-		else{
-			console.log(e);
-			//events.on_message_received(sender,msg);
-			audio_alert.play();
-		}
-	}
-}
-function join(e){
-	ws.send("JOIN #"+e);
-}
-function leave(e){
-	ws.send("PART #"+e);
-}
-
-
-
-
-
-function Loader(){
-	load_config();
-	start_ws();
-}
-
-if(document.all)
-	window.attachEvent('onload',Loader);
-else
-	window.addEventListener("load",Loader,false);﻿
-</script>
 </body>
 </html>

@@ -1,0 +1,46 @@
+
+*{
+	box-sizing:border-box;
+}
+
+body{
+	margin:0;
+	background:rgba(0,0,0,0);
+	height:100vh;
+	width:100vw;
+	overflow:hidden;
+	display:flex;
+	flex-direction:column;
+	padding:10px;
+}
+
+.hide{
+	display:none;
+}
+
+
+#panel{
+	position:relative;
+	width:100%;
+	max-width:700px;
+	background:#f8f8f8;
+	padding:15px;
+	margin:auto;
+	border-radius:5px;
+	box-shadow:0 0 4px 0px #888;
+}
+
+#hide_button{
+	position:absolute;
+	top:2px;
+	right:2px;
+	width:40px;
+	height:40px;
+	font-size:25px;
+	line-height:25px;
+}
+
+fieldset{
+	border:1px inset green;
+	margin:10px 0
+}
