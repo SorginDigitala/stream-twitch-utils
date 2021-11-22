@@ -4,50 +4,138 @@
 	<meta charset=utf-8>
 	<meta name=viewport content="width=device-width,initial-scale=1">
 	<title>Stream - Twitch - Utils - Chat Alerts</title>
+	<link rel=stylesheet href="./assets/main.css" media=all>
 </head>
 <body>
-<div>
-<input id=connect_button type=button value="Connect">
 
+<div id=panel>
+	<div>
+		<h1>Chat config</h1>
+		<form method=post id=channel_form>
+			<div id=ws_status></div>
+			<input type=text name=channel placeholder="nombre del canal">
+			<input type=button value="Connect">
+		</form>
+
+		<select id=config_mode>
+			<option value=alerts>Alerts</option>
+			<option value=tts>Text to Speech</option>
+		</select>
+	</div>
+
+	<details>
+		<summary>Alerts config</summary>
+		<select>
+			<option value="custom">custom</option>
+			<option value="bell">bell</option>
+			<option value="beep">beep</option>
+		</select>
+	</details>
+
+	<details>
+		<summary>TTS config</summary>
+	</details>
+
+	<details>
+		<summary>Rewards config</summary>
+	</details>
 </div>
 
-<style>
-	body { 
-		background-color: rgba(0, 0, 0, 0); 
-		margin: 0px auto; 
-		overflow: hidden; 
-	}
-.hide{
-	display:none;
-}
-</style>
 
 <script>
-const connection=new WebSocket("wss://irc-ws.chat.twitch.tv/");
-connect_button.classList.toggle("hide",true);
-var audio_alert=new Audio("bell.mp3");
+const config={
+	"channels"		:["seyacat","presuntamente"],
+	"mode"			:"alerts",
 
-connection.onopen=()=>{
-	console.log("[irc-ws.chat] open");
-	connection.send("CAP REQ :twitch.tv/tags twitch.tv/commands");
-	connection.send("PASS SCHMOOPIIE");
-	connection.send("NICK justinfan29530");
-	connection.send("USER justinfan29530 8 * :justinfan29530");
-	
-	connect_button.onclick=e=>{connection.send("JOIN #seyacat")};
-	connect_button.classList.toggle("hide",false);
+	"alerts"		:{
+		"sound_alert"	:"custom",
+		"custom_sound"	:"https://www.soundjay.com/buttons/beep-07a.mp3",
+		"groups"		:["broadcaster","vip","moderator","staff","admin","global_mod","viewer"],
+		"ignores"		:[]
+	},
+
+	"tts"			:{
+		"groups"		:["broadcaster","vip","moderator","staff","admin","global_mod","viewer"],
+		"ignores"		:[],
+		"ignore_urls"	:true,		//ignora las url.
+		"short_urls"	:true,		//dice el nombre de dominio, no la url entera.
+		"rate_range"	:[.5,2],	//max rate allowed ( https://mdn.github.io/web-speech-api/speak-easy-synthesis/ )
+		"pitch_range"	:[0,2],		//max pitch allowed
+	},
+
+	"chat"			:{
+		"enable"		:false,	//display chat
+	},
+
+	"rewards"			:{
+		"enable"		:false,	//enable reward events
+		"reward_list"	:[],
+	},
 };
-connection.onclose=()=>{
-	console.log("[irc-ws.chat] closed");
-	connect_button.classList.toggle("hide",true);
-};
-connection.onerror=(e)=>{
-	console.log("[irc-ws.chat] error:",e);
-};
-connection.onmessage=(event)=>{
-	console.log(event.data);
-	audio_alert.play();
+
+var ws;
+var audio_alert=new Audio("");
+
+channel_form.onsubmit=e=>{
+	e.preventDefault();
+	console.log("aoeu");
 }
+
+
+
+function load_config(){
+	audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
+
+}
+
+function start_ws(){
+	ws=new WebSocket("wss://irc-ws.chat.twitch.tv/");
+	ws.onopen=()=>{
+		console.log("[irc-ws.chat] open");
+		ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/reward");//se requiere para obtener info sobre los chatters
+		ws.send("PASS SCHMOOPIIE");
+		ws.send("NICK justinfan29530");
+		ws.send("USER justinfan29530 8 * :justinfan29530");
+
+		config.channels.forEach(e=>join(e));
+	};
+	ws.onclose=()=>{
+		console.log("[irc-ws.chat] closed");
+		//try to reconnect
+	};
+	ws.onerror=(e)=>{
+		console.log("[irc-ws.chat] error:",e);
+	};
+	ws.onmessage=(e)=>{
+		if(e.data.trim().startsWith("PING"))
+			ws.send("PONG");
+		else{
+			console.log(e);
+			//events.on_message_received(sender,msg);
+			audio_alert.play();
+		}
+	}
+}
+function join(e){
+	ws.send("JOIN #"+e);
+}
+function leave(e){
+	ws.send("PART #"+e);
+}
+
+
+
+
+
+function Loader(){
+	load_config();
+	start_ws();
+}
+
+if(document.all)
+	window.attachEvent('onload',Loader);
+else
+	window.addEventListener("load",Loader,false);﻿
 </script>
 </body>
 </html>
