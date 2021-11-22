@@ -12,8 +12,8 @@
 <div id=panel class=hide>
 	<input id=hide_button type=button value="X">
 	<fieldset>
-		<legend>Chat config</legend>
-		<form method=post id=channel_form>
+		<legend>Channels</legend>
+		<form method=post id=channel_form class=flexinput>
 			<div id=ws_status></div>
 			<input type=text name=channels placeholder="nombre del canal">
 			<input type=submit value="Connect">
@@ -27,25 +27,53 @@
 	</fieldset>
 
 	<fieldset>
-		<legend>Alerts config</legend>
-		<select id=sound_alert>
-			<option value=custom>custom</option>
-			<option value=bell>bell</option>
-			<option value=beep>beep</option>
-		</select>
-		<input type=text id=custom_sound placeholder="Pon url del sonido">
+		<legend>Alerts</legend>
+		<div class=flexinput>
+			<input type=button id=play_alert value="🎧">
+			<select id=sound_alert>
+				<option value=custom>custom</option>
+				<option value=beep>beep</option>
+				<option value=bell>bell</option>
+				<option value=wololo>wololo</option>
+			</select>
+			<input type=text id=custom_sound placeholder="Pon url del sonido">
+		</div>
+
+		<div>
+			<div id=alerts_groups></div>
+			<label>
+				<p>Excepciones</p>
+				<input type=text id=alerts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar sus alertas.">
+			</label>
+		</div>
 	</fieldset>
 
 	<fieldset>
-		<legend>TTS config</legend>
+		<legend>Text to speech</legend>
+
+		<div>
+			<div id=tts_groups></div>
+			<label>
+				<p>Excepciones</p>
+				<input type=text id=tts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar sus alertas.">
+			</label>
+		</div>
 	</fieldset>
 
 	<fieldset>
-		<legend>Rewards config</legend>
+		<legend>Chat</legend>
+	</fieldset>
+
+	<fieldset>
+		<legend>Rewards</legend>
 	</fieldset>
 
 	<fieldset>
 		<legend>import / export</legend>
+		<input id=export_clipboard type=button value="Copy to clipboard">
+		<input id=export_file type=button value="Export as file">
+		<input id=import_clipboard type=button value="Paste from clipboard">
+		<input id=import_file type=button value="Import from file">
 	</fieldset>
 
 </div>

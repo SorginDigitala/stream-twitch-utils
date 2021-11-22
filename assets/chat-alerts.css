@@ -42,5 +42,20 @@ body{
 
 fieldset{
 	border:1px inset green;
-	margin:10px 0
+	margin:10px 0;
+}
+legend{
+	padding:0 5px;
+	user-select:none;
+}
+
+
+.flexinput{
+	display:flex;
+	gap:3px;
+	margin:8px -3px;
+}
+
+.flexinput>input[type="text"]{
+	flex-grow:1;
 }

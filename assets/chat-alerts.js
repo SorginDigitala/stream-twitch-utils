@@ -3,10 +3,10 @@ const config={
 	"mode"			:"alerts",
 
 	"alerts"		:{
-		"sound_alert"	:"beep",
-		"custom_sound"	:"https://www.soundjay.com/buttons/beep-07a.mp3",
+		"sound_alert"	:"bell",
+		"custom_sound"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/beep.mp3",
 		"volume"		:1,
-		"groups"		:["broadcaster","vip","moderator","staff","admin","global_mod","viewer"],
+		"groups"		:[],
 		"ignores"		:[]
 	},
 
@@ -16,7 +16,7 @@ const config={
 		"short_urls"	:true,		//dice el nombre de dominio, no la url entera.
 		"rate_range"	:[.5,2],	//max rate allowed ( https://mdn.github.io/web-speech-api/speak-easy-synthesis/ )
 		"pitch_range"	:[0,2],		//max pitch allowed
-		"groups"		:["broadcaster","vip","moderator","staff","admin","global_mod","viewer"],
+		"groups"		:[],
 		"ignores"		:[],
 	},
 
@@ -30,8 +30,9 @@ const config={
 	},
 };
 
-var ws;
+const groups=["broadcaster","vip","moderator","staff","admin","global_mod","viewer"];
 var audio_alert=new Audio("");
+var ws;
 
 
 
@@ -39,7 +40,7 @@ function load_config(){
 	document.body.onclick=e=>{panel.classList.toggle("hide",false)}
 	hide_button.onclick=e=>{e.stopPropagation();panel.classList.toggle("hide",true)}
 
-	channel_form.querySelector("[name='channels'").value=config.channels.join(",");
+	channel_form.querySelector("[name='channels'").value=config.channels.join(", ");
 	channel_form.onsubmit=e=>{
 		e.preventDefault();
 		let channels=channel_form.querySelector("[name='channels'").value.split(",");
@@ -50,6 +51,7 @@ function load_config(){
 		leave.forEach(c=>ws_leave(c));
 		join.forEach(c=>ws_join(c));
 	}
+	mode_select.value=config.mode;
 	mode_select.onchange=e=>{
 		//desactivar el modo anterior si lo hubiera
 		//activar el nuevo modo si lo hubiera
@@ -57,13 +59,18 @@ function load_config(){
 	}
 
 
+	sound_alert.value=config.alerts.sound_alert;
+	custom_sound.value=config.alerts.custom_sound;
 	sound_alert.onchange=e=>{
 		custom_sound.classList.toggle("hide",sound_alert.value!=="custom");
 		config.alerts.sound_alert=sound_alert.value;
 		audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
 	}
-	sound_alert.value=config.alerts.sound_alert;
+	play_alert.onclick=e=>audio_alert.play();
 	sound_alert.onchange();
+
+	alerts_groups.innerHTML=groups.map((e,i)=>"<label><input type=checkbox>"+e+"</label>").join("");
+	tts_groups.innerHTML=groups.map((e,i)=>"<label><input type=checkbox>"+e+"</label>").join("");
 }
 
 function start_ws(){
