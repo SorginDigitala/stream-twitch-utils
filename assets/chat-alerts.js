@@ -3,7 +3,7 @@ const config={
 	"mode"			:"alerts",
 
 	"alerts"		:{
-		"sound_alert"	:"bell",
+		"sound_alert"	:"door",
 		"custom_sound"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/beep.mp3",
 		"volume"		:1,
 		"groups"		:[],
