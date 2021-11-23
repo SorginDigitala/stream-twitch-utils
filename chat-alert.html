@@ -19,12 +19,23 @@
 			<input type=submit value="Connect">
 		</form>
 
-		<select id=mode_select>
-			<option value=none>No Alerts</option>
-			<option value=alerts>Alerts</option>
-			<option value=tts>Text to Speech</option>
-		</select>
+		<div>
+			Mode:
+			<select id=mode_select>
+				<option value=none>No Alerts</option>
+				<option value=alerts>Alerts</option>
+				<option value=tts>Text to Speech</option>
+			</select>
+		</div>
 		<label>Volumen: <input id=config_volume type=range min=1 max=100></label>
+		<div>
+			Speech url rules:
+			<select id=speech_urls>
+				<option value=ignore>Ignore</option>
+				<option value=domain>Domain</option>
+				<option value=full>Full</option>
+			</select>
+		</div>
 	</fieldset>
 
 	<fieldset id=alerts>
@@ -64,6 +75,19 @@
 			</label>
 		</div>
 		<p class=explanation>Se activará cuando escriba un usuario que esté en un grupo marcado <b>O</b> en la lista de excepciones.</p>
+	</fieldset>
+
+<!--
+	NO SE PUEDEN OBTENER NOTIFICACIONES DESDE EL WEBSOCKET
+	<fieldset>
+		<legend>Notifications</legend>
+		<p>notificaciones de nuevas suscripciones y bits.</p>
+	</fieldset>
+-->
+
+	<fieldset>
+		<legend>Commands</legend>
+		<p>Lista de comandos que permitan ejecutar funciones ya existentes.</p>
 	</fieldset>
 
 	<fieldset>

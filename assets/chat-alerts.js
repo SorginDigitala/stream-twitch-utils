@@ -2,11 +2,12 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 	"channels"		:["seyacat","presuntamente"],
 	"mode"			:"alerts",
 	"volume"		:100,
+	"speech_urls"	:"domain",
 
 	"alerts"		:{
 		"sound_alert"	:"beep",
 		"custom_sound"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/beep.mp3",
-		"groups"		:[],
+		"groups"		:["vip","moderator","staff","admin","global_mod","viewer"],
 		"users"			:[]
 	},
 
@@ -15,7 +16,7 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 		"short_urls"	:true,		//dice el nombre de dominio, no la url entera.
 		"rate_range"	:[.5,2],	//max rate allowed ( https://mdn.github.io/web-speech-api/speak-easy-synthesis/ )
 		"pitch_range"	:[0,2],		//max pitch allowed
-		"groups"		:[],
+		"groups"		:["vip","moderator","staff","admin","global_mod","viewer"],
 		"users"			:["streamelements","nightbot"],
 	},
 
@@ -69,6 +70,9 @@ function load_config(){
 	}
 	mode_select.onchange();
 
+	speech_urls.value=config.speech_urls;
+	speech_urls.onchange=e=>{config.speech_urls=speech_urls.value;config_save()};
+
 
 	sound_alert.value=config.alerts.sound_alert;
 	custom_sound.value=config.alerts.custom_sound;
@@ -76,6 +80,7 @@ function load_config(){
 		custom_sound.classList.toggle("hide",sound_alert.value!=="custom");
 		config.alerts.sound_alert=sound_alert.value;
 		audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
+		audio_alert.volume=config.volume/100;
 		play_alert();
 		config_save();
 	}
@@ -89,10 +94,55 @@ function load_config(){
 		config_save();
 	}
 
-	alerts_groups.innerHTML=groups.map((e,i)=>"<label><input type=checkbox>"+e+"</label>").join("");
-	tts_groups.innerHTML=groups.map((e,i)=>"<label><input type=checkbox>"+e+"</label>").join("");
+	display_groups(alerts_groups,config.alerts.groups);
+	alerts_exceptions.value=config.alerts.users.join(", ");
+	display_groups(tts_groups,config.tts.groups);
+	tts_exceptions.value=config.tts.users.join(", ");
 }
 
+
+function display_groups(content,arr){
+	content.innerHTML=groups.map((e,i)=>"<label><input type=checkbox name="+e+""+(arr.includes(e)?" checked":"")+">"+e+"</label>").join("");
+	content.querySelectorAll("input").forEach(e=>{
+		e.onchange=(e=>{
+			array_toggle(arr,e.target.name);
+			config_save();
+		});
+	});
+}
+function array_toggle(arr,item){	//	https://stackoverflow.com/a/39349118/3875360
+	var i=arr.indexOf(item);
+	if(i!==-1)
+		arr.splice(i,1);
+	else
+		arr.push(item);
+}
+
+/*
+attr:
+emotes		// emotes usados y la posición de inicio y final en el mensaje
+badges		// lista de insignias - broadcaster/1,moderator/1,subscriber/0,bits/1000,sub-gifter/1,vip/1,premium/1,partner/1,glitchcon2020/1
+turbo		// si tiene turbo (?)
+subscriber	// si es suscriptor
+mod			// si es mod
+emotes-only	// si el mensaje solo contiene emotes
+first-msg	// si es su primer mensaje
+display-name// display name
+
+badge-info	// si es suscriptor / meses
+user-type	// tipo de usuario (por ahora solo devuelve "mod" en caso de ser moderador)
+
+reply-parent-display-name
+reply-parent-msg-id
+reply-parent-user-id
+reply-parent-user-login
+
+
+msgs:
+:justinfan29530!justinfan29530@justinfan29530.tmi.twitch.tv JOIN #demiontus
+:justinfan29530!justinfan29530@justinfan29530.tmi.twitch.tv PART #demiontus
+:tmi.twitch.tv HOSTTARGET #demiontus :rhomita 4
+*/
 function start_ws(){
 	ws=new WebSocket("wss://irc-ws.chat.twitch.tv/");
 	ws.onopen=e=>{
@@ -112,15 +162,22 @@ function start_ws(){
 		console.log("[irc-ws.chat] error:",e);
 	};
 	ws.onmessage=e=>{
-		//hay que implementar sistema de log.
-		if(e.data.trim().startsWith("PING")){
-			debug_log.append("\n\rPing.");
-			ws.send("PONG");
-		}else{
-			console.log(e.data);
-			//events.on_message_received(sender,msg);
-			audio_alert.play();
-		}
+		const lines=e.data.trim().split(/[\r\n]+/g);
+		lines.forEach(l=>{
+			l=l.trim();
+			if(l.startsWith("PING")){
+				ws.send("PONG");
+				//log("Ping");
+			}else if(l[0]==="@"){
+				const params=l.substring(1).split(";").map(p=>p.split("="));
+				if(params.turbo)
+					console.log(params);
+				//events.on_message_received(sender,msg);
+				audio_alert.play();
+			}else
+			//if(l[0]!==":")
+				console.log(l);
+		})
 	}
 }
 function ws_join(e){
@@ -130,12 +187,25 @@ function ws_leave(e){
 	ws.send("PART #"+e);
 }
 
+function log(action,channel="",user="",data=""){
+	let msg=action;
+	if(channel){
+		msg+=" - "+channel;
+		if(user){
+			msg+=" - "+user;
+			if(data)
+				msg+=": "+user;
+		}
+	}
+	const div=document.createElement("div");
+	div.innerText=msg;
+	debug_log.append(div);
+}
 
 
 function play_alert(){
-	audio_alert.volume=config.volume/100;
 	audio_alert.play().then().catch(e=>{
-		if(e.name!=="NotAllowedError")// ignorar error de permisos
+		if(e.name!=="NotAllowedError")// ignorar error de permisos. Quizá un mensaje de aviso no estaría mal.
 			console.error("error");
 	});
 }
