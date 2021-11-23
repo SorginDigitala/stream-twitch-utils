@@ -14,6 +14,10 @@ body{
 	padding:10px;
 }
 
+textarea{
+	width:100%;
+}
+
 .hide{
 	display:none;
 }
@@ -28,6 +32,8 @@ body{
 	margin:auto;
 	border-radius:5px;
 	box-shadow:0 0 4px 0px #888;
+	overflow-y:auto;
+	scrollbar-width:thin;
 }
 
 #hide_button{
@@ -59,3 +65,36 @@ legend{
 .flexinput>input[type="text"]{
 	flex-grow:1;
 }
+
+
+
+
+
+.groups{
+	display:flex;
+	gap:15px;
+}
+.groups p{
+	margin:0;
+}
+
+.groups_list{
+	display:flex;
+	flex-direction:column;
+	text-transform: capitalize;
+	user-select:none;
+}
+.groups_textarea{
+	flex-grow:1;
+}
+.groups_textarea textarea{
+	min-height:120px;
+	resize:vertical;
+}
+
+
+
+
+
+
+

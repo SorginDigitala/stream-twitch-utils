@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang=es>
+<html>
 <head>
 	<meta charset=utf-8>
 	<meta name=viewport content="width=device-width,initial-scale=1">
@@ -15,7 +15,7 @@
 		<legend>Channels</legend>
 		<form method=post id=channel_form class=flexinput>
 			<div id=ws_status></div>
-			<input type=text name=channels placeholder="nombre del canal">
+			<input type=text name=channels placeholder="Nombre del canal o canales, separados por coma.">
 			<input type=submit value="Connect">
 		</form>
 
@@ -24,12 +24,13 @@
 			<option value=alerts>Alerts</option>
 			<option value=tts>Text to Speech</option>
 		</select>
+		<label>Volumen: <input id=config_volume type=range min=1 max=100></label>
 	</fieldset>
 
 	<fieldset>
 		<legend>Alerts</legend>
 		<div class=flexinput>
-			<input type=button id=play_alert value="🎧">
+			<input type=button id=alert_test value="🎧">
 			<select id=sound_alert>
 				<option value=custom>custom</option>
 				<option value=beep>beep</option>
@@ -40,25 +41,29 @@
 			<input type=text id=custom_sound placeholder="Pon url del sonido">
 		</div>
 
-		<div>
-			<div id=alerts_groups></div>
-			<label>
+
+		<div class=groups>
+			<div id=alerts_groups class=groups_list></div>
+			<label class=groups_textarea>
 				<p>Excepciones</p>
-				<input type=text id=alerts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar sus alertas.">
+				<textarea type=text id=alerts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
 			</label>
 		</div>
+		<p class=explanation>Se activará cuando escriba un usuario que esté en un grupo marcado <b>O</b> en la lista de excepciones.</p>
 	</fieldset>
 
 	<fieldset>
 		<legend>Text to speech</legend>
+		<p class=explanation>La lista de voces disponibles se basa en las que vienen por defecto en el navegador.</p>
 
-		<div>
-			<div id=tts_groups></div>
-			<label>
+		<div class=groups>
+			<div id=tts_groups class=groups_list></div>
+			<label class=groups_textarea>
 				<p>Excepciones</p>
-				<input type=text id=tts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar sus alertas.">
+				<textarea id=tts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
 			</label>
 		</div>
+		<p class=explanation>Se activará cuando escriba un usuario que esté en un grupo marcado <b>O</b> en la lista de excepciones.</p>
 	</fieldset>
 
 	<fieldset>
@@ -75,6 +80,12 @@
 		<input id=export_file type=button value="Export as file">
 		<input id=import_clipboard type=button value="Paste from clipboard">
 		<input id=import_file type=button value="Import from file">
+	</fieldset>
+
+	<fieldset>
+		<legend>Debug</legend>
+		<div><a href="./index.html" target=_blank>Home</a> - <a href="https://github.com/SorginDigitala/stream-twitch-utils" target=_blank>Twitch-Utils on Github</a></div>
+		<code id=debug_log></code>
 	</fieldset>
 
 </div>
