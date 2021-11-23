@@ -62,9 +62,12 @@ function load_config(){
 	mode_select.onchange=e=>{
 		//desactivar el modo anterior si lo hubiera
 		//activar el nuevo modo si lo hubiera
-		//ocultar opciones de los demas modos
+		config.mode=mode_select.value;
+		alerts.classList.toggle("hide",config.mode!=="alerts");
+		tts.classList.toggle("hide",config.mode!=="tts");
 		config_save();
 	}
+	mode_select.onchange();
 
 
 	sound_alert.value=config.alerts.sound_alert;

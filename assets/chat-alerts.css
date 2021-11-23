@@ -18,6 +18,10 @@ textarea{
 	width:100%;
 }
 
+input[type="range"]{
+	margin-bottom:-5px;
+}
+
 .hide{
 	display:none;
 }
@@ -29,7 +33,7 @@ textarea{
 	max-width:700px;
 	background:#f8f8f8;
 	padding:15px;
-	margin:auto;
+	margin:30px auto 0;
 	border-radius:5px;
 	box-shadow:0 0 4px 0px #888;
 	overflow-y:auto;
@@ -89,6 +93,7 @@ legend{
 }
 .groups_textarea textarea{
 	min-height:120px;
+	max-height:400px;
 	resize:vertical;
 }
 
