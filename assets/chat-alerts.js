@@ -3,7 +3,7 @@ const config={
 	"mode"			:"alerts",
 
 	"alerts"		:{
-		"sound_alert"	:"door",
+		"sound_alert"	:"beep",
 		"custom_sound"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/beep.mp3",
 		"volume"		:1,
 		"groups"		:[],
@@ -24,8 +24,8 @@ const config={
 		"enable"		:false,	//display chat
 	},
 
-	"rewards"			:{
-		"enable"		:false,	//enable reward events
+	"points"			:{
+		"enable"		:false,	//enable points events
 		"reward_list"	:[],
 	},
 };
@@ -65,8 +65,9 @@ function load_config(){
 		custom_sound.classList.toggle("hide",sound_alert.value!=="custom");
 		config.alerts.sound_alert=sound_alert.value;
 		audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
+		play_alert();
 	}
-	play_alert.onclick=e=>audio_alert.play();
+	play_alert.onclick=play_alert;
 	sound_alert.onchange();
 
 	alerts_groups.innerHTML=groups.map((e,i)=>"<label><input type=checkbox>"+e+"</label>").join("");
@@ -109,6 +110,13 @@ function ws_leave(e){
 }
 
 
+
+function play_alert(){
+	audio_alert.play().then().catch(e=>{
+		if(e.name!=="NotAllowedError")// ignorar error de permisos
+			console.error("error");
+	});
+}
 
 function normalize_channel(c){
 	return c.trim().toLowerCase();
