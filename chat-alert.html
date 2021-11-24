@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang=es>
+<html>
 <head>
 	<meta charset=utf-8>
 	<meta name=viewport content="width=device-width,initial-scale=1">
@@ -8,6 +8,9 @@
 	<script async src="./assets/chat-alerts.js"></script>
 </head>
 <body>
+<div id=background oncontextmenu="return false"></div>
+
+<div id=permissions_notice class=hide>El navegador requiere de interacción para permitir emitir sonidos (hazme clic, humano).</div>
 
 <div id=panel class=hide>
 	<input id=hide_button type=button value="X">
@@ -15,59 +18,86 @@
 		<legend>Channels</legend>
 		<form method=post id=channel_form class=flexinput>
 			<div id=ws_status></div>
-			<input type=text name=channels placeholder="nombre del canal">
+			<input type=text name=channels placeholder="Nombre del canal o canales, separados por coma.">
 			<input type=submit value="Connect">
 		</form>
 
-		<select id=mode_select>
-			<option value=none>No Alerts</option>
-			<option value=alerts>Alerts</option>
-			<option value=tts>Text to Speech</option>
-		</select>
+		<div>
+			Mode:
+			<select id=mode_select>
+				<option value=none>No Alerts</option>
+				<option value=alerts>Alerts</option>
+				<option value=tts>Text to Speech</option>
+			</select>
+		</div>
+		<label>Volumen: <input id=config_volume type=range min=0 max=100></label>
+		<div>
+			Speech url rules:
+			<select id=speech_urls>
+				<option value=0>Ignore</option>
+				<option value=1>Domain</option>
+				<option value=2>Full</option>
+			</select>
+		</div>
 	</fieldset>
 
-	<fieldset>
+	<fieldset id=alerts>
 		<legend>Alerts</legend>
 		<div class=flexinput>
-			<input type=button id=play_alert value="🎧">
+			<input type=button id=alert_test value="🎧">
 			<select id=sound_alert>
 				<option value=custom>custom</option>
 				<option value=beep>beep</option>
 				<option value=bell>bell</option>
 				<option value=door>door</option>
+				<option value=door2>door2</option>
 				<option value=wololo>wololo</option>
 			</select>
 			<input type=text id=custom_sound placeholder="Pon url del sonido">
 		</div>
 
-		<div>
-			<div id=alerts_groups></div>
+
+		<div class=groups>
 			<label>
+				<p>Grupos</p>
+				<input id=alerts_groups type=text placeholder="Déjalo en blanco para permitir a todos los usuarios.">
+			</label>
+			<label class=groups_textarea>
 				<p>Excepciones</p>
-				<input type=text id=alerts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar sus alertas.">
+				<textarea type=text id=alerts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
 			</label>
 		</div>
+		<p class=explanation>Se activará cuando escriba un usuario que esté en un grupo marcado <b>O</b> en la lista de excepciones.</p>
 	</fieldset>
 
-	<fieldset>
+	<fieldset id=tts>
 		<legend>Text to speech</legend>
+		<p class=explanation>La lista de voces disponibles se basa en las que vienen por defecto en el navegador.</p>
 
-		<div>
-			<div id=tts_groups></div>
+		<div class=groups>
 			<label>
+				<p>Grupos</p>
+				<input id=tts_groups type=text placeholder="Déjalo en blanco para permitir a todos los usuarios.">
+			</label>
+			<label class=groups_textarea>
 				<p>Excepciones</p>
-				<input type=text id=tts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar sus alertas.">
+				<textarea id=tts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
 			</label>
 		</div>
+		<p class=explanation>Se activará cuando escriba un usuario que esté en un grupo marcado <b>O</b> en la lista de excepciones.</p>
+	</fieldset>
+
+<!--
+	<fieldset>
+		<legend>Commands</legend>
+		<p>Lista de comandos que permitan ejecutar funciones ya existentes.</p>
 	</fieldset>
 
 	<fieldset>
-		<legend>Chat</legend>
+		<legend>Points</legend>
+		<p>Permitir activar funciones mediante las recompensas de twitch.</p>
 	</fieldset>
-
-	<fieldset>
-		<legend>Rewards</legend>
-	</fieldset>
+-->
 
 	<fieldset>
 		<legend>import / export</legend>
@@ -75,6 +105,17 @@
 		<input id=export_file type=button value="Export as file">
 		<input id=import_clipboard type=button value="Paste from clipboard">
 		<input id=import_file type=button value="Import from file">
+		<input id=clear_config type=button value="Reset Config" title="Require reload the page">
+	</fieldset>
+
+	<fieldset>
+		<legend>Debug</legend>
+		<div><a href="./index.html" target=_blank>Home</a> - <a href="https://github.com/SorginDigitala/stream-twitch-utils" target=_blank>Twitch-Utils on Github</a> By <a href="https://www.twitch.tv/seyacat" target=_blank>Seyacat</a></div>
+		<label>
+			<p>Lista de grupos comunes + detectados en el chat (útil para activar funcionalidades por grupos).</p>
+			<textarea id=log_groups type=text placeholder="Lista de grupos detectados" disabled></textarea>
+		<label>
+		<div id=debug_log></div>
 	</fieldset>
 
 </div>
