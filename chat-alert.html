@@ -8,6 +8,7 @@
 	<script async src="./assets/chat-alerts.js"></script>
 </head>
 <body>
+<div id=background oncontextmenu="return false"></div>
 
 <div id=panel class=hide>
 	<input id=hide_button type=button value="X">
@@ -47,6 +48,7 @@
 				<option value=beep>beep</option>
 				<option value=bell>bell</option>
 				<option value=door>door</option>
+				<option value=door2>door2</option>
 				<option value=wololo>wololo</option>
 			</select>
 			<input type=text id=custom_sound placeholder="Pon url del sonido">
@@ -54,7 +56,7 @@
 
 
 		<div class=groups>
-			<div id=alerts_groups class=groups_list></div>
+			<input id=alerts_groups type=text>
 			<label class=groups_textarea>
 				<p>Excepciones</p>
 				<textarea type=text id=alerts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
@@ -68,7 +70,7 @@
 		<p class=explanation>La lista de voces disponibles se basa en las que vienen por defecto en el navegador.</p>
 
 		<div class=groups>
-			<div id=tts_groups class=groups_list></div>
+			<input id=tts_groups type=text>
 			<label class=groups_textarea>
 				<p>Excepciones</p>
 				<textarea id=tts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
@@ -78,25 +80,16 @@
 	</fieldset>
 
 <!--
-	NO SE PUEDEN OBTENER NOTIFICACIONES DESDE EL WEBSOCKET
-	<fieldset>
-		<legend>Notifications</legend>
-		<p>notificaciones de nuevas suscripciones y bits.</p>
-	</fieldset>
--->
-
 	<fieldset>
 		<legend>Commands</legend>
 		<p>Lista de comandos que permitan ejecutar funciones ya existentes.</p>
 	</fieldset>
 
 	<fieldset>
-		<legend>Chat</legend>
-	</fieldset>
-
-	<fieldset>
 		<legend>Points</legend>
+		<p>Permitir activar funciones mediante las recompensas de twitch.</p>
 	</fieldset>
+-->
 
 	<fieldset>
 		<legend>import / export</legend>
@@ -108,8 +101,12 @@
 
 	<fieldset>
 		<legend>Debug</legend>
-		<div><a href="./index.html" target=_blank>Home</a> - <a href="https://github.com/SorginDigitala/stream-twitch-utils" target=_blank>Twitch-Utils on Github</a></div>
-		<code id=debug_log></code>
+		<div><a href="./index.html" target=_blank>Home</a> - <a href="https://github.com/SorginDigitala/stream-twitch-utils" target=_blank>Twitch-Utils on Github</a> By <a href="https://seyacat.com" target=_blank>Seyacat</a></div>
+		<label>
+			<p>Lista de grupos comunes + detectados en el chat (útil para activar funcionalidades por grupos).</p>
+			<textarea id=log_groups type=text placeholder="Lista de grupos detectados" disabled></textarea>
+		<label>
+		<div id=debug_log></div>
 	</fieldset>
 
 </div>
