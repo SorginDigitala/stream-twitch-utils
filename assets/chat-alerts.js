@@ -3,7 +3,7 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 	"channels"		:["seyacat"],
 	"mode"			:"alerts",
 	"volume"		:100,
-	"speech_urls"	:0,				// [0-2] Ignora las url, o lee el dominio, lee la url completa. En el TTS y comandos que ejecuten el TTS.
+	"speech_urls"	:1,				// [0-2] Ignora las url, o lee el dominio, lee la url completa. En el TTS y comandos que ejecuten el TTS.
 
 	"alerts"		:{
 		"sound_alert"	:"beep",
@@ -26,7 +26,7 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 };
 
 var log_grouplist=[
-	"moderator","vip","founder","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","predictions","hype-train",
+	"moderator","vip","founder","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","anonymous-cheerer","predictions","hype-train",
 	//"broadcaster","partner","turbo","premium","staff","admin",
 	//"bits-charity","twitchcon2017","twitchconEU2019","twitchconNA2019","glitchcon2020","twitchconAmsterdam2020","glhf-pledge",
 	//"H1Z1_1","overwatch-league-insider_1","overwatch-league-insider_2018B","overwatch-league-insider_2019A"
@@ -91,31 +91,26 @@ function load_config(){
 		config_save();
 	}
 
-	alerts_groups.value=config.alerts.groups.join(", ");
-	alerts_groups.onchange=e=>{
-		config.alerts.groups=channels_to_array(alerts_groups.value);
-		config_save();
-	};
-	alerts_exceptions.value=config.alerts.users.join(", ");
-	alerts_exceptions.onchange=e=>{
-		config.alerts.users=channels_to_array(alerts_exceptions.value);
-		config_save();
-	};
-	tts_groups.value=config.tts.groups.join(", ");
-	tts_groups.onchange=e=>{
-		config.tts.groups=channels_to_array(tts_groups.value);
-		config_save();
-	};
-	tts_exceptions.value=config.tts.users.join(", ");
-	tts_exceptions.onchange=e=>{
-		config.tts.users=channels_to_array(tts_exceptions.value);
-		config_save();
-	};
+
+	display_groups(alerts_groups,alerts_exceptions,config.alerts);
+	display_groups(tts_groups,tts_exceptions,config.tts);
 
 	log_groups.value=log_grouplist.join(", ");
 }
 
 
+function display_groups(input,textarea,arr){
+	input.value=arr.groups.join(", ");
+	input.onchange=e=>{
+		arr.groups=channels_to_array(input.value);
+		config_save();
+	};
+	textarea.value=arr.users.join(", ");
+	textarea.onchange=e=>{
+		arr.users=channels_to_array(textarea.value);
+		config_save();
+	};
+}
 /*
 function display_groups(content,arr){
 	content.innerHTML=groups.map((e,i)=>"<label><input type=checkbox name="+e+""+(arr.includes(e)?" checked":"")+">"+e+"</label>").join("");
@@ -208,14 +203,14 @@ function start_ws(){
 				//log("Ping");
 			}else if(l[0]==="@"){
 				const params=get_params(l);
-				console.log(params);
-				if(l.includes("PRIVMSG") && xor_msg(params))
+				if(l.includes("PRIVMSG") && xor_msg(params)){
 					audio_alert.play();
+					//events.on_message_received(sender,msg);
+					//log()
+				}
 				if(!l.includes("PRIVMSG") && !["sub","resub","raid"].includes(params["msg-id"]))
 					console.log(params,l,params["msg-id"]);
-				//events.on_message_received(sender,msg);
 			}else
-			//if(l[0]!==":")
 				console.log(l);
 		})
 	}
