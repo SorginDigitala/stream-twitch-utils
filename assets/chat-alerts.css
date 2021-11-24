@@ -130,8 +130,8 @@ legend{
 	flex-grow:1;
 }
 .groups_textarea textarea{
-	min-height:120px;
-	max-height:400px;
+	min-height:4.2rem;
+	max-height:12.2rem;
 	resize:vertical;
 }
 

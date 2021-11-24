@@ -40,9 +40,13 @@ var ws;
 function config_save(){
 	localStorage.setItem("config_alerts",JSON.stringify(config));
 }
+function config_clear(){
+	localStorage.clear();
+}
 
 function load_config(){
-	background.onmousedown=e=>{panel.classList.toggle("hide",false);permissions_notice.classList.toggle("hide",true);};
+	background.onclick=e=>panel.classList.toggle("hide",false);
+	background.onmousedown=e=>permissions_notice.classList.toggle("hide",true);
 	hide_button.onclick=e=>{e.stopPropagation();panel.classList.toggle("hide",true)}
 
 	channel_form.querySelector("[name='channels'").value=config.channels.join(", ");
@@ -96,6 +100,9 @@ function load_config(){
 	display_groups(tts_groups,tts_exceptions,config.tts);
 
 	log_groups.value=log_grouplist.join(", ");
+
+
+	clear_config.onclick=e=>config_clear();
 }
 
 
@@ -173,8 +180,7 @@ function start_ws(){
 	ws.onclose=e=>{
 		ws_status.classList.toggle("on",false);
 		console.log("[irc-ws.chat] closed");
-		ws=null;					//try to reconnect (?).
-		setTimeout(start_ws,3000);	//si no se reconecta mejor no reintentarlo.
+		setTimeout(start_ws,1000);
 	};
 	ws.onmessage=e=>{
 		const lines=e.data.trim().split(/[\r\n]+/g);
@@ -188,7 +194,7 @@ function start_ws(){
 				console.log(l);
 				if(l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
 					audio_alert.play();
-					//events.on_message_received(sender,msg);
+					//events.msg(sender,msg);
 					//log()
 				}
 				if(!l.includes("PRIVMSG") && !["sub","resub","raid"].includes(params["msg-id"]))
