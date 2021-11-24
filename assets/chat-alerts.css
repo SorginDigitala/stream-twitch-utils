@@ -11,7 +11,7 @@ body{
 	overflow:hidden;
 	display:flex;
 	flex-direction:column;
-	padding:10px;
+	padding:20px;
 }
 
 textarea{
@@ -40,13 +40,22 @@ legend{
 }
 
 
+
+#permissions_notice{
+	font-size:1.6rem;
+	color:red;
+	font-weight:bold;
+	margin:auto;
+}
+
+
 #panel{
 	position:relative;
 	width:100%;
 	max-width:700px;
 	background:#f8f8f8;
 	padding:15px;
-	margin:30px auto 0;
+	margin:auto;
 	border-radius:5px;
 	box-shadow:0 0 4px 0px #888;
 	overflow-y:auto;

@@ -1,9 +1,9 @@
 //	Si se usa una versión vieja de la variable "config" podría dar error. Sería mejor usar una función que compare la config por defecto y la almacenada
 const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getItem("config_alerts")):{
-	"channels"		:["seyacat","presuntamente"],
+	"channels"		:["seyacat"],
 	"mode"			:"alerts",
 	"volume"		:100,
-	"speech_urls"	:"domain",
+	"speech_urls"	:0,				// [0-2] Ignora las url, o lee el dominio, lee la url completa. En el TTS y comandos que ejecuten el TTS.
 
 	"alerts"		:{
 		"sound_alert"	:"beep",
@@ -13,11 +13,9 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 	},
 
 	"tts"			:{
-		"ignore_urls"	:true,		//ignora las url.
-		"short_urls"	:true,		//dice el nombre de dominio, no la url entera.
 		"rate_range"	:[.5,2],	//max rate allowed ( https://mdn.github.io/web-speech-api/speak-easy-synthesis/ )
 		"pitch_range"	:[0,2],		//max pitch allowed
-		"groups"		:[],
+		"groups"		:["vip","moderator"],
 		"users"			:["streamelements","nightbot"],
 	},
 
@@ -28,8 +26,10 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 };
 
 var log_grouplist=[
-	"broadcaster","moderator","vip","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","hype-train","predictions","partner","turbo","premium",
-	"bits-charity","glitchcon2020","glhf-pledge","overwatch-league-insider_2019A","twitchconAmsterdam2020","overwatch-league-insider_2018B"
+	"moderator","vip","founder","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","predictions","hype-train",
+	//"broadcaster","partner","turbo","premium","staff","admin",
+	//"bits-charity","twitchcon2017","twitchconEU2019","twitchconNA2019","glitchcon2020","twitchconAmsterdam2020","glhf-pledge",
+	//"H1Z1_1","overwatch-league-insider_1","overwatch-league-insider_2018B","overwatch-league-insider_2019A"
 ];
 const sounds=["beep","bell","door","door2","wololo"];
 var audio_alert=new Audio("");
@@ -42,7 +42,7 @@ function config_save(){
 }
 
 function load_config(){
-	background.onmousedown=e=>panel.classList.toggle("hide");
+	background.onmousedown=e=>{panel.classList.toggle("hide",false);permissions_notice.classList.toggle("hide",true);};
 	hide_button.onclick=e=>{e.stopPropagation();panel.classList.toggle("hide",true)}
 
 	channel_form.querySelector("[name='channels'").value=config.channels.join(", ");
@@ -116,6 +116,7 @@ function load_config(){
 }
 
 
+/*
 function display_groups(content,arr){
 	content.innerHTML=groups.map((e,i)=>"<label><input type=checkbox name="+e+""+(arr.includes(e)?" checked":"")+">"+e+"</label>").join("");
 	content.querySelectorAll("input").forEach(e=>{
@@ -132,6 +133,7 @@ function array_toggle(arr,item){	//	https://stackoverflow.com/a/39349118/3875360
 	else
 		arr.push(item);
 }
+*/
 
 
 
@@ -185,7 +187,7 @@ function start_ws(){
 	ws.onopen=e=>{
 		ws_status.classList.toggle("on",true);
 		console.log("[irc-ws.chat] open");
-		ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands");//se requiere para obtener info sobre los chatters
+		ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands");//se requiere para obtener info sobre los chatters.
 		ws.send("PASS SCHMOOPIIE");
 		ws.send("NICK justinfan29530");
 		ws.send("USER justinfan29530 8 * :justinfan29530");
@@ -194,7 +196,8 @@ function start_ws(){
 	ws.onclose=e=>{
 		ws_status.classList.toggle("on",false);
 		console.log("[irc-ws.chat] closed");
-		//try to reconnect (?)
+		ws=null;					//try to reconnect (?).
+		setTimeout(start_ws,3000);	//si no se reconecta mejor no reintentarlo.
 	};
 	ws.onmessage=e=>{
 		const lines=e.data.trim().split(/[\r\n]+/g);
@@ -204,12 +207,13 @@ function start_ws(){
 				ws.send("PONG");
 				//log("Ping");
 			}else if(l[0]==="@"){
-				const params=Object.fromEntries(l.substring(1).split(";").map(x=>x.split("=")));
-				get_badges(params);
+				const params=get_params(l);
+				console.log(params);
+				if(l.includes("PRIVMSG") && xor_msg(params))
+					audio_alert.play();
 				if(!l.includes("PRIVMSG") && !["sub","resub","raid"].includes(params["msg-id"]))
 					console.log(params,l,params["msg-id"]);
 				//events.on_message_received(sender,msg);
-				audio_alert.play();
 			}else
 			//if(l[0]!==":")
 				console.log(l);
@@ -243,19 +247,34 @@ function log(action,channel="",user="",data=""){
 
 function play_alert(){
 	audio_alert.play().then().catch(e=>{
-		if(e.name==="NotAllowedError"){
-			// ignorar error de permisos. Quizá un mensaje de aviso no estaría mal.
-		}else
+		if(e.name==="NotAllowedError")
+			permissions_notice.classList.toggle("hide",false);
+		else
 			console.error("error",e.name);
 	});
 }
 
 function channels_to_array(v){
-	return v.split(",").map(c=>normalize_channel(c)).filter((c,i,a)=>a.indexOf(c)===i)
+	return v.split(",").map(c=>normalize_channel(c)).filter((c,i,a)=>a.indexOf(c)===i && c);
 }
 
 function normalize_channel(c){
 	return c.trim().toLowerCase();
+}
+
+function get_params(l){	// un poco fea esta función
+	let params=l.substring(1).split(";");
+	let last=params.at(-1).split(":").map(x=>x.trim());
+	params[params.length-1]=last[0];
+	params=Object.fromEntries(params.map(x=>x.split("=")));
+	params.msg_channel=last[1].split("#")[1];
+	params.msg=last.slice(2).join(":");
+	get_badges(params);
+	return params;
+}
+
+function xor_msg(p){
+	return config.alerts.groups.length===0 || (p.badges && config.alerts.groups.find(x=>p.badges.includes(x))) ^ config.alerts.users.includes(p["display-name"].toLowerCase());
 }
 
 function get_badges(params){
