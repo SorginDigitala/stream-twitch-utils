@@ -111,24 +111,6 @@ function display_groups(input,textarea,arr){
 		config_save();
 	};
 }
-/*
-function display_groups(content,arr){
-	content.innerHTML=groups.map((e,i)=>"<label><input type=checkbox name="+e+""+(arr.includes(e)?" checked":"")+">"+e+"</label>").join("");
-	content.querySelectorAll("input").forEach(e=>{
-		e.onchange=(e=>{
-			array_toggle(arr,e.target.name);
-			config_save();
-		});
-	});
-}
-function array_toggle(arr,item){	//	https://stackoverflow.com/a/39349118/3875360
-	var i=arr.indexOf(item);
-	if(i!==-1)
-		arr.splice(i,1);
-	else
-		arr.push(item);
-}
-*/
 
 
 
@@ -203,7 +185,8 @@ function start_ws(){
 				//log("Ping");
 			}else if(l[0]==="@"){
 				const params=get_params(l);
-				if(l.includes("PRIVMSG") && xor_msg(params)){
+				console.log(l);
+				if(l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
 					audio_alert.play();
 					//events.on_message_received(sender,msg);
 					//log()
@@ -268,8 +251,10 @@ function get_params(l){	// un poco fea esta función
 	return params;
 }
 
-function xor_msg(p){
-	return config.alerts.groups.length===0 || (p.badges && config.alerts.groups.find(x=>p.badges.includes(x))) ^ config.alerts.users.includes(p["display-name"].toLowerCase());
+function xor_msg(p,c){
+	let g=(c.groups.length===0 || (p.badges && c.groups.findIndex(x=>p.badges.includes(x))>=0));
+	let u=c.users.includes(p["display-name"].toLowerCase());
+	return g^u;
 }
 
 function get_badges(params){
