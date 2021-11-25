@@ -248,9 +248,7 @@ function normalize_channel(c){
 
 function get_params(l){	// un poco fea esta función
 	let params=l.substring(1).split(";");
-	if(!params)
-		return [];
-	let last=params.at(-1).split(":").map(x=>x.trim());
+	let last=params[params.length-1].split(":").map(x=>x.trim());
 	params[params.length-1]=last[0];
 	params=Object.fromEntries(params.map(x=>x.split("=")));
 	params.msg_channel=last[1].split("#")[1];
