@@ -7,7 +7,7 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 
 	"alerts"		:{
 		"sound_alert"	:"beep",
-		"custom_sound"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/beep.mp3",
+		"custom_sound"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/bell.mp3",
 		"groups"		:[],
 		"users"			:[]
 	},
@@ -25,24 +25,22 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 	},
 };
 
-var log_grouplist=[
+const synth			=window.speechSynthesis;
+const defaultVoice	=synth.getVoices().find(e=>e.default);
+const sounds		=["beep","bell","door","door2","wololo"];
+const fragments		=["alexa","detector","evaristo","followers","google","martini","rapero","repsol","subnormal"];
+const videos		=[];
+
+var log_grouplist	=[
 	"moderator","vip","founder","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","anonymous-cheerer","predictions","hype-train",
 	//"broadcaster","partner","turbo","premium","staff","admin",
 	//"bits-charity","twitchcon2017","twitchconEU2019","twitchconNA2019","glitchcon2020","twitchconAmsterdam2020","glhf-pledge",
 	//"H1Z1_1","overwatch-league-insider_1","overwatch-league-insider_2018B","overwatch-league-insider_2019A"
 ];
-const sounds=["beep","bell","door","door2","wololo"];
-var audio_alert=new Audio("");
+var audio_alert;
 var ws;
 
 
-
-function config_save(){
-	localStorage.setItem("config_alerts",JSON.stringify(config));
-}
-function config_clear(){
-	localStorage.clear();
-}
 
 function load_config(){
 	background.onclick=e=>panel.classList.toggle("hide",false);
@@ -62,10 +60,12 @@ function load_config(){
 	}
 	mode_select.value=config.mode;
 	mode_select.onchange=e=>{
-		config.mode=mode_select.value;
+		if(e){
+			config.mode=mode_select.value;
+			config_save();
+		}
 		Alerts.enable(config.mode==="alerts");
 		TTS.enable(config.mode==="tts");
-		config_save();
 	}
 	mode_select.onchange();
 
@@ -87,19 +87,13 @@ function load_config(){
 	clear_config.onclick=e=>config_clear();
 }
 
-
-function display_groups(input,textarea,arr){
-	input.value=arr.groups.join(", ");
-	input.onchange=e=>{
-		arr.groups=channels_to_array(input.value);
-		config_save();
-	};
-	textarea.value=arr.users.join(", ");
-	textarea.onchange=e=>{
-		arr.users=channels_to_array(textarea.value);
-		config_save();
-	};
+function config_save(){
+	localStorage.setItem("config_alerts",JSON.stringify(config));
 }
+function config_clear(){
+	localStorage.clear();
+}
+
 
 
 
@@ -136,6 +130,7 @@ info:	@emote-only=0;followers-only=-1;r9k=0;rituals=0;room-id=130747120;slow=0;s
 ban:	@ban-duration=5;room-id=494686511;target-user-id=664042355;tmi-sent-ts=1637699597872 :tmi.twitch.tv CLEARCHAT #s4vitaar :vpabloa
 clear:	@login=owen20202021;room-id=;target-msg-id=6b9ee65f-e0b2-4d74-b35c-669bf129ebda;tmi-sent-ts=1637762922034 :tmi.twitch.tv CLEARMSG #folagorlives :gran stream
 
+notice:
 hosting:		@msg-id=host_on :tmi.twitch.tv NOTICE #nicro4fun :Now hosting kaku924. host_on :tmi.twitch.tv NOTICE #nicro4fun :Now hosting kaku924.
 hosting off:	@msg-id=host_target_went_offline :tmi.twitch.tv NOTICE #rhomita :demiontus has gone offline. Exiting host mode. host_target_went_offline :tmi.twitch.tv NOTICE #rhomita :demiontus has gone offline. Exiting host mode.
 
@@ -143,13 +138,11 @@ emotes-only:	@emote-only=1;room-id=30857876 :tmi.twitch.tv ROOMSTATE #folagorliv
 suboff:			@msg-id=subs_off :tmi.twitch.tv NOTICE #westcol :This room is no longer in subscribers-only mode. subs_off :tmi.twitch.tv NOTICE #westcol :This room is no longer in subscribers-only mode.
 
 
-sub:	 @badge-info=subscriber/11;badges=subscriber/9;color=#4E7597;display-name=gabbocastle;emotes=;flags=;id=f6c19fed-154f-4f9c-a671-05d059e84a54;login=gabbocastle;mod=0;msg-id=resub;msg-param-cumulative-months=11;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Élite\sde\sla\sélite;msg-param-sub-plan=1000;msg-param-was-gifted=false;room-id=30651868;subscriber=1;system-msg=gabbocastle\ssubscribed\sat\sTier\s1.\sThey've\ssubscribed\sfor\s11\smonths!;tmi-sent-ts=1637699628747;user-id=496385231;user-type= :tmi.twitch.tv USERNOTICE #elrichmc
-sub:	 @badge-info=;badges=premium/1;color=;display-name=nacho_soler;emotes=;flags=;id=abc5db39-f2e5-4401-aed8-bf3735d2b668;login=nacho_soler;mod=0;msg-id=sub;msg-param-cumulative-months=1;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=H4x0r;msg-param-sub-plan=Prime;msg-param-was-gifted=false;room-id=494686511;subscriber=1;system-msg=nacho_soler\ssubscribed\swith\sPrime.;tmi-sent-ts=1637700802996;user-id=214336286;user-type= :tmi.twitch.tv USERNOTICE #s4vitaar
-subgift:	 @badge-info=subscriber/26;badges=moderator/1,subscriber/24,sub-gifter/50;color=#FF69B4;display-name=Taquitazo;emotes=;flags=;id=890175f9-f175-48ff-ba98-e986c7c8a864;login=taquitazo;mod=1;msg-id=subgift;msg-param-gift-months=1;msg-param-months=2;msg-param-origin-id=d6\s39\s29\sd4\s5e\s0f\s32\s69\s86\sf1\s52\s13\s34\s71\s3b\se9\s4d\s53\sfc\s1e;msg-param-recipient-display-name=Ader04120;msg-param-recipient-id=182974601;msg-param-recipient-user-name=ader04120;msg-param-sender-count=0;msg-param-sub-plan-name=Gentecilla\s(nicro4fun);msg-param-sub-plan=1000;room-id=153594349;subscriber=1;system-msg=Taquitazo\sgifted\sa\sTier\s1\ssub\sto\sAder04120!;tmi-sent-ts=1637710546224;user-id=127959084;user-type=mod :tmi.twitch.tv USERNOTICE #nicro4fun subgift
-submysterygift:	 @badge-info=subscriber/26;badges=moderator/1,subscriber/24,sub-gifter/50;color=#FF69B4;display-name=Taquitazo;emotes=;flags=;id=6d19d5a5-ce3c-4bfb-bcfa-31b4918058c5;login=taquitazo;mod=1;msg-id=submysterygift;msg-param-mass-gift-count=3;msg-param-origin-id=d6\s39\s29\sd4\s5e\s0f\s32\s69\s86\sf1\s52\s13\s34\s71\s3b\se9\s4d\s53\sfc\s1e;msg-param-sender-count=63;msg-param-sub-plan=1000;room-id=153594349;subscriber=1;system-msg=Taquitazo\sis\sgifting\s3\sTier\s1\sSubs\sto\snicro4fun's\scommunity!\sThey've\sgifted\sa\stotal\sof\s63\sin\sthe\schannel!;tmi-sent-ts=1637710543777;user-id=127959084;user-type=mod :tmi.twitch.tv USERNOTICE #nicro4fun submysterygift
-raid:	@badge-info=;badges=;color=#8A2BE2;display-name=ManzDev;emotes=;flags=;id=068be18a-ee52-48bb-961b-c391424b5cc3;login=manzdev;mod=0;msg-id=raid;msg-param-displayName=ManzDev;msg-param-login=manzdev;msg-param-profileImageURL=https://static-cdn.jtvnw.net/jtv_user_pictures/86bd7a3b-b42f-4463-a428-e3f8d0614208-profile_image-70x70.png;msg-param-viewerCount=46;room-id=494686511;subscriber=0;system-msg=46\sraiders\sfrom\sManzDev\shave\sjoined!;tmi-sent-ts=1637699495632;user-id=504185570;user-type= :tmi.twitch.tv USERNOTICE #s4vitaar
+usernotice:	 @...;msg-id=resub;msg-param-cumulative-months=11;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Élite\sde\sla\sélite;msg-param-sub-plan=1000;msg-param-was-gifted=false;system-msg=gabbocastle\ssubscribed\sat\sTier\s1.\sThey've\ssubscribed\sfor\s11\smonths!;tmi-sent-ts=1637699628747;user-id=496385231;user-type= :tmi.twitch.tv USERNOTICE #elrichmc
+subgift:	 @...;msg-id=subgift;msg-param-gift-months=1;msg-param-months=2;msg-param-origin-id=d6\s39\s29\sd4\s5e\s0f\s32\s69\s86\sf1\s52\s13\s34\s71\s3b\se9\s4d\s53\sfc\s1e;msg-param-recipient-display-name=Ader04120;msg-param-recipient-id=182974601;msg-param-recipient-user-name=ader04120;msg-param-sender-count=0;msg-param-sub-plan-name=Gentecilla\s(nicro4fun);msg-param-sub-plan=1000;system-msg=Taquitazo\sgifted\sa\sTier\s1\ssub\sto\sAder04120!;tmi-sent-ts=1637710546224;user-id=127959084;user-type=mod :tmi.twitch.tv USERNOTICE #nicro4fun subgift
+submysterygift:	 @...;msg-id=submysterygift;msg-param-mass-gift-count=3;msg-param-origin-id=d6\s39\s29\sd4\s5e\s0f\s32\s69\s86\sf1\s52\s13\s34\s71\s3b\se9\s4d\s53\sfc\s1e;msg-param-sender-count=63;msg-param-sub-plan=1000;system-msg=Taquitazo\sis\sgifting\s3\sTier\s1\sSubs\sto\snicro4fun's\scommunity!\sThey've\sgifted\sa\stotal\sof\s63\sin\sthe\schannel!;tmi-sent-ts=1637710543777;user-id=127959084;user-type=mod :tmi.twitch.tv USERNOTICE #nicro4fun submysterygift
+raid:	@...;msg-id=raid;msg-param-displayName=ManzDev;msg-param-login=manzdev;msg-param-profileImageURL=https://static-cdn.jtvnw.net/jtv_user_pictures/86bd7a3b-b42f-4463-a428-e3f8d0614208-profile_image-70x70.png; msg-param-viewerCount=46;system-msg=46\sraiders\sfrom\sManzDev\shave\sjoined!;tmi-sent-ts=1637699495632;user-id=504185570;user-type= :tmi.twitch.tv USERNOTICE #s4vitaar
 
-nidea:  @login=pa4b;room-id=;target-msg-id=8667393d-5677-4479-87af-a21dbe663338;tmi-sent-ts=1637700375095 :tmi.twitch.tv CLEARMSG #elrichmc :ah ): vrga
 */
 function start_ws(){
 	ws=new WebSocket("wss://irc-ws.chat.twitch.tv/");
@@ -259,6 +252,19 @@ function get_badges(params){
 }
 
 
+function display_groups(input,textarea,arr){
+	input.value=arr.groups.join(", ");
+	input.onchange=e=>{
+		arr.groups=channels_to_array(input.value);
+		config_save();
+	};
+	textarea.value=arr.users.join(", ");
+	textarea.onchange=e=>{
+		arr.users=channels_to_array(textarea.value);
+		config_save();
+	};
+}
+
 
 
 
@@ -273,9 +279,10 @@ class Alerts{
 			config.alerts.sound_alert=sound_alert.value;
 			audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
 			audio_alert.volume=config.volume/100;
-			if(e)
+			if(e){
 				Alerts.play();
-			config_save();
+				config_save();
+			}
 		}
 		alert_test.onclick=Alerts.play;
 		sound_alert.onchange();
@@ -299,8 +306,6 @@ class Alerts{
 	}
 }
 
-const synth			=window.speechSynthesis;
-const defaultVoice	=synth.getVoices().find(e=>e.default);
 class TTS{
 	static lastVoiceUser;
 
@@ -344,10 +349,6 @@ class TTS{
 
 
 
-function Loader(){
-	load_config();
-	start_ws();
-}
 
 class Events{
 	static events={};
@@ -379,6 +380,10 @@ class Events{
 	}
 }
 
+function Loader(){
+	load_config();
+	start_ws();
+}
 if(document.all)
 	window.attachEvent('onload',Loader);
 else

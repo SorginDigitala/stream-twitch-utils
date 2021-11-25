@@ -142,3 +142,38 @@ legend{
 
 
 
+
+
+
+label{
+	display:block;
+	padding:3px 0;
+	font-weight: 700;
+	margin-bottom:10px;
+}
+label h2{
+	margin:7px 0;
+	font-size:1.3rem
+}
+label p{
+	margin:7px 0;
+	font-weight: normal;
+	color:#000;
+	font-size:1rem;
+}
+
+
+input:not([type="range"]){
+	padding:.3rem;
+	border: 1px solid #999;
+	border-radius:2px;
+	font-size: 16px;
+}
+input:focus,
+textarea:focus{
+	border-color:darkgreen;
+}
+
+
+
+
