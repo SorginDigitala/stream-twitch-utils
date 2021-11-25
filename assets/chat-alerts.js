@@ -194,6 +194,8 @@ function start_ws(){
 				console.log(l);
 				if(l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
 					audio_alert.play();
+					console.log(params.msg)
+					speakRandom(params.msg);
 					//events.msg(sender,msg);
 					//log()
 				}
