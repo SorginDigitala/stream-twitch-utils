@@ -305,7 +305,7 @@ const speak=(msg,voice,pitch=1,rate=1)=>{
 	utterThis.voice	=voice
 	synth.speak(utterThis);
 }
-	console.log(synth.getVoices());
+	console.log("voices:",synth.getVoices());
 
 
 
