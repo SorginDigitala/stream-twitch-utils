@@ -62,11 +62,9 @@ function load_config(){
 	}
 	mode_select.value=config.mode;
 	mode_select.onchange=e=>{
-		//desactivar el modo anterior si lo hubiera
-		//activar el nuevo modo si lo hubiera
 		config.mode=mode_select.value;
-		alerts.classList.toggle("hide",config.mode!=="alerts");
-		tts.classList.toggle("hide",config.mode!=="tts");
+		Alerts.enable(config.mode==="alerts");
+		TTS.enable(config.mode==="tts");
 		config_save();
 	}
 	mode_select.onchange();
@@ -74,34 +72,18 @@ function load_config(){
 	speech_urls.value=config.speech_urls;
 	speech_urls.onchange=e=>{config.speech_urls=speech_urls.value;config_save()};
 
-
-	sound_alert.value=config.alerts.sound_alert;
-	custom_sound.value=config.alerts.custom_sound;
-	sound_alert.onchange=e=>{
-		custom_sound.classList.toggle("hide",sound_alert.value!=="custom");
-		config.alerts.sound_alert=sound_alert.value;
-		audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
-		audio_alert.volume=config.volume/100;
-		play_alert();
-		config_save();
-	}
-	alert_test.onclick=play_alert;
-	sound_alert.onchange();
-
 	config_volume.value=config.volume;
 	config_volume.onchange=e=>{
 		audio_alert.volume=config_volume.value/100;
 		config.volume=config_volume.value;
 		config_save();
 	}
+	
+	Alerts.start();
+	TTS.start();
 
-
-	display_groups(alerts_groups,alerts_exceptions,config.alerts);
-	display_groups(tts_groups,tts_exceptions,config.tts);
 
 	log_groups.value=log_grouplist.join(", ");
-
-
 	clear_config.onclick=e=>config_clear();
 }
 
@@ -125,10 +107,12 @@ function display_groups(input,textarea,arr){
 attr:
 display-name// display name
 emotes		// emotes usados y la posición de inicio y final en el mensaje
+
 badges		// lista de insignias
 turbo		// si tiene turbo
 subscriber	// si es suscriptor
 mod			// si es mod
+
 emotes-only	// si el mensaje solo contiene emotes
 first-msg	// si es su primer mensaje
 
@@ -193,16 +177,18 @@ function start_ws(){
 				//log("Ping");
 			}else if(l[0]==="@"){
 				const params=get_params(l);
-				console.log(l,params);
-				if(params["emote-only"]){
-					// solo envia emotes
-				}else if(l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
-					//audio_alert.play();
-					speak_msg(params["display-name"],params.msg);
-					//events.msg(sender,msg);
-					//log()
-				}
-				if(!l.includes("PRIVMSG") && !["sub","resub","raid"].includes(params["msg-id"]))
+				if(!params["emote-only"] && l.includes("PRIVMSG") && xor_msg(params,config.alerts))
+					Events.Dispatch("msg",params);
+
+				if(params["custom-reward-id"])
+					Events.Dispatch("msg.reward",params);
+				else if(params["first-msg"])
+					Events.Dispatch("msg.emote-only",params);
+				else if(params["emote-only"])
+					Events.Dispatch("msg.emote-only",params);
+				else if(l.includes("PRIVMSG"))
+					Events.Dispatch("msg.normal",params);
+				if(!["sub","resub","raid"].includes(params["msg-id"]))
 					console.log(params,l,params["msg-id"]);
 			}else
 				console.log(l);
@@ -232,15 +218,6 @@ function log(action,channel="",user="",data=""){
 }
 
 
-function play_alert(){
-	audio_alert.play().then().catch(e=>{
-		if(e.name==="NotAllowedError")
-			permissions_notice.classList.toggle("hide",false);
-		else
-			console.error("error",e.name);
-	});
-}
-
 function channels_to_array(v){
 	return v.split(",").map(c=>normalize_channel(c)).filter((c,i,a)=>a.indexOf(c)===i && c);
 }
@@ -252,6 +229,7 @@ function normalize_channel(c){
 function get_params(l){	// un poco fea esta función
 	let params=l.substring(1).split(";");
 	let last=params[params.length-1].split(":").map(x=>x.trim());
+	console.log(l,last)
 	params[params.length-1]=last[0];
 	params=Object.fromEntries(params.map(x=>x.split("=")));
 	params.msg_channel=last[1].split("#")[1];
@@ -281,6 +259,61 @@ function get_badges(params){
 
 
 
+
+
+
+class Alerts{
+	static start(){
+		sound_alert.value=config.alerts.sound_alert;
+		custom_sound.value=config.alerts.custom_sound;
+		sound_alert.onchange=e=>{
+			custom_sound.classList.toggle("hide",sound_alert.value!=="custom");
+			config.alerts.sound_alert=sound_alert.value;
+			audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
+			audio_alert.volume=config.volume/100;
+			Alerts.play();
+			config_save();
+		}
+		alert_test.onclick=Alerts.play;
+		sound_alert.onchange();
+		display_groups(alerts_groups,alerts_exceptions,config.alerts);
+	}
+	static enable(b){
+		if(b)
+			Events.Add("msg",Alerts.play);
+		else
+			Events.Remove("msg",Alerts.play);
+		alerts.classList.toggle("hide",!b);
+	}
+
+	static play(){
+		audio_alert.play().then().catch(e=>{
+			if(e.name==="NotAllowedError")
+				permissions_notice.classList.toggle("hide",false);
+			else
+				console.error("error",e.name);
+		});
+	}
+}
+
+class TTS{
+	static start(){
+		display_groups(tts_groups,tts_exceptions,config.tts);
+	}
+	static enable(b){
+		if(b)
+			Events.Add("msg",TTS.play);
+		else
+			Events.Remove("msg",TTS.play);
+		tts.classList.toggle("hide",!b);
+	}
+
+	static play(p){
+		console.log("aoeu");
+		speak_msg(p["display-name"],p.msg)
+	}
+}
+
 // TTS functions
 
 const synth			=window.speechSynthesis;
@@ -299,15 +332,12 @@ const speak_msg=(user,msg)=>{
 }
 const speak=(msg,voice,pitch=1,rate=1)=>{
 	var utterThis	=new SpeechSynthesisUtterance(msg);
-	utterThis.volume=1
+	utterThis.volume=config.volume
 	utterThis.pitch	=pitch
 	utterThis.rate	=rate
 	utterThis.voice	=voice
 	synth.speak(utterThis);
 }
-	console.log("voices:",synth.getVoices());
-
-
 
 
 
@@ -315,6 +345,36 @@ const speak=(msg,voice,pitch=1,rate=1)=>{
 function Loader(){
 	load_config();
 	start_ws();
+}
+
+class Events{
+	static events={};
+
+	static Add(e,f){
+		if(typeof f!=="function")
+			console.log("Events.Add(string event,function function)",e,f);
+		else if(Events.events[e]===undefined)
+			Events.events[e]=[f];
+		else if(!Events.events[e].includes(f))
+			Events.events[e].push(f);
+	}
+
+	static Remove(e,f){
+		if(!Events.events[e])
+			return;
+		let x=Events.events[e].indexOf(f);
+		if(x>-1)
+			Events.events[e].splice(x,1);
+	}
+
+	static RemoveAll(e){
+		Events.events[e]=[];
+	}
+
+	static Dispatch(e,p){
+		if(Events.events[e])
+			Events.events[e].forEach(e=>e(p));
+	}
 }
 
 if(document.all)
