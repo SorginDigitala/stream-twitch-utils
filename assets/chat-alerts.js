@@ -197,10 +197,8 @@ function start_ws(){
 				if(params["emote-only"]){
 					// solo envia emotes
 				}else if(l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
-					audio_alert.play();
-					
-					speak(params["display-name"]);
-					speakRandom(params.msg);
+					//audio_alert.play();
+					speak_msg(params["display-name"],params.msg);
 					//events.msg(sender,msg);
 					//log()
 				}
@@ -287,9 +285,17 @@ function get_badges(params){
 
 const synth			=window.speechSynthesis;
 const defaultVoice	=synth.getVoices().find(e=>e.default);
-const speakRandom	=msg=>{
+var lastVoiceUser;
+const speak_rand=msg=>{
 	voices=synth.getVoices()
 	speak(msg,voices[Math.floor(Math.random() * voices.length)],0.5+1.5*Math.random(),0.5+0.5*Math.random());
+}
+const speak_msg=(user,msg)=>{
+	if(lastVoiceUser!==user){
+		lastVoiceUser=user;
+		speak(user);
+	}
+	speak_rand(msg);
 }
 const speak=(msg,voice,pitch=1,rate=1)=>{
 	if(!voice)
