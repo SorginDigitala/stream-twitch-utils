@@ -170,8 +170,10 @@ function start_ws(){
 				//log("Ping");
 			}else if(l[0]==="@"){
 				const params=get_params(l);
-				if(!params["emote-only"] && l.includes("PRIVMSG") && xor_msg(params,config.alerts))
+				if(!params["emote-only"] && l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
 					Events.dispatch("msg",params);
+					console.log(params);
+				}
 
 				if(params["custom-reward-id"])
 					Events.dispatch("msg.reward",params);
@@ -272,6 +274,11 @@ function display_groups(input,textarea,arr){
 
 class Alerts{
 	static start(){
+		// Fuerza el audio para mostrar el mensaje de interacción.
+		audio_alert=new Audio();
+		audio_alert.volume=.001;
+		Alerts.play();
+
 		sound_alert.value=config.alerts.sound_alert;
 		custom_sound.value=config.alerts.custom_sound;
 		sound_alert.onchange=e=>{
