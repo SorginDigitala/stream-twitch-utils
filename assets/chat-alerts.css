@@ -109,29 +109,12 @@ legend{
 	background:darkgreen;
 }
 
-
-/*
-.groups{
-	display:flex;
-	gap:15px;
-}
-.groups p{
-	margin:0;
-}
-
-.groups_list{
-	display:flex;
-	flex-direction:column;
-	text-transform: capitalize;
-	user-select:none;
-}
-*/
 .groups_textarea{
 	flex-grow:1;
 }
 .groups_textarea textarea{
-	min-height:4.2rem;
-	max-height:12.2rem;
+	min-height:4.4rem;
+	max-height:12.4rem;
 	resize:vertical;
 }
 
@@ -148,8 +131,9 @@ legend{
 
 
 #log_groups{
-	resize:none;
-	height:5.2rem;
+	resize:vertical;
+	min-height:3.4rem;
+	max-height:12.4rem;
 }
 
 

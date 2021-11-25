@@ -178,18 +178,20 @@ function start_ws(){
 			}else if(l[0]==="@"){
 				const params=get_params(l);
 				if(!params["emote-only"] && l.includes("PRIVMSG") && xor_msg(params,config.alerts))
-					Events.Dispatch("msg",params);
+					Events.dispatch("msg",params);
 
 				if(params["custom-reward-id"])
-					Events.Dispatch("msg.reward",params);
+					Events.dispatch("msg.reward",params);
 				else if(params["first-msg"])
-					Events.Dispatch("msg.emote-only",params);
+					Events.dispatch("msg.emote-only",params);
 				else if(params["emote-only"])
-					Events.Dispatch("msg.emote-only",params);
+					Events.dispatch("msg.emote-only",params);
 				else if(l.includes("PRIVMSG"))
-					Events.Dispatch("msg.normal",params);
-				if(!["sub","resub","raid"].includes(params["msg-id"]))
+					Events.dispatch("msg.normal",params);
+				if(["sub","resub","raid"].includes(params["msg-id"]))
 					console.log(params,l,params["msg-id"]);
+			}else if(l[0]===":"){
+				//info del canal, como JOIN o PART
 			}else
 				console.log(l);
 		})
@@ -226,10 +228,10 @@ function normalize_channel(c){
 	return c.trim().toLowerCase();
 }
 
-function get_params(l){	// un poco fea esta función
+function get_params(l){	// si envian mensaje con ";" da error
 	let params=l.substring(1).split(";");
 	let last=params[params.length-1].split(":").map(x=>x.trim());
-	console.log(l,last)
+	//console.log(l,last)
 	params[params.length-1]=last[0];
 	params=Object.fromEntries(params.map(x=>x.split("=")));
 	params.msg_channel=last[1].split("#")[1];
@@ -271,7 +273,8 @@ class Alerts{
 			config.alerts.sound_alert=sound_alert.value;
 			audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
 			audio_alert.volume=config.volume/100;
-			Alerts.play();
+			if(e)
+				Alerts.play();
 			config_save();
 		}
 		alert_test.onclick=Alerts.play;
@@ -280,9 +283,9 @@ class Alerts{
 	}
 	static enable(b){
 		if(b)
-			Events.Add("msg",Alerts.play);
+			Events.add("msg",Alerts.play);
 		else
-			Events.Remove("msg",Alerts.play);
+			Events.remove("msg",Alerts.play);
 		alerts.classList.toggle("hide",!b);
 	}
 
@@ -296,48 +299,47 @@ class Alerts{
 	}
 }
 
+const synth			=window.speechSynthesis;
+const defaultVoice	=synth.getVoices().find(e=>e.default);
 class TTS{
+	static lastVoiceUser;
+
 	static start(){
 		display_groups(tts_groups,tts_exceptions,config.tts);
 	}
 	static enable(b){
 		if(b)
-			Events.Add("msg",TTS.play);
+			Events.add("msg",TTS.play);
 		else
-			Events.Remove("msg",TTS.play);
+			Events.remove("msg",TTS.play);
 		tts.classList.toggle("hide",!b);
 	}
 
 	static play(p){
-		console.log("aoeu");
-		speak_msg(p["display-name"],p.msg)
+		TTS.speak_msg(p["display-name"],p.msg)
+	}
+
+	static speak_rand(msg){
+		let voices=synth.getVoices()
+		TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.5+1.5*Math.random(),0.5+0.5*Math.random());
+	}
+	static speak_msg(user,msg){
+		if(TTS.lastVoiceUser!==user){
+			TTS.lastVoiceUser=user;
+			TTS.speak(user,defaultVoice);
+		}
+		TTS.speak_rand(msg);
+	}
+	static speak(msg,voice,pitch=1,rate=1){
+		var utterThis	=new SpeechSynthesisUtterance(msg);
+		utterThis.volume=config.volume
+		utterThis.pitch	=pitch
+		utterThis.rate	=rate
+		utterThis.voice	=voice
+		synth.speak(utterThis);
 	}
 }
 
-// TTS functions
-
-const synth			=window.speechSynthesis;
-const defaultVoice	=synth.getVoices().find(e=>e.default);
-var lastVoiceUser;
-const speak_rand=msg=>{
-	voices=synth.getVoices()
-	speak(msg,voices[Math.floor(Math.random() * voices.length)],0.5+1.5*Math.random(),0.5+0.5*Math.random());
-}
-const speak_msg=(user,msg)=>{
-	if(lastVoiceUser!==user){
-		lastVoiceUser=user;
-		speak(user,defaultVoice);
-	}
-	speak_rand(msg);
-}
-const speak=(msg,voice,pitch=1,rate=1)=>{
-	var utterThis	=new SpeechSynthesisUtterance(msg);
-	utterThis.volume=config.volume
-	utterThis.pitch	=pitch
-	utterThis.rate	=rate
-	utterThis.voice	=voice
-	synth.speak(utterThis);
-}
 
 
 
@@ -350,16 +352,16 @@ function Loader(){
 class Events{
 	static events={};
 
-	static Add(e,f){
+	static add(e,f){
 		if(typeof f!=="function")
-			console.log("Events.Add(string event,function function)",e,f);
+			console.error("Events.Add(string event,function function)",e,f);
 		else if(Events.events[e]===undefined)
 			Events.events[e]=[f];
 		else if(!Events.events[e].includes(f))
 			Events.events[e].push(f);
 	}
 
-	static Remove(e,f){
+	static remove(e,f){
 		if(!Events.events[e])
 			return;
 		let x=Events.events[e].indexOf(f);
@@ -367,11 +369,11 @@ class Events{
 			Events.events[e].splice(x,1);
 	}
 
-	static RemoveAll(e){
+	static remove_all(e){
 		Events.events[e]=[];
 	}
 
-	static Dispatch(e,p){
+	static dispatch(e,p){
 		if(Events.events[e])
 			Events.events[e].forEach(e=>e(p));
 	}
