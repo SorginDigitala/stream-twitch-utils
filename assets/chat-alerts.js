@@ -293,15 +293,14 @@ const speak_rand=msg=>{
 const speak_msg=(user,msg)=>{
 	if(lastVoiceUser!==user){
 		lastVoiceUser=user;
-		speak(user);
+		speak(user,defaultVoice);
 	}
 	speak_rand(msg);
 }
 const speak=(msg,voice,pitch=1,rate=1)=>{
-	if(!voice)
-		voice=defaultVoice;
-	var utterThis		=new SpeechSynthesisUtterance(msg);
-	utterThis.volume	=1
+	console.log(synth.getVoices());
+	var utterThis	=new SpeechSynthesisUtterance(msg);
+	utterThis.volume=1
 	utterThis.pitch	=pitch
 	utterThis.rate	=rate
 	utterThis.voice	=voice
