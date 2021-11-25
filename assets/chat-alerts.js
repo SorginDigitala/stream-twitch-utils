@@ -298,7 +298,6 @@ const speak_msg=(user,msg)=>{
 	speak_rand(msg);
 }
 const speak=(msg,voice,pitch=1,rate=1)=>{
-	console.log(synth.getVoices());
 	var utterThis	=new SpeechSynthesisUtterance(msg);
 	utterThis.volume=1
 	utterThis.pitch	=pitch
@@ -306,6 +305,7 @@ const speak=(msg,voice,pitch=1,rate=1)=>{
 	utterThis.voice	=voice
 	synth.speak(utterThis);
 }
+	console.log(synth.getVoices());
 
 
 
