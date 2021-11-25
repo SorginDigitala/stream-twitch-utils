@@ -132,6 +132,8 @@ mod			// si es mod
 emotes-only	// si el mensaje solo contiene emotes
 first-msg	// si es su primer mensaje
 
+custom-reward-id
+
 badge-info	// si es suscriptor / meses
 user-type	// tipo de usuario (por ahora solo me ha devuelto "mod" en caso de ser moderador)
 
@@ -191,10 +193,13 @@ function start_ws(){
 				//log("Ping");
 			}else if(l[0]==="@"){
 				const params=get_params(l);
-				console.log(l);
-				if(l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
+				console.log(l,params);
+				if(params["emote-only"]){
+					// solo envia emotes
+				}else if(l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
 					audio_alert.play();
-					console.log(params.msg)
+					
+					speak(params["display-name"]);
 					speakRandom(params.msg);
 					//events.msg(sender,msg);
 					//log()
@@ -212,8 +217,6 @@ function ws_join(e){
 function ws_leave(e){
 	ws.send("PART #"+e);
 }
-
-
 
 function log(action,channel="",user="",data=""){
 	let msg=action;
@@ -277,6 +280,27 @@ function get_badges(params){
 	}
 }
 
+
+
+
+// TTS functions
+
+const synth			=window.speechSynthesis;
+const defaultVoice	=synth.getVoices().find(e=>e.default);
+const speakRandom	=msg=>{
+	voices=synth.getVoices()
+	speak(msg,voices[Math.floor(Math.random() * voices.length)],0.5+1.5*Math.random(),0.5+0.5*Math.random());
+}
+const speak=(msg,voice,pitch=1,rate=1)=>{
+	if(!voice)
+		voice=defaultVoice;
+	var utterThis		=new SpeechSynthesisUtterance(msg);
+	utterThis.volume	=1
+	utterThis.pitch	=pitch
+	utterThis.rate	=rate
+	utterThis.voice	=voice
+	synth.speak(utterThis);
+}
 
 
 
