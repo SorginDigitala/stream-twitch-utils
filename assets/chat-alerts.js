@@ -28,7 +28,7 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 const synth			=window.speechSynthesis;
 const defaultVoice	=synth.getVoices().find(e=>e.default);
 const sounds		=["beep","bell","door","door2","wololo"];
-const fragments		=["alexa","detector","evaristo","followers","google","martini","rapero","repsol","subnormal"];
+const fragments		=["alexa","detector","evaristo","followers","google","jetset","martini","rapero","repsol","subnormal"];
 const videos		=[];
 
 var log_grouplist	=[
@@ -178,7 +178,7 @@ function start_ws(){
 				if(params["custom-reward-id"])
 					Events.dispatch("msg.reward",params);
 				else if(params["first-msg"])
-					Events.dispatch("msg.emote-only",params);
+					Events.dispatch("msg.first-msg",params);
 				else if(params["emote-only"])
 					Events.dispatch("msg.emote-only",params);
 				else if(l.includes("PRIVMSG"))
