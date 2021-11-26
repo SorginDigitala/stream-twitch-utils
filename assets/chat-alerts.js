@@ -226,14 +226,29 @@ function normalize_channel(c){
 function get_params(l){	// si envian mensaje con ";" da error
 	let params=l.substring(1).split(";");
 	let last=params[params.length-1].split(":").map(x=>x.trim());
-	//console.log(l,last)
+	console.log(l,last,params)
 	params[params.length-1]=last[0];
 	params=Object.fromEntries(params.map(x=>x.split("=")));
 	params.msg_channel=last[1].split("#")[1];
-	params.msg=last.slice(2).join(":");
+	params.raw_msg=last.slice(2).join(":");
+	params.msg=params.raw_msg;
+
+	if(params.emotes){
+		let emotes=params.emotes.split("/").reverse().map(x=>x.split(":").map(y=>y.split(",").map(z=>z.split("-"))));
+		emotes.forEach(x=>x[1].forEach(y=>{const size=parseInt(y[1])+2-parseInt(y[0]);params.msg=params.msg.splice(parseInt(y[0]),size," ".repeat(size))}));
+		params.msg=params.msg.replace(/\s{2,}/g," ").trim();
+	}
+	
+
 	get_badges(params);
 	return params;
 }
+
+String.prototype.splice = function(start,length,replacement) {
+		console.log(this,start,length,replacement)
+    return this.substr(0,start)+replacement+this.substr(start+length);
+}
+
 
 function xor_msg(p,c){
 	let g=(c.groups.length===0 || (p.badges && c.groups.findIndex(x=>p.badges.includes(x))>=0));
