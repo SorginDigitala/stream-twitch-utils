@@ -371,7 +371,7 @@ class TTS{
 	}
 
 	static parse_msg(msg){
-		return msg.replace(/((?:(?:https?:\/\/)|(?:www\.))([-A-Z0-9\.]+)([-A-Z0-9+&@#\/%=~_\.|]+))/ig,"$2");
+		return msg.replace(/((?:(?:https?:\/\/)|(?:www\.))([-A-Z0-9\.]+)([-A-Z0-9+&\?@#\/%=~_\.|]+))/ig,"$2");
 	}
 }
 
