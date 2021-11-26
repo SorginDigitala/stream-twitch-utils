@@ -344,12 +344,16 @@ class TTS{
 		TTS.speak_rand(msg);
 	}
 	static speak(msg,voice,pitch=1,rate=1){
-		var utterThis	=new SpeechSynthesisUtterance(msg);
+		var utterThis	=new SpeechSynthesisUtterance(TTS.parse_msg(msg));
 		utterThis.volume=config.volume
 		utterThis.pitch	=pitch
 		utterThis.rate	=rate
 		utterThis.voice	=voice
 		synth.speak(utterThis);
+	}
+
+	static parse_msg(msg){
+		return msg.replace(/((?:(?:https?:\/\/)|(?:www\.))([-A-Z0-9\.]+)([-A-Z0-9+&@#\/%=~_|]+))/ig,"--$2--");
 	}
 }
 
