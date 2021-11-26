@@ -349,7 +349,7 @@ class TTS{
 
 	static speak_rand(msg){
 		let voices=synth.getVoices()
-		TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.5+1.5*Math.random(),0.5+0.5*Math.random());
+		TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.5+1*Math.random(),0.5+1.5*Math.random());
 	}
 	static speak_msg(user,msg){
 		if(TTS.lastVoiceUser!==user){
