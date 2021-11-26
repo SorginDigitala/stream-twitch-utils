@@ -293,6 +293,7 @@ class Alerts{
 		}
 		alert_test.onclick=Alerts.play;
 		sound_alert.onchange();
+		custom_sound.onchange=e=>{config.alerts.custom_sound=custom_sound.value;config_save();};
 		display_groups(alerts_groups,alerts_exceptions,config.alerts);
 	}
 	static enable(b){
