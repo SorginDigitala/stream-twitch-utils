@@ -2,7 +2,7 @@
 const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getItem("config_alerts")):{
 	"channels"		:["seyacat"],
 	"mode"			:"alerts",
-	"volume"		:100,
+	"volume"		:1,
 	"speech_urls"	:1,				// [0-2] Ignora las url, o lee el dominio, lee la url completa. En el TTS y comandos que ejecuten el TTS.
 
 	"alerts"		:{
@@ -25,21 +25,20 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 	},
 };
 
-const synth			=window.speechSynthesis;
-const defaultVoice	=synth.getVoices().find(e=>e.default);
 const sounds		=["beep","bell","door","door2","wololo"];
 const fragments		=["alexa","detector","evaristo","followers","google","jetset","martini","rapero","repsol","subnormal"];
 const videos		=[];
-
 var log_grouplist	=[
 	"moderator","vip","founder","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","anonymous-cheerer","predictions","hype-train",
 	//"broadcaster","partner","turbo","premium","staff","admin",
 	//"bits-charity","twitchcon2017","twitchconEU2019","twitchconNA2019","glitchcon2020","twitchconAmsterdam2020","glhf-pledge",
 	//"H1Z1_1","overwatch-league-insider_1","overwatch-league-insider_2018B","overwatch-league-insider_2019A"
 ];
+
+const synth			=window.speechSynthesis;
+const defaultVoice	=synth.getVoices().find(e=>e.default);
 var audio_alert;
 var ws;
-
 
 
 function load_config(){
@@ -72,10 +71,10 @@ function load_config(){
 	speech_urls.value=config.speech_urls;
 	speech_urls.onchange=e=>{config.speech_urls=speech_urls.value;config_save()};
 
-	config_volume.value=config.volume;
+	config_volume.value=config.volume*100;
 	config_volume.onchange=e=>{
-		audio_alert.volume=config_volume.value/100;
-		config.volume=config_volume.value;
+		config.volume=config_volume.value/100;
+		audio_alert.volume=config.volume;
 		config_save();
 	}
 	
@@ -96,61 +95,13 @@ function config_clear(){
 
 
 
-
-/*
-attr:
-display-name// display name
-emotes		// emotes usados y la posición de inicio y final en el mensaje
-
-badges		// lista de insignias
-turbo		// si tiene turbo
-subscriber	// si es suscriptor
-mod			// si es mod
-
-emotes-only	// si el mensaje solo contiene emotes
-first-msg	// si es su primer mensaje
-
-custom-reward-id
-
-badge-info	// si es suscriptor / meses
-user-type	// tipo de usuario (por ahora solo me ha devuelto "mod" en caso de ser moderador)
-
-reply-parent-display-name
-reply-parent-msg-id
-reply-parent-user-id
-reply-parent-user-login
-
-
-msgs:
-:justinfan29530!justinfan29530@justinfan29530.tmi.twitch.tv JOIN #demiontus
-:justinfan29530!justinfan29530@justinfan29530.tmi.twitch.tv PART #demiontus
-:tmi.twitch.tv HOSTTARGET #demiontus :rhomita 4
-
-info:	@emote-only=0;followers-only=-1;r9k=0;rituals=0;room-id=130747120;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #rhomita
-ban:	@ban-duration=5;room-id=494686511;target-user-id=664042355;tmi-sent-ts=1637699597872 :tmi.twitch.tv CLEARCHAT #s4vitaar :vpabloa
-clear:	@login=owen20202021;room-id=;target-msg-id=6b9ee65f-e0b2-4d74-b35c-669bf129ebda;tmi-sent-ts=1637762922034 :tmi.twitch.tv CLEARMSG #folagorlives :gran stream
-
-notice:
-hosting:		@msg-id=host_on :tmi.twitch.tv NOTICE #nicro4fun :Now hosting kaku924. host_on :tmi.twitch.tv NOTICE #nicro4fun :Now hosting kaku924.
-hosting off:	@msg-id=host_target_went_offline :tmi.twitch.tv NOTICE #rhomita :demiontus has gone offline. Exiting host mode. host_target_went_offline :tmi.twitch.tv NOTICE #rhomita :demiontus has gone offline. Exiting host mode.
-
-emotes-only:	@emote-only=1;room-id=30857876 :tmi.twitch.tv ROOMSTATE #folagorlives undefined
-suboff:			@msg-id=subs_off :tmi.twitch.tv NOTICE #westcol :This room is no longer in subscribers-only mode. subs_off :tmi.twitch.tv NOTICE #westcol :This room is no longer in subscribers-only mode.
-
-
-usernotice:	 @...;msg-id=resub;msg-param-cumulative-months=11;msg-param-months=0;msg-param-multimonth-duration=0;msg-param-multimonth-tenure=0;msg-param-should-share-streak=0;msg-param-sub-plan-name=Élite\sde\sla\sélite;msg-param-sub-plan=1000;msg-param-was-gifted=false;system-msg=gabbocastle\ssubscribed\sat\sTier\s1.\sThey've\ssubscribed\sfor\s11\smonths!;tmi-sent-ts=1637699628747;user-id=496385231;user-type= :tmi.twitch.tv USERNOTICE #elrichmc
-subgift:	 @...;msg-id=subgift;msg-param-gift-months=1;msg-param-months=2;msg-param-origin-id=d6\s39\s29\sd4\s5e\s0f\s32\s69\s86\sf1\s52\s13\s34\s71\s3b\se9\s4d\s53\sfc\s1e;msg-param-recipient-display-name=Ader04120;msg-param-recipient-id=182974601;msg-param-recipient-user-name=ader04120;msg-param-sender-count=0;msg-param-sub-plan-name=Gentecilla\s(nicro4fun);msg-param-sub-plan=1000;system-msg=Taquitazo\sgifted\sa\sTier\s1\ssub\sto\sAder04120!;tmi-sent-ts=1637710546224;user-id=127959084;user-type=mod :tmi.twitch.tv USERNOTICE #nicro4fun subgift
-submysterygift:	 @...;msg-id=submysterygift;msg-param-mass-gift-count=3;msg-param-origin-id=d6\s39\s29\sd4\s5e\s0f\s32\s69\s86\sf1\s52\s13\s34\s71\s3b\se9\s4d\s53\sfc\s1e;msg-param-sender-count=63;msg-param-sub-plan=1000;system-msg=Taquitazo\sis\sgifting\s3\sTier\s1\sSubs\sto\snicro4fun's\scommunity!\sThey've\sgifted\sa\stotal\sof\s63\sin\sthe\schannel!;tmi-sent-ts=1637710543777;user-id=127959084;user-type=mod :tmi.twitch.tv USERNOTICE #nicro4fun submysterygift
-raid:	@...;msg-id=raid;msg-param-displayName=ManzDev;msg-param-login=manzdev;msg-param-profileImageURL=https://static-cdn.jtvnw.net/jtv_user_pictures/86bd7a3b-b42f-4463-a428-e3f8d0614208-profile_image-70x70.png; msg-param-viewerCount=46;system-msg=46\sraiders\sfrom\sManzDev\shave\sjoined!;tmi-sent-ts=1637699495632;user-id=504185570;user-type= :tmi.twitch.tv USERNOTICE #s4vitaar
-
-*/
 function start_ws(){
 	ws=new WebSocket("wss://irc-ws.chat.twitch.tv/");
 	ws.onerror=e=>console.log("[irc-ws.chat] error:",e);
 	ws.onopen=e=>{
 		ws_status.classList.toggle("on",true);
 		console.log("[irc-ws.chat] open");
-		ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands");//se requiere para obtener info sobre los chatters.
+		ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands");//se requiere para obtener info sobre los chatters: https://dev.twitch.tv/docs/irc/guide
 		ws.send("PASS SCHMOOPIIE");
 		ws.send("NICK justinfan29530");
 		ws.send("USER justinfan29530 8 * :justinfan29530");
@@ -169,26 +120,24 @@ function start_ws(){
 				ws.send("PONG");
 				//log("Ping");
 			}else if(l[0]==="@"){
-				const params=get_params(l);
-				if(!params["emote-only"] && l.includes("PRIVMSG") && xor_msg(params,config.alerts)){
-					Events.dispatch("msg",params);
-					console.log(params);
-				}
+				const msg=Twitch.msg(l);
+				if(msg.type==="PRIVMSG" && !msg.params["emote-only"])
+					Events.dispatch("msg",msg);
 
-				if(params["custom-reward-id"])
-					Events.dispatch("msg.reward",params);
-				else if(params["first-msg"])
-					Events.dispatch("msg.first-msg",params);
-				else if(params["emote-only"])
-					Events.dispatch("msg.emote-only",params);
-				else if(l.includes("PRIVMSG"))
-					Events.dispatch("msg.normal",params);
-				if(["sub","resub","raid"].includes(params["msg-id"]))
-					console.log(params,l,params["msg-id"]);
+				if(msg.params["custom-reward-id"])
+					Events.dispatch("msg.reward",msg);
+				else if(msg.params["first-msg"])
+					Events.dispatch("msg.first-msg",msg);
+				else if(msg.params["emote-only"])
+					Events.dispatch("msg.emote-only",msg);
+				else if(msg.type==="PRIVMSG")
+					Events.dispatch("msg.normal",msg);
+				if(["sub","resub","raid"].includes(msg.params["msg-id"]))
+					console.log(msg.params["msg-id"],msg,l);
 			}else if(l[0]===":"){
 				//info del canal, como JOIN o PART
 			}else
-				console.log(l);
+				console.log("unknown message: ",l);
 		})
 	}
 }
@@ -198,6 +147,7 @@ function ws_join(e){
 function ws_leave(e){
 	ws.send("PART #"+e);
 }
+
 
 function log(action,channel="",user="",data=""){
 	let msg=action;
@@ -223,49 +173,15 @@ function normalize_channel(c){
 	return c.trim().toLowerCase();
 }
 
-function get_params(l){	// si envian mensaje con ";" da error
-	let params=l.substring(1).split(";");
-	let last=params[params.length-1].split(":").map(x=>x.trim());
-	console.log(l,last,params)
-	params[params.length-1]=last[0];
-	params=Object.fromEntries(params.map(x=>x.split("=")));
-	params.msg_channel=last[1].split("#")[1];
-	params.raw_msg=last.slice(2).join(":");
-	params.msg=params.raw_msg;
-
-	if(params.emotes){
-		let emotes=params.emotes.split("/").reverse().map(x=>x.split(":").map(y=>y.split(",").map(z=>z.split("-"))));
-		emotes.forEach(x=>x[1].forEach(y=>{const size=parseInt(y[1])+2-parseInt(y[0]);params.msg=params.msg.splice(parseInt(y[0]),size," ".repeat(size))}));
-		params.msg=params.msg.replace(/\s{2,}/g," ").trim();
-	}
-	
-
-	get_badges(params);
-	return params;
-}
-
 String.prototype.splice = function(start,length,replacement) {
-		console.log(this,start,length,replacement)
     return this.substr(0,start)+replacement+this.substr(start+length);
 }
 
 
-function xor_msg(p,c){
-	let g=(c.groups.length===0 || (p.badges && c.groups.findIndex(x=>p.badges.includes(x))>=0));
-	let u=c.users.includes(p["display-name"].toLowerCase());
+function xor_msg(params,conf){
+	let g=(conf.groups.length===0 || (params.badges && conf.groups.findIndex(x=>params.badges.includes(x))>=0));
+	let u=conf.users.includes(params["display-name"].toLowerCase());
 	return g^u;
-}
-
-function get_badges(params){
-	if(params.badges){
-		params.badges=params.badges.split(",").map(e=>e.split("/")[0]);
-		params.badges.forEach(e=>{
-			if(!log_grouplist.includes(e)){
-				log_grouplist.push(e);
-				log_groups.value=log_grouplist.join(", ");
-			}
-		});
-	}
 }
 
 
@@ -285,6 +201,62 @@ function display_groups(input,textarea,arr){
 
 
 
+class Twitch{
+	static msg(msg){
+		const x=msg.match(/(.*?):(?:([a-zA-Z0-9_]{4,25}![a-zA-Z0-9_]{4,25}@[a-zA-Z0-9_]{4,25}.tmi.twitch.tv)|tmi.twitch.tv) (JOIN?|PART?|PRIVMSG?|CLEARMSG?|CLEARCHAT?|HOSTTARGET?|NOTICE?|USERSTATE?|USERNOTICE?|ROOMSTATE?|GLOBALUSERSTATE?) (?:#([a-zA-Z0-9_]{4,25}))[?:\s:]{0,}(.*?)$/si);
+		console.log(msg);
+		console.log(x);
+		const params=Twitch.get_params(x[1]);
+		//console.log(params);
+		let data={
+			params	:params,
+			user	:x[2]?x[2].split("!")[0]:"",
+			type	:x[3],
+			channel	:x[4],
+			raw_msg	:x[5],
+			msg		:Twitch.clear_emotes(x[5],params),
+		}
+		console.log(data);
+		return data;
+	}
+
+	static get_params(l){
+		let params=Object.fromEntries(l.substring(1).split(";").map(x=>x.split("=")));
+		Twitch.get_badges(params);
+		return params;
+	}
+
+	static get_badges(params){
+		if(params.badges){
+			params.badges=params.badges.split(",").map(e=>e.split("/")[0]);
+			params.badges.forEach(e=>{
+				if(!log_grouplist.includes(e)){
+					log_grouplist.push(e);
+					log_groups.value=log_grouplist.join(", ");
+				}
+			});
+		}
+	}
+
+	static clear_emotes(msg,params){
+		if(params.emotes){
+			let emotes=params.emotes.split("/").reverse().map(x=>x.split(":").map(y=>y.split(",").map(z=>z.split("-"))));
+			emotes.forEach(x=>x[1].forEach(y=>{const size=parseInt(y[1])+2-parseInt(y[0]);msg=msg.splice(parseInt(y[0]),size," ".repeat(size))}));
+		}
+		return msg.replace(/\s{2,}/g," ").trim();
+	}
+}
+
+/*
+Twitch.msg("@badge-info=subscriber/14;badges=moderator/1,subscriber/0;client-nonce=ef99b1d9f606cea809c1c4ec2989add4;color=#2E8B57;display-name=Presuntamente;emotes=;first-msg=0;flags=;id=e435cf16-7508-417f-a02e-1bb7fd067872;mod=1;room-id=194927077;subscriber=1;tmi-sent-ts=1638042827616;turbo=0;user-id=488234266;user-type=mod :presuntamente!presuntamente@presuntamente.tmi.twitch.tv PRIVMSG #seyacat :test")
+Twitch.msg(":justinfan29530!justinfan29530@justinfan29530.tmi.twitch.tv JOIN #demiontus");
+Twitch.msg(":justinfan29530!justinfan29530@justinfan29530.tmi.twitch.tv PART #demiontus");
+Twitch.msg(":tmi.twitch.tv HOSTTARGET #demiontus :rhomita 4");
+Twitch.msg("@badge-info=subscriber/14;badges=moderator/1,subscriber/0;client-nonce=5423e4bb60671815736a7b42f069fb0f;color=#2E8B57;display-name=Presuntamente;emotes=303422392:33-42/306427250:44-55/307610478:57-65/303662944:7-18,20-31;first-msg=0;flags=;id=28b9e402-2d9c-484b-9a26-156099faf9d1;mod=1;room-id=194927077;subscriber=1;tmi-sent-ts=1638050907354;turbo=0;user-id=488234266;user-type=mod :presuntamente!presuntamente@presuntamente.tmi.twitch.tv PRIVMSG #seyacat :inicio presun9Among presun9Among rafalaTONE pedros27Humo tamayo4XD fin");
+Twitch.msg("@emote-only=0;followers-only=-1;r9k=0;rituals=0;room-id=130747120;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #rhomita");
+Twitch.msg("@ban-duration=5;room-id=494686511;target-user-id=664042355;tmi-sent-ts=1637699597872 :tmi.twitch.tv CLEARCHAT #s4vitaar :vpabloa");
+Twitch.msg("@login=owen20202021;room-id=;target-msg-id=6b9ee65f-e0b2-4d74-b35c-669bf129ebda;tmi-sent-ts=1637762922034 :tmi.twitch.tv CLEARMSG #folagorlives :gran stream");
+*/
 
 
 class Alerts{
@@ -300,7 +272,7 @@ class Alerts{
 			custom_sound.classList.toggle("hide",sound_alert.value!=="custom");
 			config.alerts.sound_alert=sound_alert.value;
 			audio_alert=new Audio(config.alerts.sound_alert==="custom"?config.alerts.custom_sound:"./assets/audios/alerts/"+config.alerts.sound_alert+".mp3");
-			audio_alert.volume=config.volume/100;
+			audio_alert.volume=config.volume;
 			if(e){
 				Alerts.play();
 				config_save();
@@ -319,13 +291,14 @@ class Alerts{
 		alerts.classList.toggle("hide",!b);
 	}
 
-	static play(){
-		audio_alert.play().then().catch(e=>{
-			if(e.name==="NotAllowedError")
-				permissions_notice.classList.toggle("hide",false);
-			else
-				console.error("error",e.name);
-		});
+	static play(p){
+		if(!p || xor_msg(p.params,config.alerts))
+			audio_alert.play().then().catch(e=>{
+				if(e.name==="NotAllowedError")
+					permissions_notice.classList.toggle("hide",false);
+				else
+					console.error("error",e.name);
+			});
 	}
 }
 
@@ -344,16 +317,15 @@ class TTS{
 	}
 
 	static play(p){
-		TTS.speak_msg(p["display-name"],p.msg)
+		if(xor_msg(p.params,config.tts))
+			TTS.speak_msg(p["display-name"],p.msg)
 	}
 
 	static speak_rand(msg){
 		let voices=synth.getVoices()
-		TTS.speak(
-			msg,voices[
-			Math.floor(Math.random() * voices.length)],
-			0.4+.7*Math.random(),0.4+0.7*Math.random());
+		TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.4+.7*Math.random(),0.4+0.7*Math.random());
 	}
+
 	static speak_msg(user,msg){
 		if(TTS.lastVoiceUser!==user){
 			TTS.lastVoiceUser=user;
@@ -361,6 +333,7 @@ class TTS{
 		}
 		TTS.speak_rand(msg);
 	}
+
 	static speak(msg,voice,pitch=1,rate=1){
 		var utterThis	=new SpeechSynthesisUtterance(TTS.parse_msg(msg));
 		utterThis.volume=config.volume
@@ -371,11 +344,9 @@ class TTS{
 	}
 
 	static parse_msg(msg){
-		return msg.replace(/((?:(?:https?:\/\/)|(?:www\.))([-A-Z0-9\.]+)([-A-Z0-9+&\?@#\/%=~_\.|]+))/ig,"$2");
+		return config.speech_urls==2?msg:msg.replace(/((?:(?:https?:\/\/)|(?:www\.))([-A-Z0-9\.]+)([-A-Z0-9+&\?@#\/%=~_\.|]+))/ig,config.speech_urls==1?"$2":"");
 	}
 }
-
-
 
 
 
