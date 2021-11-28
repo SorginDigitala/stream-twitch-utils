@@ -74,7 +74,8 @@ function load_config(){
 	config_volume.value=config.volume*100;
 	config_volume.onchange=e=>{
 		config.volume=config_volume.value/100;
-		audio_alert.volume=config.volume;
+		Alerts.set_volume();
+		Media.set_volume();
 		config_save();
 	}
 	
@@ -201,6 +202,51 @@ function display_groups(input,textarea,arr){
 
 
 
+class Media{
+	static list=[];
+	static current;
+
+	static start(){
+		//	hay que pensar en como agregar un video player de una forma elegante, con absolute y centrado.
+		//	https://stackoverflow.com/questions/15286407/in-javascript-what-is-the-video-equivalent-of-new-audio/49558085
+	}
+
+	static play(){
+		if(Media.current && !Media.current.content.paused || Media.list.length===0)
+			return;
+		Media.current=Media.list.shift();
+		Media.current.content.onended=Media.play;
+		Media.set_volume();
+		Media.current.content.play();
+	}
+
+	static play_sound(url){
+		//comprobar si la url existe.
+		Media.list.push({
+			type:"audio",
+			content:new Audio(url),
+		});
+		Media.play();
+	}
+
+	static play_video(url){
+		//comprobar si la url existe.
+	}
+
+	static set_volume(){
+		if(Media.current)
+			Media.current.content.volume=config.volume;
+	}
+}
+/*
+document.body.onclick=e=>{
+	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/beep.mp3");
+	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/beep.mp3");
+	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/wololo.mp3");
+	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/beep.mp3");
+}
+*/
+
 class Twitch{
 	static msg(msg){
 		const x=msg.match(/(.*?):(?:([a-zA-Z0-9_]{4,25}![a-zA-Z0-9_]{4,25}@[a-zA-Z0-9_]{4,25}.tmi.twitch.tv)|tmi.twitch.tv) (JOIN?|PART?|PRIVMSG?|CLEARMSG?|CLEARCHAT?|HOSTTARGET?|NOTICE?|USERSTATE?|USERNOTICE?|ROOMSTATE?|GLOBALUSERSTATE?) (?:#([a-zA-Z0-9_]{4,25}))[?:\s:]{0,}(.*?)$/si);
@@ -299,6 +345,10 @@ class Alerts{
 				else
 					console.error("error",e.name);
 			});
+	}
+
+	static set_volume(){
+		audio_alert.volume=config.volume;
 	}
 }
 
