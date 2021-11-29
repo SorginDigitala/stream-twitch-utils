@@ -16,7 +16,11 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 		"rate_range"	:[.5,2],	//max rate allowed ( https://mdn.github.io/web-speech-api/speak-easy-synthesis/ )
 		"pitch_range"	:[0,2],		//max pitch allowed
 		"groups"		:["vip","moderator"],
-		"users"			:["streamelements","nightbot"],
+		"users"			:["streamelements","nightbot","moobot"],
+	},
+
+	"events"			:{
+		"event_list"	:[],
 	},
 
 	"points"			:{
@@ -79,12 +83,13 @@ function load_config(){
 		config_save();
 	}
 	
+	TwitchEvents.start();
+	Groups.start();
 	Alerts.start();
 	TTS.start();
+	Rewards.start();
 
-
-	log_groups.value=log_grouplist.join(", ");
-	clear_config.onclick=e=>config_clear();
+	clear_config.onclick=e=>{config_clear();location=""};
 }
 
 function config_save(){
@@ -116,29 +121,13 @@ function start_ws(){
 	ws.onmessage=e=>{
 		const lines=e.data.trim().split(/[\r\n]+/g);
 		lines.forEach(l=>{
-			l=l.trim();
 			if(l.startsWith("PING")){
 				ws.send("PONG");
-				//log("Ping");
-			}else if(l[0]==="@"){
-				const msg=Twitch.msg(l);
-				if(msg.type==="PRIVMSG" && !msg.params["emote-only"])
-					Events.dispatch("msg",msg);
-
-				if(msg.params["custom-reward-id"])
-					Events.dispatch("msg.reward",msg);
-				else if(msg.params["first-msg"])
-					Events.dispatch("msg.first-msg",msg);
-				else if(msg.params["emote-only"])
-					Events.dispatch("msg.emote-only",msg);
-				else if(msg.type==="PRIVMSG")
-					Events.dispatch("msg.normal",msg);
-				if(["sub","resub","raid"].includes(msg.params["msg-id"]))
-					console.log(msg.params["msg-id"],msg,l);
-			}else if(l[0]===":"){
-				//info del canal, como JOIN o PART
-			}else
-				console.log("unknown message: ",l);
+				return;
+			}
+			let x=Twitch.msg(l);
+			if(x)
+				TwitchEvents.input(x);
 		})
 	}
 }
@@ -150,10 +139,10 @@ function ws_leave(e){
 }
 
 
-function log(action,channel="",user="",data=""){
-	let msg=action;
+function log(action,channel,user,data){
+	let msg="["+action+"]";
 	if(channel){
-		msg+=" - "+channel;
+		msg+=" #"+channel;
 		if(user){
 			msg+=" - "+user;
 			if(data)
@@ -199,7 +188,142 @@ function display_groups(input,textarea,arr){
 	};
 }
 
+function array_toggle(arr,item){	//	https://stackoverflow.com/a/39349118/3875360
+	var i=arr.indexOf(item);
+	if(i!==-1)
+		arr.splice(i,1);
+	else
+		arr.push(item);
+}
 
+
+class Groups{
+	static start(){
+		Groups.update();
+		popup_groups.querySelector("[name=close]").onclick=e=>Groups.hide();
+		popup_groups.onclick=e=>{e.target===e.currentTarget && Groups.hide()};
+		alerts_groups.onclick=e=>Groups.display(config.alerts.groups,alerts_groups);
+		tts_groups.onclick=e=>Groups.display(config.tts.groups,tts_groups);
+		//chequear que group_list tenga todos los grupos de config.alerts.groups y config.tts.groups
+	}
+
+	static update(){
+		group_list.innerHTML=log_grouplist.map((e,i)=>"<label><input type=checkbox name="+e+">"+e+"</label>").join("");
+	}
+
+	static display(arr,input){
+		group_list.querySelectorAll("input").forEach(e=>{
+			e.checked=arr.includes(e.name);
+			e.onchange=(e=>{
+				array_toggle(arr,e.target.name);
+				input.value=arr.join(", ");
+				config_save();
+			});
+		});
+		popup_groups.classList.remove("hide");
+		document.addEventListener('keydown',Groups.hide);
+	}
+
+	static hide(e){
+		if(e && e.keyCode!==27)
+			return;
+		popup_groups.classList.add("hide");
+		document.removeEventListener('keydown',Groups.hide);
+	}
+}
+
+
+
+class TwitchEvents{	//	https://dev.twitch.tv/docs/irc/tags
+	static event_list=[
+		"JOIN","PART","PRIVMSG","CLEARCHAT","CLEARMSG","HOSTTARGET",
+		"highlighted-message","sub","resub","subgift","anonsubgift","submysterygift","giftpaidupgrade","rewardgift","anongiftpaidupgrade","raid","unraid","ritual","bitsbadgetier"
+	];
+	static events={};
+	static ignore=["ROOMSTATE"];
+
+	static start(){
+		//Events.add("any",TwitchEvents.input);
+	}
+
+	static update(){
+		//config -> TwitchEvents.events;
+	}
+
+	static input(e){
+		if(["JOIN","PART"].includes(e.type))
+			log(e.type,e.channel,e.msg);
+
+		if(e.type==="PRIVMSG" && !e.params["emote-only"])
+			Events.dispatch("PRIVMSG",e);
+
+		if(e.type==="PRIVMSG" && e.params["custom-reward-id"])
+			Events.dispatch("REWARD",e);
+
+/*
+		if(e.params["custom-reward-id"])
+			Events.dispatch("reward",e);
+		else if(e.params["first-msg"]==="1")
+			Events.dispatch("first-msg",e);
+		else if(e.params["emote-only"])
+			Events.dispatch("emote-only",e);
+		else
+			Events.dispatch(e.type,e);
+*/
+
+		
+
+
+		if(TwitchEvents.events[e.type])
+			TwitchEvents.events[e.type].forEach(e=>{
+				//ejecutar mensaje
+			});
+		if(e.params["msg-id"] && TwitchEvents.events[e.params["msg-id"]])
+			TwitchEvents.events[e.type].forEach(e=>{
+				//ejecutar mensaje
+			});
+		if(!TwitchEvents.ignore.includes(e.type) && (!TwitchEvents.event_list.includes(e.type) || e.params["msg-id"] && !TwitchEvents.event_list.includes(e.params["msg-id"])))
+			console.log(e.type,e.params["msg-id"]);
+	}
+}
+
+
+class Rewards{
+	static rewards={
+		"6432ef11-ce83-44e0-a39f-088cc49c476a":[
+			{
+				"type"	:"sound",
+				"words"	:["aoeu","vacunas","antivacunas"],
+				"url"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/fragments/antivacunas.mp3"
+			},
+			{
+				"type"	:"sound",
+				"words"	:["aoeu","vacunas","antivacunas"],
+				"url"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/fragments/bitcoin.mp3"
+			},
+		]
+	};
+
+	static start(){
+		Events.add("REWARD",Rewards.input);
+	}
+	
+
+	static input(msg){
+		const rewards=Rewards.rewards[msg.params["custom-reward-id"]];
+		if(!rewards || rewards.length===0)
+			return;
+		const w=msg.msg.split(" ");
+		let r=rewards.filter(e=>e.words.find(o=>w.includes(o)));
+		if(r.length===0)
+			r=rewards;
+		Rewards.play(r[r.length*Math.random()<<0]);
+	}
+
+	static play(reward){
+		Media.play_sound(reward.url);
+	}
+}
 
 
 class Media{
@@ -248,21 +372,24 @@ document.body.onclick=e=>{
 */
 
 class Twitch{
+	static pattern=/(.*?):(?:([a-zA-Z0-9_]{4,25}![a-zA-Z0-9_]{4,25}@[a-zA-Z0-9_]{4,25}.tmi.twitch.tv)|tmi.twitch.tv) (JOIN?|PART?|PRIVMSG?|CLEARMSG?|CLEARCHAT?|HOSTTARGET?|NOTICE?|USERSTATE?|USERNOTICE?|ROOMSTATE?|GLOBALUSERSTATE?) (?:#([a-zA-Z0-9_]{4,25}))[?:\s:]{0,}(.*?)$/si
+
 	static msg(msg){
-		const x=msg.match(/(.*?):(?:([a-zA-Z0-9_]{4,25}![a-zA-Z0-9_]{4,25}@[a-zA-Z0-9_]{4,25}.tmi.twitch.tv)|tmi.twitch.tv) (JOIN?|PART?|PRIVMSG?|CLEARMSG?|CLEARCHAT?|HOSTTARGET?|NOTICE?|USERSTATE?|USERNOTICE?|ROOMSTATE?|GLOBALUSERSTATE?) (?:#([a-zA-Z0-9_]{4,25}))[?:\s:]{0,}(.*?)$/si);
-		console.log(msg);
-		console.log(x);
+		const x=msg.match(Twitch.pattern);
+		if(!x){
+			console.log(msg);
+			return;
+		}
 		const params=Twitch.get_params(x[1]);
-		//console.log(params);
 		let data={
-			params	:params,
-			user	:x[2]?x[2].split("!")[0]:"",
 			type	:x[3],
 			channel	:x[4],
+			user	:x[2]?x[2].split("!")[0]:"",
 			raw_msg	:x[5],
 			msg		:Twitch.clear_emotes(x[5],params),
+			params	:params,
 		}
-		console.log(data);
+		//console.log(data);
 		return data;
 	}
 
@@ -278,7 +405,7 @@ class Twitch{
 			params.badges.forEach(e=>{
 				if(!log_grouplist.includes(e)){
 					log_grouplist.push(e);
-					log_groups.value=log_grouplist.join(", ");
+					Groups.update();
 				}
 			});
 		}
@@ -324,27 +451,32 @@ class Alerts{
 				config_save();
 			}
 		}
-		alert_test.onclick=Alerts.play;
+		alert_test.onclick=e=>Alerts.play();
 		sound_alert.onchange();
 		custom_sound.onchange=e=>{config.alerts.custom_sound=custom_sound.value;config_save();};
 		display_groups(alerts_groups,alerts_exceptions,config.alerts);
 	}
 	static enable(b){
 		if(b)
-			Events.add("msg",Alerts.play);
+			Events.add("PRIVMSG",Alerts.play);
 		else
-			Events.remove("msg",Alerts.play);
+			Events.remove("PRIVMSG",Alerts.play);
 		alerts.classList.toggle("hide",!b);
 	}
 
 	static play(p){
-		if(!p || xor_msg(p.params,config.alerts))
-			audio_alert.play().then().catch(e=>{
-				if(e.name==="NotAllowedError")
-					permissions_notice.classList.toggle("hide",false);
-				else
-					console.error("error",e.name);
-			});
+		if(p){
+			if(!xor_msg(p.params,config.alerts)){
+				//alerts_last_exception.innerText="";
+				return;
+			}
+		}
+		audio_alert.play().then().catch(e=>{
+			if(e.name==="NotAllowedError")
+				permissions_notice.classList.toggle("hide",false);
+			else
+				console.error("error",e.name);
+		});
 	}
 
 	static set_volume(){
@@ -360,9 +492,9 @@ class TTS{
 	}
 	static enable(b){
 		if(b)
-			Events.add("msg",TTS.play);
+			Events.add("PRIVMSG",TTS.play);
 		else
-			Events.remove("msg",TTS.play);
+			Events.remove("PRIVMSG",TTS.play);
 		tts.classList.toggle("hide",!b);
 	}
 
