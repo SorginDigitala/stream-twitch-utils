@@ -30,7 +30,7 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 };
 
 const sounds		=["beep","bell","door","door2","wololo"];
-const fragments		=["alexa","detector","evaristo","followers","google","jetset","martini","rapero","repsol","subnormal"];
+const fragments		=["alexa","antivacunas","bitcoin","capitalismo","evaristo","followers","google","izquierda","jetset","juventud","lola","provacunas","rapero","repsol","subnormal","tinder","wallhack"];
 const videos		=[];
 var log_grouplist	=[
 	"moderator","vip","founder","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","anonymous-cheerer","predictions","hype-train",
@@ -290,7 +290,7 @@ class TwitchEvents{	//	https://dev.twitch.tv/docs/irc/tags
 
 class Rewards{
 	static rewards={
-		"6432ef11-ce83-44e0-a39f-088cc49c476a":[
+		"cb9a5657-1ad5-41e6-a939-ae13db69102a":[
 			{
 				"type"	:"sound",
 				"words"	:["aoeu","vacunas","antivacunas"],
@@ -306,6 +306,11 @@ class Rewards{
 
 	static start(){
 		Events.add("REWARD",Rewards.input);
+		fragments.forEach(e=>Rewards.rewards["cb9a5657-1ad5-41e6-a939-ae13db69102a"].push({
+			"type"	:"sound",
+			"words"	:[e],
+			"url"	:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/fragments/"+e+".mp3"
+		}));
 	}
 	
 
