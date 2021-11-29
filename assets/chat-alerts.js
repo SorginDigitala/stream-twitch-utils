@@ -311,7 +311,6 @@ class Rewards{
 	
 
 	static input(msg){
-		console.log(msg);
 		log("REWARD",msg.channel,msg.user,msg.params["custom-reward-id"]);
 		const rewards=Rewards.rewards[msg.params["custom-reward-id"]];
 		if(!rewards || rewards.length===0)
