@@ -322,7 +322,17 @@ class Rewards{
 	}
 
 	static play(reward){
-		Media.play_sound(reward.url);
+		Media.play_sound(reward.url,reward,Rewards.onstart,Rewards.onend);
+	}
+
+	static onstart(reward){
+		console.log("onstart",reward);
+		//	mostrar mensaje
+	}
+
+	static onend(reward){
+		console.log("onend",reward);
+		//	ocultar mensaje
 	}
 }
 
@@ -340,16 +350,20 @@ class Media{
 		if(Media.current && !Media.current.content.paused || Media.list.length===0)
 			return;
 		Media.current=Media.list.shift();
-		Media.current.content.onended=Media.play;
+		Media.current.content.onended=e=>{Media.current.onend(Media.current.data);Media.play()};
 		Media.set_volume();
+		Media.current.onstart(Media.current.data);
 		Media.current.content.play();
 	}
 
-	static play_sound(url){
+	static play_sound(url,data,onstart,onend){
 		//comprobar si la url existe.
 		Media.list.push({
-			type:"audio",
-			content:new Audio(url),
+			type		:"audio",
+			content		:new Audio(url),
+			"data"		:data,
+			"onstart"	:onstart,
+			"onend"		:onend,
 		});
 		Media.play();
 	}
