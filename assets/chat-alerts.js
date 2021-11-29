@@ -45,6 +45,7 @@ var ws;
 
 
 function load_config(){
+	//background.onclick=e=>panel.classList.toggle("hide");
 	background.onclick=e=>panel.classList.toggle("hide",false);
 	background.onmousedown=e=>permissions_notice.classList.toggle("hide",true);
 	hide_button.onclick=e=>{e.stopPropagation();panel.classList.toggle("hide",true)}
@@ -105,7 +106,7 @@ function start_ws(){
 	ws.onerror=e=>console.log("[irc-ws.chat] error:",e);
 	ws.onopen=e=>{
 		ws_status.classList.toggle("on",true);
-		console.log("[irc-ws.chat] open");
+		log("WS connected");
 		ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands");//se requiere para obtener info sobre los chatters: https://dev.twitch.tv/docs/irc/guide
 		ws.send("PASS SCHMOOPIIE");
 		ws.send("NICK justinfan29530");
@@ -113,8 +114,10 @@ function start_ws(){
 		config.channels.forEach(e=>ws_join(e));
 	};
 	ws.onclose=e=>{
-		ws_status.classList.toggle("on",false);
-		console.log("[irc-ws.chat] closed");
+		if(ws_status.classList.has("on")){
+			log("WS disconnected");
+			ws_status.classList.toggle("on",false);
+		}
 		setTimeout(start_ws,1000);
 	};
 	ws.onmessage=e=>{
@@ -174,19 +177,6 @@ function xor_msg(params,conf){
 }
 
 
-function display_groups(input,textarea,arr){
-	input.value=arr.groups.join(", ");
-	input.onchange=e=>{
-		arr.groups=channels_to_array(input.value);
-		config_save();
-	};
-	textarea.value=arr.users.join(", ");
-	textarea.onchange=e=>{
-		arr.users=channels_to_array(textarea.value);
-		config_save();
-	};
-}
-
 function array_toggle(arr,item){	//	https://stackoverflow.com/a/39349118/3875360
 	var i=arr.indexOf(item);
 	if(i!==-1)
@@ -198,16 +188,33 @@ function array_toggle(arr,item){	//	https://stackoverflow.com/a/39349118/3875360
 
 class Groups{
 	static start(){
-		Groups.update();
 		popup_groups.querySelector("[name=close]").onclick=e=>Groups.hide();
 		popup_groups.onclick=e=>{e.target===e.currentTarget && Groups.hide()};
 		alerts_groups.onclick=e=>Groups.display(config.alerts.groups,alerts_groups);
 		tts_groups.onclick=e=>Groups.display(config.tts.groups,tts_groups);
-		//chequear que group_list tenga todos los grupos de config.alerts.groups y config.tts.groups
+		Groups.update();
 	}
 
 	static update(){
+		[config.alerts.groups,config.tts.groups].forEach(e=>e.forEach(x=>{
+			if(!log_grouplist.includes(x))
+				log_grouplist.push(x);
+		}));
 		group_list.innerHTML=log_grouplist.map((e,i)=>"<label><input type=checkbox name="+e+">"+e+"</label>").join("");
+	}
+
+	static display_groups(input,textarea,arr){
+		input.value=arr.groups.join(", ");
+		input.onchange=e=>{
+			arr.groups=channels_to_array(input.value);
+			Groups.update();
+			config_save();
+		};
+		textarea.value=arr.users.join(", ");
+		textarea.onchange=e=>{
+			arr.users=channels_to_array(textarea.value);
+			config_save();
+		};
 	}
 
 	static display(arr,input){
@@ -448,7 +455,7 @@ class Alerts{
 		alert_test.onclick=e=>Alerts.play();
 		sound_alert.onchange();
 		custom_sound.onchange=e=>{config.alerts.custom_sound=custom_sound.value;config_save();};
-		display_groups(alerts_groups,alerts_exceptions,config.alerts);
+		Groups.display_groups(alerts_groups,alerts_exceptions,config.alerts);
 	}
 	static enable(b){
 		if(b)
@@ -482,7 +489,7 @@ class TTS{
 	static lastVoiceUser;
 
 	static start(){
-		display_groups(tts_groups,tts_exceptions,config.tts);
+		Groups.display_groups(tts_groups,tts_exceptions,config.tts);
 	}
 	static enable(b){
 		if(b)

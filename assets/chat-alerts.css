@@ -137,6 +137,12 @@ legend{
 	background:darkgreen;
 }
 
+
+
+.groups>label:nth-child(1):hover{
+	background:#f8f8f8;
+	cursor:pointer;
+}
 .groups_textarea{
 	flex-grow:1;
 }
