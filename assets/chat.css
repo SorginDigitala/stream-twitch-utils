@@ -154,7 +154,8 @@ legend{
 
 
 
-#debug_log{
+#debug_log,
+#chat{
 	background:#f8f8f8;
 	border:1px solid darkgreen;
 	width:100%;
@@ -168,6 +169,10 @@ legend{
 	max-height:36.4rem;
 }
 
+
+#chat span:nth-child(1){
+	font-weight:700;
+}
 
 
 

@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<meta name=viewport content="width=device-width,initial-scale=1">
+	<title>Stream - Twitch - Utils - Chat Alerts</title>
+	<link rel=icon type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+	<link rel=stylesheet media=all href="./assets/chat.css">
+	<script async src="./assets/chat.js"></script>
+	<script async src="./assets/chat-alerts.js"></script>
+</head>
+<body>
+<div id=background oncontextmenu="return false"></div>
+<div id=permissions_notice class=hide>El navegador requiere de interacción para emitir sonidos (hazme clic).</div>
+
+<div id=popup_groups class=hide>
+	<div id=popup_groups_container>
+		<div>Qué grupos pueden activar esta función</div>
+		<input id=groups_search type=text placeholder="Buscar...">
+		<div id=group_list></div>
+		<input name=close type=submit value="Cerrar">
+	</div>
+</div>
+
+
+<div id=panel class=hide>
+	<input id=hide_button type=button value="X">
+
+	<div id=panelgrid>
+		<div>
+			<fieldset>
+				<legend>Channels</legend>
+				<form method=post id=channel_form class=flexinput>
+					<div id=ws_status></div>
+					<input type=text name=channels placeholder="Nombre del canal o canales, separados por coma.">
+					<input type=submit value="Join">
+				</form>
+
+				<div>
+					Mode:
+					<select id=mode_select>
+						<option value=none>No Alerts</option>
+						<option value=alerts>Alerts</option>
+						<option value=tts>Text to Speech</option>
+					</select>
+				</div>
+				<label>Volumen: <input id=config_volume type=range min=0 max=100></label>
+				<div>
+					Speech url rules:
+					<select id=speech_urls>
+						<option value=0>Ignore</option>
+						<option value=1>Domain</option>
+						<option value=2>Full</option>
+					</select>
+				</div>
+			</fieldset>
+
+			<fieldset id=alerts>
+				<legend>Alerts</legend>
+				<div class=flexinput>
+					<input type=button id=alert_test value="🎧">
+					<select id=sound_alert>
+						<option value=custom>custom</option>
+						<option value=beep>beep</option>
+						<option value=bell>bell</option>
+						<option value=door>door</option>
+						<option value=door2>door2</option>
+						<option value=wololo>wololo</option>
+					</select>
+					<input type=text id=custom_sound placeholder="Pon url del sonido">
+				</div>
+
+
+				<div class=groups>
+					<label>
+						<h2>Grupos</h2>
+						<p>Que grupos pueden acceder a esta función.</p>
+						<input id=alerts_groups type=text placeholder="Déjalo en blanco para permitir a todos los usuarios.">
+					</label>
+					<label class=groups_textarea>
+						<h2>Excepciones</h2>
+						<p>Usuarios a los que incluir o excluir.</p>
+						<textarea type=text id=alerts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
+					</label>
+				</div>
+				<p id=alerts_last_exception></p>
+			</fieldset>
+
+			<fieldset id=tts>
+				<legend>Text to speech</legend>
+				<p class=explanation>La lista de voces disponibles se basa en las que vienen por defecto en el navegador.</p>
+
+				<div class=groups>
+					<label>
+						<h2>Grupos</h2>
+						<p>Que grupos pueden acceder a esta función.</p>
+						<input id=tts_groups type=text placeholder="Déjalo en blanco para permitir a todos los usuarios.">
+					</label>
+					<label class=groups_textarea>
+						<h2>Excepciones</h2>
+						<p>Usuarios a los que incluir o excluir.</p>
+						<textarea id=tts_exceptions placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados."></textarea>
+					</label>
+				</div>
+				<p class=explanation>Se activará cuando escriba un usuario que esté en un grupo marcado <b>O</b> en la lista de excepciones.</p>
+			</fieldset>
+		</div>
+
+		<div>
+			<fieldset>
+				<legend>Log</legend>
+				<div>
+					<div id=chat></div>
+				</div>
+				
+				<div>
+					<div id=debug_log></div>
+					<div><a href="./index.html" target=_blank>Home</a> - <a href="https://github.com/SorginDigitala/stream-twitch-utils" target=_blank>Twitch-Utils on Github</a> By <a href="https://www.twitch.tv/seyacat" target=_blank>Seyacat</a></div>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>import / export</legend>
+				<input id=export_clipboard type=button value="Copy to clipboard">
+				<input id=export_file type=button value="Export as file">
+				<input id=import_clipboard type=button value="Paste from clipboard">
+				<input id=import_file type=button value="Import from file">
+				<input id=clear_config type=button value="Reset Config" title="Require reload the page">
+			</fieldset>
+		</div>
+	</div>
+
+	<fieldset>
+		<legend>Events</legend>
+		<p>Lista de eventos.</p>
+	</fieldset>
+
+	<fieldset>
+		<legend>Points</legend>
+		<p>Permitir activar funciones mediante las recompensas de twitch.</p>
+	</fieldset>
+
+<!--
+	<fieldset>
+		<legend>Commands</legend>
+		<p>Lista de comandos que permitan ejecutar funciones ya existentes.</p>
+	</fieldset>
+-->
+
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+        <title>Twitch PubSub Example</title>
+    </head>
+    <body>
+        <h2 class="text-center">Twitch PubSub Example</h2>
+        <div class="container">
+            <div class="row">
+                <div style="display:none" class="auth" class="text-center">
+                    <p>First, connect with your Twitch Account:</p>
+                    <a id="auth-link">Connect</a>
+                </div>
+                <div style="display:none" class="socket">
+                    <textarea class="ws-output" rows="20" style="font-family:Courier;width:100%"></textarea>
+                    <form id="topic-form" class="text-right form-inline" >
+                        <label id="topic-label" for="topic-text"></label>
+                        <input type="text" id="topic-text" placeholder="Topic" value="channel-points-channel-v1.">
+                        <button type="submit" class="btn">Listen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="./test.js"></script>
+        <script>
+        </script>
+    </body>
+</html>

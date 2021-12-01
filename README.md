@@ -1,4 +1,4 @@
 # stream-twitch-utils
 
 
-<a href="https://sorgindigitala.github.io/stream-twitch-utils/chat-alert.html" target=blank>Demo</a>
+<a href="https://sorgindigitala.github.io/stream-twitch-utils/chat.html" target=blank>Demo</a>
