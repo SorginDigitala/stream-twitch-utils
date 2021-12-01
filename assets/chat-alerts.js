@@ -151,7 +151,8 @@ class TTS{
 
 	static speak_rand(msg){
 		let voices=synth.getVoices()
-		TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.4+.7*Math.random(),0.4+0.7*Math.random());
+		TTS.speak(msg,defaultVoice,0.4+.7*Math.random(),0.4+0.7*Math.random());
+		//TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.4+.7*Math.random(),0.4+0.7*Math.random());
 	}
 
 	static speak_msg(user,msg){
