@@ -5,6 +5,15 @@ class Log{
 	static start(){
 		["PRIVMSG","CLEARCHAT","CLEARMSG"].forEach(e=>Events.add(e,Log[e]));
 		["JOIN","PART","CLEARCHAT"].forEach(e=>Events.add(e,Log.log));
+
+		
+		document.querySelectorAll("#log_menu>[data-show]").forEach(b=>{
+			b.onclick=(e)=>document.querySelectorAll("#log_menu>[data-show]").forEach(o=>{
+				let y=document.getElementById(o.dataset.show);
+				y.classList.toggle("hide",y.id!==e.target.dataset.show)
+			});
+		});
+		document.querySelector("#log_menu>div").click();
 	}
 
 	static PRIVMSG(msg){
@@ -151,7 +160,7 @@ class TTS{
 
 	static speak_rand(msg){
 		let voices=synth.getVoices()
-		TTS.speak(msg,defaultVoice,0.4+.7*Math.random(),0.4+0.7*Math.random());
+		TTS.speak(msg,defaultVoice,0.8+.5*Math.random(),0.8+0.5*Math.random());
 		//TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.4+.7*Math.random(),0.4+0.7*Math.random());
 	}
 

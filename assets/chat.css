@@ -154,6 +154,17 @@ legend{
 
 
 
+#log_menu{
+	display:flex;
+	cursor:pointer;
+}
+#log_menu [data-show]{
+	padding:5px 20px;
+	margin:0 3px;
+	border:1px dotted gray;
+}
+
+
 #debug_log,
 #chat{
 	background:#f8f8f8;
