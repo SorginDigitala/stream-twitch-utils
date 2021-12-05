@@ -7,7 +7,11 @@
 	<link rel=icon type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
 	<link rel=stylesheet media=all href="./assets/chat.css">
 	<script async src="./assets/chat.js"></script>
+	<script async src="./assets/chat-twitch.js"></script>
+	<script async src="./assets/chat-log.js"></script>
 	<script async src="./assets/chat-alerts.js"></script>
+	<script async src="./assets/twitch-common.js"></script>
+	<script async src="./assets/chat-rewards.js"></script>
 </head>
 <body>
 <div id=background oncontextmenu="return false"></div>
@@ -107,20 +111,25 @@
 		</div>
 
 		<div>
-			<fieldset>
+			<fieldset id=logs class=log_area>
 				<legend>Log</legend>
 				<div id=log_menu>
 					<div data-show="log_area">Log</div>
 					<div data-show="chat_area">Chat</div>
-				</div>
-
-				<div id=chat_area>
-					<div id=chat></div>
+					<div data-show="rewards_area">Rewards</div>
 				</div>
 				
 				<div id=log_area>
 					<div id=debug_log></div>
 					<div><a href="./index.html" target=_blank>Home</a> - <a href="https://github.com/SorginDigitala/stream-twitch-utils" target=_blank>Twitch-Utils on Github</a> By <a href="https://www.twitch.tv/seyacat" target=_blank>Seyacat</a></div>
+				</div>
+
+				<div id=chat_area>
+					<div id=chat_log></div>
+				</div>
+
+				<div id=rewards_area>
+					<div id=rewards_log></div>
 				</div>
 			</fieldset>
 
@@ -135,6 +144,7 @@
 		</div>
 	</div>
 
+<!--
 	<fieldset>
 		<legend>Events</legend>
 		<p>Lista de eventos.</p>
@@ -144,13 +154,79 @@
 		<legend>Points</legend>
 		<p>Permitir activar funciones mediante las recompensas de twitch.</p>
 	</fieldset>
+-->
 
 <!--
 	<fieldset>
 		<legend>Commands</legend>
-		<p>Lista de comandos que permitan ejecutar funciones ya existentes.</p>
+		<div>añadir comando</div>
+<style>
+.cmd_row{
+	display:flex;
+	cursor:pointer;
+}
+
+.cmd_row>div{
+	width:100px;
+	text-align:center;
+}
+.cmd_row .rule{
+	text-align:left;
+}
+
+</style>
+		<details>
+			<summary class=cmd_row>
+				<div class=rule>!beep</div>
+				<div class=groups>4 grupos</div>
+				<div class=action>sound</div>
+				<div class=cooldown>00:00:10</div>
+			</summary>
+			<form method=post>
+				<label>
+					<h2>Regla</h2>
+					<p>Que deben escribir.</p>
+					<input name=rule type=text placeholder="!mycommand">
+				</label>
+				
+				<label>
+					<h2>Grupos</h2>
+					<p>Que grupos pueden acceder a esta función.</p>
+					<input name=groups type=text placeholder="Déjalo en blanco para permitir a todos los usuarios.">
+				</label>
+				
+				<label>
+					<h2>Tiempo de espera</h2>
+					<p>Para prevenir el spam puedes subir el tiempo (en segundos).</p>
+					<input name=cooldown type=text placeholder="0">
+				</label>
+				
+				<label>
+					<h2>Tiempo de espera individual</h2>
+					<p>Tiempo de espera para que el usuario pueda reenviar el mismo comando (en segundos).</p>
+					<input name=cooldown type=text placeholder="0">
+				</label>
+				
+				<label>
+					<h2>Acción</h2>
+					<p>Acción a realizar.</p>
+					<select name=action>
+						<option value=sound>Sound</option>
+						<option value=sound_instant>Sound (instant)</option>
+						<option value=tts>Text to speech</option>
+					</select>
+				</label>
+
+				<div class=action_options>
+					para sonidos: lista de inputs con regex y la select/url del sonido.
+					para tts: no opciones.
+				</div>
+
+				<input type=submit value="Guardar">
+			</form>
+		</details>
 	</fieldset>
--->
+	-->
 
 </div>
 </body>

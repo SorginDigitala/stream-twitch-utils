@@ -166,7 +166,8 @@ legend{
 
 
 #debug_log,
-#chat{
+#chat_log,
+#rewards_log{
 	background:#f8f8f8;
 	border:1px solid darkgreen;
 	width:100%;
@@ -178,6 +179,21 @@ legend{
 	min-height:10.4rem;
 	height:20.4rem;
 	max-height:36.4rem;
+}
+#log_area,
+#chat_area,
+#rewards_area{
+	display:none;
+}
+.log_area #log_area,
+.chat_area #chat_area,
+.rewards_area #rewards_area{
+	display:unset;
+}
+.log_area		#log_menu [data-show="log_area"],
+.chat_area		#log_menu [data-show="chat_area"],
+.rewards_area	#log_menu [data-show="rewards_area"]{
+	border:1px solid darkgreen;
 }
 
 
