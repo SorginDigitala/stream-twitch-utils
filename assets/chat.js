@@ -17,7 +17,7 @@ const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getIt
 		"rate_range"	:[.5,2],	//max rate allowed ( https://mdn.github.io/web-speech-api/speak-easy-synthesis/ )
 		"pitch_range"	:[0,2],		//max pitch allowed
 		"groups"		:[],//["vip","moderator"],
-		"users"			:["streamelements","nightbot","moobot"],
+		"users"			:["streamelements","streamlabs","moobot","nightbot"],
 	},
 
 	"events"			:{
