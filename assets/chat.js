@@ -40,7 +40,6 @@ var log_grouplist	=[
 ];
 
 const synth			=window.speechSynthesis;
-const defaultVoice	=synth.getVoices().find(e=>e.default)??synth.getVoices()[0];
 var audio_alert;
 var ws;
 
