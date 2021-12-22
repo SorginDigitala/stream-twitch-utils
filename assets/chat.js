@@ -1,7 +1,7 @@
 //	Si se usa una versión vieja de la variable "config" podría dar error. Sería mejor usar una función que compare la config por defecto y la almacenada
 "use strict";
 const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getItem("config_alerts")):{
-	"channels"		:["seyacat"],
+	"channels"		:["seyacat","samugarron"],
 	"mode"			:"alerts",
 	"volume"		:1,
 	"speech_urls"	:1,				// [0-2] Ignora las url, o lee el dominio, lee la url completa. En el TTS y comandos que ejecuten el TTS.
