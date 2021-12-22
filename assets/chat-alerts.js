@@ -50,9 +50,11 @@ class Alerts{
 
 class TTS{
 	static lastVoiceUser;
+	static userVoices=JSON.parse(localStorage.getItem("user_voices"))??{};
 
 	static start(){
 		Groups.display_groups(tts_groups,tts_exceptions,config.tts);
+		Events.add("COMMAND",TTS.onCommand);
 	}
 
 	static enable(b){
@@ -61,6 +63,29 @@ class TTS{
 		else
 			Events.remove("PRIVMSG",TTS.play);
 		tts.classList.toggle("hide",!b);
+	}
+
+	static onCommand(d){
+		if(!d.msg.startsWith("!voice "))
+			return;
+		var x=d.msg.split(" ").slice(1,4);
+		TTS.userVoices[d.user]=[x[0].toLowerCase(),x[1]?TTS.between(parseFloat(x[1]),.75,1.5):1,x[2]?TTS.between(parseFloat(x[2]),.75,1.5):1];
+		localStorage.setItem("user_voices",JSON.stringify(TTS.userVoices));
+	}
+
+	static between(x,min,max){
+		return x<min?min:(x>max?max:x)
+	}
+
+	static get_user_voice(user){
+		if(!TTS.userVoices[user])
+			TTS.set_user_voice(user,"es",0.8+.5*Math.random(),0.8+0.5*Math.random())
+		return TTS.userVoices[user];
+	}
+
+	static set_user_voice(user,voice,pitch,rate){
+		TTS.userVoices[user]=[voice,pitch,rate];
+		localStorage.setItem("user_voices",JSON.stringify(TTS.userVoices));
 	}
 
 	static play(d){
@@ -80,7 +105,9 @@ class TTS{
 			TTS.lastVoiceUser=user;
 			TTS.speak(user,defaultVoice);
 		}
-		TTS.speak_rand(msg);
+		const mVoice=TTS.get_user_voice(user);
+		TTS.speak(msg,synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0])),mVoice[1],mVoice[2]);
+		//TTS.speak_rand(msg);
 	}
 
 	static speak(msg,voice,pitch=1,rate=1){

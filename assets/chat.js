@@ -1,4 +1,5 @@
 //	Si se usa una versión vieja de la variable "config" podría dar error. Sería mejor usar una función que compare la config por defecto y la almacenada
+"use strict";
 const config=localStorage.getItem("config_alerts")?JSON.parse(localStorage.getItem("config_alerts")):{
 	"channels"		:["seyacat"],
 	"mode"			:"alerts",
@@ -39,7 +40,7 @@ var log_grouplist	=[
 ];
 
 const synth			=window.speechSynthesis;
-const defaultVoice	=synth.getVoices().find(e=>e.default);
+const defaultVoice	=synth.getVoices().find(e=>e.default)??synth.getVoices()[0];
 var audio_alert;
 var ws;
 

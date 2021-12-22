@@ -26,11 +26,12 @@ class Log{
 	}
 
 	static CLEARCHAT(msg){
-			chat.querySelectorAll("#chat [data-user='"+msg.raw_msg+"'] span").forEach(x=>x.style="text-decoration:line-through");
+		//hay que marcar como borrados los mensajes de x canal
+		//chat_area.querySelectorAll("#chat_log [data-user='"+msg.raw_msg+"'] span").forEach(x=>x.style="text-decoration:line-through");
 	}
 
 	static CLEARMSG(msg){
-		const x=chat.querySelector("#chat [data-msg-id='"+msg.params["target-msg-id"]+"'] span:nth-child(2)");
+		const x=chat_area.querySelector("#chat_log [data-msg-id='"+msg.params["target-msg-id"]+"'] span:nth-child(2)");
 		if(x){
 			x.style="text-decoration:line-through";
 			log(msg.type,msg.channel,x,msg.msg);

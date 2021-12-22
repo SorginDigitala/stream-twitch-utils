@@ -79,7 +79,10 @@ class TwitchEvents{	//	https://dev.twitch.tv/docs/irc/tags
 	}
 
 	static input(e){
-		Events.dispatch(e.type,e);
+		if(e.type==="PRIVMSG" && e.msg[0]==="!")
+			Events.dispatch("COMMAND",e);
+		else
+			Events.dispatch(e.type,e);
 
 		if(e.type==="PRIVMSG" && e.params["custom-reward-id"])
 			Events.dispatch("REWARD",e);
