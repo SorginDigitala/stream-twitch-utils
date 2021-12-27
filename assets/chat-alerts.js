@@ -54,7 +54,7 @@ class TTS{
 	static userVoices=JSON.parse(localStorage.getItem("user_voices"))??{};
 
 	static start(){
-		TTS.defaultVoice=synth.getVoices().find(e=>e.default)??synth.getVoices()[0];
+		TTS.defaultVoice=synth.getVoices().find(e=>e.default)??synth.getVoices().find(e=>e=>e.lang.includes("es-MX"));
 		Groups.display_groups(tts_groups,tts_exceptions,config.tts);
 		Events.add("COMMAND",TTS.onCommand);
 	}
@@ -99,16 +99,15 @@ class TTS{
 	static speak_rand(msg){
 		let voices=synth.getVoices()
 		TTS.speak(msg,TTS.defaultVoice,0.8+.5*Math.random(),0.8+0.5*Math.random());
-		//TTS.speak(msg,voices[Math.floor(Math.random() * voices.length)],0.4+.7*Math.random(),0.4+0.7*Math.random());
 	}
 
 	static speak_msg(user,msg){
 		if(TTS.lastVoiceUser!==user){
 			TTS.lastVoiceUser=user;
-			TTS.speak(user,TTS.defaultVoice);
+			TTS.speak(user,TTS.defaultVoice,1.2,1.2);
 		}
 		const mVoice=TTS.get_user_voice(user);
-		TTS.speak(msg,synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0])),mVoice[1],mVoice[2]);
+		TTS.speak(msg,synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0]) || e.name.toLowerCase().includes(mVoice[0])),mVoice[1],mVoice[2]);
 		//TTS.speak_rand(msg);
 	}
 
