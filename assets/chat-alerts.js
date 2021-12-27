@@ -54,9 +54,11 @@ class TTS{
 	static userVoices=JSON.parse(localStorage.getItem("user_voices"))??{};
 
 	static start(){
-		TTS.defaultVoice=synth.getVoices().find(e=>e.default)??synth.getVoices().find(e=>e=>e.lang.includes("es-MX"));
-		Groups.display_groups(tts_groups,tts_exceptions,config.tts);
-		Events.add("COMMAND",TTS.onCommand);
+		setTimeout(e=>{//a veces no se carga la lista de voces a tiempo.
+			TTS.defaultVoice=synth.getVoices().find(e=>e.lang.includes("es-MX"));
+			Groups.display_groups(tts_groups,tts_exceptions,config.tts);
+			Events.add("COMMAND",TTS.onCommand);
+		},10);
 	}
 
 	static enable(b){
