@@ -84,7 +84,7 @@ class TTS{
 
 	static get_user_voice(user){
 		if(!TTS.userVoices[user])
-			TTS.set_user_voice(user,"es",0.8+.5*Math.random(),0.8+0.5*Math.random())
+			TTS.set_user_voice(user,"spanish",0.8+.5*Math.random(),0.8+0.5*Math.random())
 		return TTS.userVoices[user];
 	}
 
