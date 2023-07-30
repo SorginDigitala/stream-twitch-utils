@@ -3,7 +3,7 @@
 		{
 			"name":"Twitch",
 			"id":"Twitch",
-			"logo":"./assets/default/platforms/twitch/icon.png",
+			"logo":"./assets/default/platforms/Twitch/icon.png",
 			"color1":"#9146ff",
 			"color2":"#fff",
 			"files":[
@@ -32,7 +32,7 @@
 			"files":[
 				"./assets/default/platforms/Youtube/Youtube.js"
 			],
-			"logo":"./assets/default/platforms/youtube/icon.png",
+			"logo":"./assets/default/platforms/Youtube/icon.png",
 			"color1":"#ff0000",
 			"color2":"#fff",
 			"defaultOptions":{
@@ -46,7 +46,7 @@
 			"files":[
 				"./assets/default/platforms/Trovo/Trovo.js"
 			],
-			"logo":"./assets/default/platforms/trovo/icon.png",
+			"logo":"./assets/default/platforms/Trovo/icon.png",
 			"color1":"#21b36c",
 			"color2":"#fff",
 			"defaultOptions":{
