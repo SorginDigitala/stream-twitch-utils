@@ -40,7 +40,8 @@ class Numerica extends Module{
 			"height="+this.height+","+
 			"left=0,"+
 			"top=0";
-		const w=window.open(this.currentScriptPath(0)+"index.htm","_myTarget__"+this.name,params);
+		//const w=window.open(this.currentScriptPath(0)+"index.htm","_myTarget__"+this.name,params);
+		const w=window.open("https://sorgindigitala.github.io/stream-twitch-utils/twitch-monitor/assets/default/apps/Numerica/index.htm","_myTarget__"+this.name,params);
 		
 		if(!w){
 			console.error("Sin permisos para abrir popups");
