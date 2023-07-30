@@ -81,7 +81,7 @@
 			"name":"Log",
 			"managebar":false,
 			"files":[
-				"./assets/default/modules/log.js"
+				"./assets/default/modules/Log.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true
