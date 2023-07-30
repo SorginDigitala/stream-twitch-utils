@@ -1,0 +1,71 @@
+{
+	"options":{
+		"dir":"ltr"
+	},
+	"data":{
+		"enabled":"Enabled",
+		"disabled":"Disabled",
+		"volume":"Volume",
+		"remove":"Remove",
+		"delete":"Delete",
+		"join":"Join",
+		"login":"Login",
+		"update":"Update",
+		"send":"Send",
+
+		"platforms":"Plataforms",
+		"twitch.placeholder":"Channel names, separated by comma.",
+		"twitch.description":"Puedes entrar a varios canales separandolos por comas. A partir de 10 canales puede dar problemas. Acerca de los límites: <a href='https://dev.twitch.tv/docs/irc/guide#rate-limits' target=_blank>IRC</a>, <a href='https://dev.twitch.tv/docs/pubsub#api-limits' target=_blank>PubSub</a>.",
+
+		"channels":"Channels",
+
+		"log":"Log",
+		"log.system":"System",
+		"log.chat":"Chat",
+		"log.actions":"Actions",
+		"log.monetization":"Monetization",
+
+		"log.connected":"Connected.",
+		"log.disconnected":"Disconnected.",
+
+		"options":"Options",
+		"options.volume":"Master Volume",
+		"options.speech_url_rules":"Reglas del TTS para URLs",
+		"options.speech_rule_ignore":"Ignore",
+		"options.speech_rule_domain":"Domain",
+		"options.speech_rule_full":"Full",
+		"options.export":"Export",
+		"options.import":"Import",
+		"options.reset":"Reset Config",
+		"options.reset_title":"Se reiniciará la configuración y se recargará la página.",
+
+		"tts.volume":"Volume",
+
+		"events":"Events",
+		"events.on_message":"Al recibir un mensaje de chat. Excluye comandos, donaciones, recompensas.",
+		"events.on_sub":"Al recibir una sub.",
+
+		"commands":"Comamnds",
+
+		"panel.controls_add":"Add",
+		"panel.controls_rmv":"Remove",
+		"panel.controls_up":"Up",
+		"panel.controls_down":"Down",
+		
+		"exceptions.groups":"Groups",
+		"exceptions.groups_desc":"Que grupos pueden acceder a esta función.",
+		"exceptions.groups_placeholder":"Déjalo en blanco para permitir a todos los usuarios",
+		"exceptions.exceptions":"Excepciones",
+		"exceptions.exceptions_desc":"Usuarios a los que incluir o excluir.",
+		"exceptions.exceptions_placeholder":"Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados.",
+		"exceptions.popup_desc":"Qué grupos pueden activar esta función.",
+		"exceptions.popup_placeholder":"Buscar...",
+		"exceptions.popup_close":"Close",
+
+		"credits_home":"Index",
+		"credits_docs":"Docs",
+
+		"alerts.mode.title":"Modo",
+		"alerts.mode.desc":"Select the alert mode."
+	}
+}

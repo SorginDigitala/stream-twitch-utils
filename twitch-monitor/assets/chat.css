@@ -1,0 +1,488 @@
+:root{
+	--header-height:2rem;
+	--primary:#fff;
+	--secondary:#003;
+}
+
+
+*{
+	box-sizing:border-box;
+}
+
+body{
+	margin:0;
+	background:rgba(0,0,0,0);
+	display:flex;
+	flex-direction:column;
+	padding:10px;
+}
+
+textarea{
+	width:100%;
+}
+
+input[type="text"],
+input[type="password"]{
+	width:100%;
+}
+
+input[type="range"]{
+	margin-bottom:-5px;
+}
+
+hr{
+	margin:25px 0;
+}
+
+
+.label{
+	display:block;
+	padding:3px 0;
+	margin-bottom:5px;
+}
+
+.label h1,.label h2,.label h3,.label h4{margin:0}
+.label h2{font-size:1.3rem}
+
+.label p{
+	margin:7px 0;
+	font-weight: normal;
+	color:#000;
+	font-size:1rem;
+}
+
+
+input:not([type="range"]),select{
+	padding:.3rem;
+	border: 1px solid #999;
+	border-radius:2px;
+	font-size: 1rem;
+}
+input:focus,
+textarea:focus,
+select:focus{
+	border-color:darkgreen;
+}
+
+
+fieldset{
+	border:1px inset green;
+	margin-bottom:5px;
+}
+legend{
+	padding:0 5px;
+	user-select:none;
+	margin:0 1rem;
+}
+
+
+details{}
+summary{
+	cursor:pointer;
+}
+
+
+
+
+
+
+
+
+.hide{
+	display:none !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.dropdown{
+	position:relative;
+	background:transparent;/* button no es completamente transparente sin propiedad background*/
+}
+.dropdown,.dropdownMenu{}
+.dropdownMenu{
+	margin:0;
+	display:none;
+	position:absolute;
+	z-index:2;
+	background:var(--primary);
+	border-radius:0 0 3px 3px;
+}
+.dropdownMenu:not(.right){left:0}
+.dropdownMenu.right{right:0}
+
+/*
+.dropdown:focus-within{background:var(--secondary)}
+*/
+.dropdown:hover .dropdownMenu,
+.dropdown:focus-within .dropdownMenu{
+	padding:5px;
+	display:block;
+	max-height:480px;
+	width:max-content;
+	box-shadow:0 2px 4px -1px var(--primary);
+	color:var(--primary);
+	cursor:auto;
+}
+
+.dropdownMenu li{
+	text-align:left;
+	width:100%;
+}
+
+.dropdownMenu label,
+.dropdownMenu a,
+.dropdownMenu a:visited{
+	color:var(--secondary);
+}
+.dropdownMenu li:last-child a{
+	border-radius:0 0 3px 3px;
+}
+.dropdownMenu a:hover{
+	background:var(--secondary);
+	color:var(--primary);
+}
+.dropdownMenu a,.dropdownMenu>span{
+	padding:0 12px;
+	width:100%;
+	height: var(--header-height);
+	line-height: var(--header-height);
+	display:inline-block;
+	font-size:1rem;
+}
+
+
+
+body:not([data-login]) [data-require="login"],
+body:not([data-twitch]) [data-require="twitch"],
+body:not([data-youtube]) [data-require="youtube"]{
+	display:none;
+}
+
+
+
+#permissions_notice{
+	font-size:1.6rem;
+	color:red;
+	font-weight:bold;
+	margin:auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#panel{
+	position:relative;
+	width:100%;
+	max-width:1300px;
+	min-height:200px;
+	background:#fefefe;
+	padding:15px;
+	margin:20px auto;
+	border-radius:5px;
+	box-shadow:0 0 4px 0px #888;
+	overflow-y:auto;
+	scrollbar-width:thin;
+}
+
+#panelgrid{
+	display:grid;
+	grid-template-columns:repeat(auto-fill,minmax(600px,1fr));
+	/*
+	grid-auto-rows:400px;
+	*/
+	grid-gap:5px;
+	width:100%;
+}
+#panelgrid>div{
+	min-width:400px;
+	width:100%;
+}
+
+#hide_button{
+	position:absolute;
+	top:2px;
+	right:2px;
+	width:40px;
+	height:40px;
+	font-size:25px;
+	line-height:25px;
+	z-index:2
+}
+
+
+.flex{
+	display:flex;
+}
+.flexinput,
+.flexinputrtl{
+	display:flex;
+	gap:3px;
+	margin:6px -3px;
+}
+.flexinputrtl{
+	flex-direction:row-reverse
+}
+
+.flexinput>input[type="text"],
+.flexinputrtl>input[type="text"]{
+	flex-grow:1;
+}
+
+#background{
+	position:absolute;
+	top:0;
+	bottom:0;
+	right:0;
+	left:0;
+}
+
+
+#popup_groups{
+	position:absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	z-index:1
+}
+
+#popup_groups_container{
+	position:absolute;
+	width:100%;
+	max-width:240px;
+	background:#fefefe;
+	padding:15px;
+	border-radius:5px;
+	box-shadow:0 0 4px 0px #888;
+}
+
+
+
+
+
+
+.ws_status{
+	width:1rem;
+	min-width:1rem;
+	height:1rem;
+	margin:auto;
+	border-radius:50%;
+	background:red;
+}
+
+.ws_status.on{
+	background:darkgreen;
+}
+
+
+
+.groups>label:nth-child(1):hover{
+	background:#f8f8f8;
+}
+.groups_textarea{
+	flex-grow:1;
+}
+.groups_textarea textarea{
+	min-height:4.4rem;
+	max-height:12.4rem;
+	resize:vertical;
+}
+
+
+
+
+
+
+#lang_selector{
+	display:flex
+}
+#lang_selector>div{
+	font-size:1.7rem;
+	margin:.1rem .2rem;
+}
+
+/*
+.twitch{color:rgb(145, 70, 255)}
+.youtube{color:#c4302b}
+*/
+
+.multimenu>.menu{
+	display:flex;
+	gap:5px;
+}
+.multimenu>.menu>button:only-child{display:none}
+
+.button{
+	display:flex;
+	gap:4px;
+	padding:6px 15px;
+	user-select:none;
+}
+.button.on{border:1px solid darkgreen}
+.button:not(.on){border:1px dotted gray}
+
+
+
+
+
+
+
+
+#streamlist .line{
+	display:flex;
+	gap:5px;
+	white-space:nowrap;
+	overflow:hidden;
+}
+#streamlist .viewers{
+	width:48px;
+	padding-right:8px;
+	text-align:right;
+}
+#streamlist .channel{
+	width:160px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.textarea,
+#log_chat{
+	background:#f8f8f8;
+	width:100%;
+	overflow-y:auto;
+	margin-top:10px;
+	padding:8px;
+	border:1px solid darkgreen;
+
+	resize:vertical;
+	min-height:14.4rem;
+	height:20.4rem;
+	max-height:50.4rem;
+	scrollbar-width:thin;
+}
+
+.textarea.small{
+	height:4.7rem;
+	min-height:4.7rem;
+	max-height:14.1rem;
+}
+
+#chat span:nth-child(1){
+	font-weight:700;
+}
+#log_chat [data-nonce]{
+	display:none
+}
+
+
+.textarea span,
+#log_chat span{
+	overflow-wrap:anywhere;
+}
+
+
+.panel{
+	display:flex;
+	position:relative;
+	width:100%;
+	min-height:400px;
+}
+
+.panel_left{
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	display:flex;
+	flex-direction:column;
+	width:150px;
+	height:100%;
+}
+
+.panel_list{
+	flex-grow:1;
+	background:#f8f8f8;
+	border:1px solid darkgreen;
+	margin:0;
+	padding:0;
+	list-style:none;
+	height:100%;
+	overflow-y:auto;
+	scrollbar-width:thin;	
+}
+
+.panel_list li{
+	width:100%;
+	padding:5px;
+}
+
+.panel_list li:nth-child(2n){background-color:#f3f3f3}
+.panel_list li:nth-child(2n+1){background-color:#fff}
+.panel_list li.on{background-color:#ccf}
+.panel_list li span{pointer-events:none}
+
+.panel_list_controls{
+	display:flex;
+}
+
+.panel_list_controls input{
+	height:2rem;
+	width:2rem;
+	margin:3px;
+}
+
+.panel_right{
+	position:absolute;
+	top:0;
+	bottom:0;
+	right:0;
+	left:160px;
+
+	background:#f8f8f8;
+	border:1px solid darkgreen;
+	overflow-y:auto;
+	scrollbar-width:thin;
+	/*
+	Al poner position:absolute no puedo hacerlo resizable, puta bida tt
+	resize:vertical;
+	*/
+}
+
+
+
+
+
+

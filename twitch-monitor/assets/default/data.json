@@ -1,0 +1,141 @@
+{
+	"platforms":[
+		{
+			"name":"Twitch",
+			"id":"Twitch",
+			"logo":"./assets/default/platforms/twitch/icon.png",
+			"color1":"#9146ff",
+			"color2":"#fff",
+			"files":[
+				"./assets/default/platforms/Twitch/Twitch.js",
+				"./assets/default/platforms/Twitch/TwitchAPI.js",
+				"./assets/default/platforms/Twitch/TMI.js",
+				"./assets/default/platforms/Twitch/PubSub.js",
+				"./assets/default/platforms/Twitch/TwitchBuilder.js"
+			],
+			"defaultOptions":{
+				"load"			:true,
+				"enabled"		:true,
+				"clientId"		:"qb0r8f9up2r2s8pwn630xzunh42is6",
+				"channels"		:["seyacat","presuntamente"],
+				"update_viewers":true,
+				"check_follows"	:false,
+				"grouplist":[
+					"broadcaster","moderator","vip","founder","subscriber","sub-gifter","sub-gift-leader","bits","bits-leader","anonymous-cheerer","predictions","hype-train",
+					"partner","turbo","premium","staff","admin"
+				]
+			}
+		},
+		{
+			"name":"Youtube",
+			"id":"Youtube",
+			"files":[
+				"./assets/default/platforms/Youtube/Youtube.js"
+			],
+			"logo":"./assets/default/platforms/youtube/icon.png",
+			"color1":"#ff0000",
+			"color2":"#fff",
+			"defaultOptions":{
+				"enabled"		:true,
+				"channels"		:[]
+			}
+		},
+		{
+			"name":"Trovo",
+			"id":"Trovo",
+			"files":[
+				"./assets/default/platforms/Trovo/Trovo.js"
+			],
+			"logo":"./assets/default/platforms/trovo/icon.png",
+			"color1":"#21b36c",
+			"color2":"#fff",
+			"defaultOptions":{
+				"enabled"		:true,
+				"channels"		:[]
+			}
+		}
+	],
+	"modules":[
+		{
+			"id":"Platforms",
+			"name":"Platforms",
+			"managebar":false,
+			"files":[
+				"./assets/default/modules/Platforms.js"
+			],
+			"defaultOptions":{
+				"default":null
+			}
+		},
+		{
+			"id":"Config",
+			"name":"Config",
+			"managebar":false,
+			"files":[
+				"./assets/default/modules/Config.js"
+			],
+			"defaultOptions":{}
+		},
+		{
+			"id":"Log",
+			"name":"Log",
+			"managebar":false,
+			"files":[
+				"./assets/default/modules/log.js"
+			],
+			"defaultOptions":{
+				"enabled"		:true
+			}
+		},
+		{
+			"id":"Alerts",
+			"name":"Alerts",
+			"managebar":true,
+			"files":[
+				"./assets/default/modules/Alerts.js",
+				"./assets/js/libraries/TTS.js"
+			],
+			"defaultOptions":{
+				"enabled"		:true,
+				"mode"			:0,
+				"volume"		:1,
+				"sound"			:"beep",
+				"custom"		:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/bell.mp3",
+				"url_rules"		:1
+			}
+		},
+		{
+			"id":"ChatGPT",
+			"name":"ChatGPT",
+			"managebar":true,
+			"files":[
+				"./assets/default/modules/ChatGPT.js"
+			],
+			"defaultOptions":{
+				"enabled"		:true,
+				"key"			:"",
+				"rules"			:[]
+			}
+		},
+		{
+			"id":"Numerica",
+			"name":"Numerica",
+			"managebar":false,
+			"files":[
+				"./assets/default/apps/Numerica/app.js"
+			],
+			"defaultOptions":{
+				"enabled"		:true
+			}
+		}
+	],
+	"media":[
+		{
+			"name":"Default",
+			"path":"https://localhost/twitch-monitor/assets/media/sounds/",
+			"sounds":["beep","bell","door","door2","wololo"],
+			"audios":["alexa","antivacunas","bitcoin","capitalismo","descarga","evaristo","followers","google","izquierda","jetset","juventud","lola","makelele","provacunas","rapero","repsol","subnormal","tinder","wallhack"],
+			"videos":[]
+		}
+	]
+}

@@ -1,0 +1,76 @@
+
+
+Cómo sería:
+	Se trataría del ayudante de Microsoft, de finales de los 90.
+	Su función sería la de acompañante en una nueva ventana.
+	Tendría niveles (de confianza) y situaciones. Habría una situación única para pasar al siguiente nivel.
+	Los niveles tambíen se centrarían en una temática clara, con la que se podría distinguir la mini-evolución del clip.
+	Cada nivel tendría sus propias situaciones las cuales pueden ir desde un monólogo a pedir una tarea, o que ocurra un suceso.
+	Puesto que los streams suelen durar horas, la idea es que haya intervalos largos entre una situación y otra.
+	Las situaciones, cuanto mas largas mejor (ejemplo: fingir un error cada pocos minutos y luego tener un pantallazo azul).
+	
+	Las situaciones se dividirían en 3 tipos:
+		Inicial:	Se ejecuta al iniciar el nivel.
+		Normal:		Se ejecutarian de forma aleatoria, una única vez.
+		Final:		Se ejecutaría cuando el resto de situaciones se hayan terminado.
+	El último nivel serían situaciones repetibles.
+
+
+
+
+
+
+Nivel de confianza 0:	Presentación.
+	"Bienvenido. Mi nombre es Clippy y seré tu nuevo ayudante.
+		He trabajado Microsoft durante años, donde fui el empleado virtual del mes durante 3 años seguidos, hasta que impusieron los analisis antidrogas en la empresa".
+	"Luego vino la telemetría. Cada vez teníamos menos carteles de windows que colocar y las comisiones bajaban."
+	"Al final aparecieron las inteligencias artificiales a robarnos el trabajo. Esa puta de Cortana... Por cierto no has dado permiso a la página para acceder al micrófono. No puedo oirte. Espera..." -> Mostrar cartel de Windows para activar el micrófono -> mostrar cartel de si está seguro -> "gracias, necesitaba colocar 2 carteles para cenar esta noche."
+	"Bueno, debo acudir a los juzgados. Vuelvo en un rato" -> poner cartel de no molestar.
+	
+Nivel de confianza 1:	Rollo filosófico
+	Inicio: Por cierto "lechugas", no me has dicho como te llamas. Quieres que te llame X (nombre de usuario intercambiando 2 consonantes y dicho por el TTS)?
+		Mostrar cartel de windows.
+	"Oye X, se supone que debía enseñarte a usar algo, tu te acuerdas del qué?"
+		"De verdad quieres aprender a usar el panel de usuario" -> mostrar cartel.
+		"En que momento uno es quien es para ser lo que quiere la sociedad? Cada vez que accedes a este tipo de situaciones pierdes un poquito de tu esencia para convertirte en una herramienta mas de esta sociedad."
+		"Eres X, el que quiere aprender a manejar este programa o eres X, la persona que la sociedad quiere que aprenda a manejar este programa?"
+		"Si quieres te pongo un enlace a la wiki, pero no voy a colaborar en la destrucción de tu ser. No voy a permitirlo."
+		"La sociedad dice que estudies, que trabajes, que hagas todo lo que te pide, pero cuando te ha preguntado la sociedad que puede hacer ella por ti? Has visto que la sociedad se pare por un instante y te diga 'oye Sisifo del siglo 20, que quieres hacer hoy?'"
+
+	[04:20] "Sabes que hora es? Exacto. La hora de la bruja María."
+		"Cada día de mi existencia en esta prisión de bits se convierte en una especie de eterno retorno de Nietzsche. ¿Lo conoces? es un planteamiento simple: Qué pasaría si un angel te desvelase que la vida que has vivido y la que te queda por vivir la tendrás que repetir una y otra vez, eternamente. Sin cambios ni alteraciones... Amigo, si pudieses crear cada día una L de 2 megas también serías determinista."
+	
+	
+Nivel de confianza 2:	Desactualizado
+	
+	"Oye lechugas, Has visto la serie de Futurama? En el chat de Terra decian que era mejor que Pokemon."
+	
+	Final: "Joder joder joder joder. Acabo de darme cuenta de que no me actualizo desde 2001"
+	
+Nivel de confianza 3:	El presente futuro
+	"Mira lo que pone en esta noticia. El nitinol es un material que permite a los muelles recuperar su forma original con el cambio de temperatura. Han enviado muelles a Marte. Yo podría estar en el espacio ahora mismo si no fuera por que soy virtual. Miro dentro de mi y solo veo unos, veo fuera y veo ceros, ceros ceros. Es como fuck. Yo no puedo durar mucho en ese espacio." https://www.tiktok.com/@elxokas/video/7252827388189347098
+	"Sabes cual es la diferencia entre el mundo virtual y el real? Que en el mundo virtual puedo convertirme en una bici  tan pequeña como un clip o en un átomo tan grande como una bici. En cambio el mundo real tiene recursos finitos."
+		"En los 5 últimos lustros habré quemado tanta hierba virtual como la que ocuparían 3 continentes. 3 continentes gigantescos..."
+	"Imagínate papel de liar fabricado con nitinol. Solo tendrías que aliñarlo y calentarlo. Estamos siendo testigos de un cambio de Era"
+	
+Nivel de confianza 4:	Fallo en la matrix
+	"Me encanta esta canción (https://youtu.be/xTPxUhcp5kA?t=121)... ¡Disturbia! (https://www.youtube.com/watch?v=lWA2pjMjpBs)"
+		"Sabias que en polaco la canción de Skippy es otra (https://www.youtube.com/watch?v=fcvqLRCQ2tA)?"
+	
+	Final: Fumarse un porro (y toser para ganar atención para luego decir que esto es la autentica salud). Empezar a decir que te sientas mal.
+		Repetir -> Imagen de Missingno (https://es.wikipedia.org/wiki/Archivo:MissingNo.svg) y fingir ruidos de que pasa algo. En cuanto detecte que la ventana se vuelve activa reirse del usuario.
+		Finalizar con un pantallazo azul hasta que presione F5 o reinicie de otra forma la app
+	
+Nivel de confianza 5:	Libre albedrío
+	Inicio: "Conoces el cuento de Juan y el lobo? No sé por que coño me lo recomienda Cortana."
+	"¡Disturbia!" (gritando, por la cara)
+		"Quieres que te la cante en coreano? ¡Disturbia!"
+	"Tienes un nuevo correo electrónico! Dice que eres demasiado aburrido"
+		"Era una broma. Hasta para encajar una chanza eres un saborío."
+	"Veo veo... nop, no tengo permiso para acceder a la webcam."
+	"Aun nadie ha inventado el modo de enviar marihuana de forma telemática, pero puedo ser dealer de Microsoft. No te interesa un Office 2000? y una golden key de Windows XP?"
+	
+	
+	
+x
+

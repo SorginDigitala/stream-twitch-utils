@@ -1,0 +1,21 @@
+{
+	"options":{
+		"lang":null,
+		"volume":0.75,
+		"scripts":[],
+		"scripts2":["./assets/defaults/data.json"]
+	},
+	"mymodules":[
+		["Log"],
+		["Alerts","ChatGPT"]
+	],
+	"modules":{
+		"Platforms":{
+			"default":null
+		},
+		"Log":{
+			"chat_channels":[["twitch","presuntamente"]]
+		}
+	},
+	"platforms":{}
+}

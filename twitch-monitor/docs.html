@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<meta name=viewport content="width=device-width,initial-scale=1">
+	<title>Stream - Utils - Chat Alerts</title>
+	<link rel=icon type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+	<link rel=stylesheet media=all href="./assets/chat.css">
+	<script async src="./assets/js/Lang.js"></script>
+</head>
+<body>
+
+	<div>
+	
+Como agregar Plataformas.
+	- Agregar un objeto con X propiedades a la variable mPlatforms.
+	- dentro de defaultOptions puedes poner lo que quieras.
+Como agregar Módulos.
+
+
+{Module} Class:
+	name:
+	start():
+	getPanel():
+
+{Platform} Class:
+	start(data):						Inicia la plataforma
+	enable(bool):						Activa/Desactiva la plataforma.
+	delete():							Elimina la plataforma
+	logout():							Fuerza el logout
+						
+	get_channels():								Channel[]	Lista de canales.
+	get_user():									Object		Usuario con el que se conecta.
+	connect(string[] channels):					
+	disconnect(string[] channels):				
+	message(string[] channels,string message):	
+	
+Eventos:
+	Class Options:
+		config.lang									Al cambiar el idioma
+		config.volume								Al cambiar el volumen global
+
+	Class Platforms:
+		platform.load		Platform,bool			Al cargar/deshabilitar una plataforma
+		platform.enable		Platform,bool			Al activar/desactivar una plataforma
+		platform.login		Platform,bool			Al conectarse a una plataforma (bool isUser)
+
+	Class {Platform}
+		channel.connect			Action		Al conectarse a un canal
+		channel.disconect		Action		Al desconectarse de un canal
+		channel.join			Action		Cuando un usuario se conecta a un canal
+		channel.leave			Action		Cuando un usuario se desconecta a un canal
+		channel.message			Action		Cuando se recibe un mensaje en el canal
+		channel.action			Action		Acciones del canal (borrar mensajes, expulsar gente...)
+
+
+Peticiones:
+	channel.connect			{PlatformX:[string channels]}					Pide conectarse a X canales
+	channel.disconnect		{PlatformX:[string channels]}					Pide desconectarse a X canales
+	channel.message			{PlatformX:[string channels],string message}	Pide enviar un mensaje a X canales
+	channel.action			{PlatformX:[string channels],object action}		Pide realizar una acción
+
+
+	</div>
+</body>
+</html>
