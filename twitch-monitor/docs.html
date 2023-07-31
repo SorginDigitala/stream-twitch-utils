@@ -11,29 +11,74 @@
 <body>
 
 	<div>
-	
-Como agregar Plataformas.
-	- Agregar un objeto con X propiedades a la variable mPlatforms.
-	- dentro de defaultOptions puedes poner lo que quieras.
-Como agregar Módulos.
 
 
-{Module} Class:
-	name:
-	start():
-	getPanel():
+El main script es ChatMonitor.js el cual primero carga:
+	./config.json
+		La configuración del usuario.
+	./default/data.json (y otros scripts que aparezcan en config.options.scripts)
+		Script con datos sobre las plataformas, módulos y apps.
+	ModuleManager.js		->	Carga todos los módulos activos
+	PlatformManager.js		->	Carga todas las plataformas activas
+	AppManager.js			->	Carga todas las apps activas
 
-{Platform} Class:
-	start(data):						Inicia la plataforma
-	enable(bool):						Activa/Desactiva la plataforma.
-	delete():							Elimina la plataforma
-	logout():							Fuerza el logout
-						
-	get_channels():								Channel[]	Lista de canales.
-	get_user():									Object		Usuario con el que se conecta.
-	connect(string[] channels):					
-	disconnect(string[] channels):				
-	message(string[] channels,string message):	
+
+------------------------		Módulos		------------------------
+	Los módulos son los recuadros que ves en el monitor.
+	ModuleManager se encarga de iniciar los módulos.
+	Los módulos deben tener de base la class Module.
+
+Como agregar Módulos:
+	- Mas o menos lo mismo que platforms, pero con menos métodos por defecto en la clase
+		Class myModule extends Module{
+			start(){}
+			getPanel(){
+				const container=createElement("div");
+				return container;
+			}
+		}
+		window.modules.myModule=myModule; // esto es necesario para poder acceder de forma dinámica a las clases.
+
+
+------------------------		Plataformas		------------------------
+	Las plataformas son Twitch, Trovo, Youtube...
+	Las plataformas deben tener de base la class Platform.
+
+Como agregar Plataformas:
+	- Añades la config base en ./default/data.json -> .platforms.push({...})
+	- Creas el script ./default/platforms/myPlatform/myPlatform.js y le pones:
+		Class myPlatform extends Platform{
+			start(){}
+		}
+		window.platforms.myPlatform=myPlatform;
+	- Ahora debes activar en el panel la nueva plataforma e ir añadiendo funciones en base a los errores que muestra la consola.
+
+
+------------------------		Apps		------------------------
+	Las apps son aplicaciones que se ejecutan en otra ventana. Como juegos tipo Numerica.
+	Las apps deben tener de base la class App.
+	Esto es algo nuevo y aun no sé que llevará la clase base, pero será similar a Platform y Module:
+		Class myApp extends App{
+			start(){}
+		}
+		window.apps.myApp=myApp;
+
+
+------------------------		Librerias		------------------------
+	Algunos scripts, como TTS, pueden ser útiles en varios módulos o aplicaciones.
+	En data.json, los módulos deben añadir las librerias al array "files".
+
+
+------------------------		Clases especiales		------------------------
+	Existen clases especiales:
+Events		->	Para avisar de eventos a otras clases.
+		ejemplo: Events.trigger("channel.message",new Action(...));
+				Notifica de un nuevo mensaje de la plataforma a todos los módulos y aplicaciones que estén escuchando.
+Action		->	Cuando una plataforma envía un mensaje, se debe procesar con esta clase para mantener una consistencia.
+Groups,
+Channels	->	Estas 2 clases están super desfasadas. Antes mostraban una lista de canales y grupos pero no era compatible con multiples plataformas.
+
+
 	
 Eventos:
 	Class Options:
@@ -52,13 +97,6 @@ Eventos:
 		channel.leave			Action		Cuando un usuario se desconecta a un canal
 		channel.message			Action		Cuando se recibe un mensaje en el canal
 		channel.action			Action		Acciones del canal (borrar mensajes, expulsar gente...)
-
-
-Peticiones:
-	channel.connect			{PlatformX:[string channels]}					Pide conectarse a X canales
-	channel.disconnect		{PlatformX:[string channels]}					Pide desconectarse a X canales
-	channel.message			{PlatformX:[string channels],string message}	Pide enviar un mensaje a X canales
-	channel.action			{PlatformX:[string channels],object action}		Pide realizar una acción
 
 
 	</div>

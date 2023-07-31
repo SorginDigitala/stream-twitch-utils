@@ -51,7 +51,7 @@ class TMI{	//	Twitch Messaging Interface
 				//console.log(e.data)
 				const x=TMI.process_data(l)
 				if(x)
-					TMI.process_msg(x)
+					TMI.process_msg(x,e.data)
 			})
 		}
 		ws.onerror=e=>console.log("[irc-ws.chat] error:",e)
@@ -69,7 +69,7 @@ class TMI{	//	Twitch Messaging Interface
 		const n=nonce(15)
 		TMI.ws.send("@client-nonce="+n+" PRIVMSG #"+channel+" :"+msg)
 
-		const r=new Action('Twitch','chat',channel,n,msg,msg,{id:'@me',username:'@me',color:'#000'});
+		const r=new Action("",'Twitch','chat',channel,n,msg,msg,{id:'@me',username:'@me',color:'#000'});
 		Events.dispatch('channel.message',r)
 	}
 
@@ -124,7 +124,7 @@ class TMI{	//	Twitch Messaging Interface
 	}
 
 
-	static process_msg(e){
+	static process_msg(e,original){
 		if(e.type==="USERSTATE"){
 			const div=document.querySelector("[data-nonce='"+e.params["client-nonce"]+"']")
 			if(div){
@@ -145,6 +145,7 @@ class TMI{	//	Twitch Messaging Interface
 		}
 		*/
 		const response=new Action(
+			original,
 			'Twitch',
 			'chat',
 			e.channel,

@@ -1,0 +1,5 @@
+class AppManager{
+
+	static start(){
+	}
+}

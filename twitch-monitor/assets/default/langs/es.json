@@ -15,14 +15,14 @@
 
 		"platforms":"Plataformas",
 		"twitch.placeholder":"Nombre del canal o canales, separados por coma.",
-		"twitch.description":"Puedes entrar a varios canales separandolos por comas. A partir de 10 canales puede dar problemas. Acerca de los límites: <a href='https://dev.twitch.tv/docs/irc/guide#rate-limits' target=_blank>IRC</a>, <a href='https://dev.twitch.tv/docs/pubsub#api-limits' target=_blank>PubSub</a>.",
+		"twitch.description":"Puedes entrar a varios canales separandolos por comas. A partir de 20 canales puede dar problemas. Acerca de los límites: <a href='https://dev.twitch.tv/docs/irc/guide#rate-limits' target=_blank>IRC</a>, <a href='https://dev.twitch.tv/docs/pubsub#api-limits' target=_blank>PubSub</a>.",
 
 		"channels":"Canales",
 
 		"log":"Registro",
 		"log.system":"Sistema",
 		"log.chat":"Chat",
-		"log.actions":"Acciones",
+		"log.action":"Acciones",
 		"log.monetization":"Monetización",
 
 		"log.connected":"Conectado.",

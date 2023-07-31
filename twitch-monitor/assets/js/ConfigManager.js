@@ -23,7 +23,10 @@ class ConfigManager{
 		if(!x)
 			return;
 		Object.keys(x).forEach(k=>{
-			data[k]=[...data[k],...x[k]];
+			if(!data[k])
+				data[k]=x[k];
+			else
+				data[k]=[...data[k],...x[k]];
 		});
 	}
 

@@ -139,7 +139,7 @@ class Log extends Module{
 		createElement('div',{innerHTML:'<span class=channel_count>0</span> <span data-lang_text=channels>Channels</span>'},dropdown);
 		createElement('ul',{className:'dropdownMenu'},dropdown);
 
-		['system','chat','actions','monetization'].forEach(e=>{
+		['system','chat','action','monetization'].forEach(e=>{
 			const x=createElement('button',{className:'button',onclick:e=>{}},log_menu);
 			Lang.set_text(x,'log.'+e);
 		})

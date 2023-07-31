@@ -7,7 +7,7 @@
 	},
 	"mymodules":[
 		["Log"],
-		["Alerts","ChatGPT"]
+		["Apps","Alerts"]
 	],
 	"modules":{
 		"Platforms":{

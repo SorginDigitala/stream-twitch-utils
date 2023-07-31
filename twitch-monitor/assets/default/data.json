@@ -118,6 +118,19 @@
 			}
 		},
 		{
+			"id":"Apps",
+			"name":"Apps",
+			"managebar":true,
+			"files":[
+				"./assets/default/modules/apps.js"
+			],
+			"defaultOptions":{
+				"enabled"		:true
+			}
+		}
+	],
+	"apps":[
+		{
 			"id":"Numerica",
 			"name":"Numerica",
 			"managebar":false,
