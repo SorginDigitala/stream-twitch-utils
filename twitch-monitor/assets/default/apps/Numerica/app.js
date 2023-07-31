@@ -28,7 +28,7 @@ class Numerica extends Module{
 		return container;
 	}
 
-	static currentScriptPath=function(level=0){
+	static currentScriptPath(level=0){
 		let line=(new Error()).stack.split('\n')[level+1].split('@').pop();
 		return line.substr(0,line.lastIndexOf('/')+1);
 	};
