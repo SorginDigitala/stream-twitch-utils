@@ -47,22 +47,24 @@ class ChatMonitor{
 	}
 }
 
-
+const ACTION_TYPES=["system","chat","action","monetization"];
 class Action{
-	platform;		//	Twitch | Youtube | ...
-	type;			//	system | chat | action | monetization
-	channel;		//	canal
-	id;				//	id del mensaje
-	msg;			//	mensaje formateado
-	raw_msg;		//	mensaje original
-	clean_msg;		//	mensaje limpio, solo texto (no emotes)
-	sender;			//	{id,username,color}
-	response;		//	mensaje original
+	platform;		//	(String) Twitch | Youtube | ...					->	Se podría cambiar por la ref en vez String
+	type;			//	(String) system | chat | action | monetization
+	subtype;		//	(String) msg, subscription (génerico), hypechat (de youtube), bits (de Twitch), ...
+	channel;		//	(String) canal
+	id;				//	(String) id del mensaje
+	msg;			//	(String) mensaje formateado
+	raw_msg;		//	(String) mensaje original
+	clean_msg;		//	(String) mensaje limpio, solo texto (no emotes)
+	sender;			//	{(String) id,(String) username,(String) color}	->	Puede contener mas info sobre el user
+	response;		//	(String) mensaje original
 
-	constructor(r,p,t,c,id,msg,raw_msg,sender=null){
+	constructor(r,p,t,st,c,id,msg,raw_msg,sender=null){
 		this.response	=r;
 		this.platform	=p;
 		this.type		=t;
+		this.subtype	=st;
 		this.channel	=c;
 		this.id			=id;
 		this.msg		=msg;

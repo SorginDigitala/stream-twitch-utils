@@ -76,16 +76,6 @@ function lois_raid(e){
 
 
 
-var rafa_started_at="";
-function on_update_streams(r){
-	r.forEach(e=>{
-		if(e.user_login==='rafalagoon' && rafa_started_at!==e.started_at){
-			rafa_started_at=e.started_at;
-			setTimeout(()=>TMI.send("rafalagoon","No puedo enviarte recompensas, pero esto te lo comes: 8==D"),60000)
-		}
-	});
-}
-
 
 function luis420(){
 	if(!Twitch.user)

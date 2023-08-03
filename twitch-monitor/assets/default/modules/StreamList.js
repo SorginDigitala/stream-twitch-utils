@@ -4,7 +4,7 @@ class StreamList{
 	//static youtube_channels=[]
 
 	static start(twitch,youtube){
-		StreamList.build_twitch(twitch)
+		this.build_twitch(twitch)
 	}
 
 	static build_twitch(twitch){

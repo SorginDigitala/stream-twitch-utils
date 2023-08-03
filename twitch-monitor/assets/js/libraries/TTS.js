@@ -1,5 +1,4 @@
-
-const synth=window.speechSynthesis
+const synth=window.speechSynthesis;
 class TTS{
 	static defaultVoice;	//voz por defecto (para leer nicks y demás)
 	static defaultVoices;	//voces disponibles por defecto para los usuarios
@@ -10,12 +9,12 @@ class TTS{
 	static maxRate=1.6;
 	static userVoices=JSON.parse(localStorage.getItem("user_voices"))??{};
 
-	static start(){
+	static loadVoices(defaultVoice,defaultVoices){
 		setTimeout(e=>{//a veces no se carga la lista de voces a tiempo.
-			TTS.defaultVoice=synth.getVoices().find(e=>e.name.toLowerCase().includes(config.tts.defaultVoice))
-			TTS.defaultVoices=synth.getVoices().filter(e=>e.name.toLowerCase().includes(config.tts.defaultVoices))
+			TTS.defaultVoice=synth.getVoices().find(e=>e.name.toLowerCase().includes(defaultVoice))
+			TTS.defaultVoices=synth.getVoices().filter(e=>e.name.toLowerCase().includes(defaultVoices))
 			//Groups.display_groups(tts_groups,tts_exceptions,config.tts);
-		},10)
+		},100);
 	}
 
 	static randVal(arr){
@@ -30,60 +29,45 @@ class TTS{
 	static getRandomRate(){
 		return this.rand(this.minRate,this.maxRate);
 	}
+	static between(x,min,max){
+		return x<min?min:(x>max?max:x)
+	}
 
 	static getVoice(user){
-		if(!TTS.userVoices[user])
+		if(!TTS.userVoices[user]){
 			TTS.setVoice(user,TTS.randVal(TTS.defaultVoices),TTS.getRandomPitch(),TTS.getRandomRate())
+		}
 		const voice=TTS.userVoices[user]
 		voice[0]=synth.getVoices().find(e=>e.voiceURI===voice[0])
 		return voice;
 	}
 
-	static setVoice(username,voice,pitch,rate){
+	static getRandVoice(str){
+		const voices=synth.getVoices().filter(e=>e.name.toLowerCase().includes(str.toLowerCase()));
+		return this.randVal(voices);
+	}
+
+	static setVoice(username,voice,pitch=1,rate=1){
 		TTS.userVoices[username]=[voice?voice.voiceURI:"",pitch,rate]
 		localStorage.setItem("user_voices",JSON.stringify(TTS.userVoices))
 	}
 
-	static speak_msg(user,msg){
+	static speak_msg(user,msg,volume){
 		if(TTS.lastVoiceUser!==user){
-			TTS.lastVoiceUser=user
-			TTS.speak(user,TTS.defaultVoice,1.2,1.2)
+			TTS.lastVoiceUser=user;
+			TTS.speak(user,TTS.defaultVoice,volume,1.2,1.2)
 		}
 		const mVoice=TTS.getVoice(user)
-		TTS.speak(msg,mVoice[0],mVoice[1],mVoice[2])
+		TTS.speak(msg,mVoice[0],volume,mVoice[1],mVoice[2])
 	}
 
-	static speak(msg,voice,pitch=1,rate=1){
-		if(!synth.speaking)//no sé por qué pero el sintetizador chrasea en Edge y Chrome en algunos ordenadores. Estas lineas son para probar.
-			synth.cancel()
-		const utterThis	=new SpeechSynthesisUtterance(TTS.parse_urls(msg))
-		utterThis.volume=config.volume*config.tts.volume
-		utterThis.pitch	=pitch
-		utterThis.rate	=rate
-		utterThis.voice	=voice
-		synth.speak(utterThis)
-	}
-
-	static parse_urls(msg){
-		return config.tts.speech_urls==2?msg:msg.replace(/((?:(?:https?:\/\/)|(?:www\.))([-A-Z0-9\.]+)([-A-Z0-9+&\?@#\/%=~_\.|]+))/ig,config.tts.speech_urls==1?"$2":"")
-	}
-
-	static between(x,min,max){
-		return x<min?min:(x>max?max:x)
-	}
-
-	static voiceCommand(platform,channel,user,color,msg){
-		const x=msg.toLowerCase().split(" ").slice(1,4)
-		if(!x[0]){
-			//en vez devolver falso debería desactivar el tts para el usuario.
-			return false;
-		}
-		const voice=TTS.getRandomVoice(synth.getVoices().filter(e=>e.name.toLowerCase().includes(x[0])))
-		const pitch=x[1]?TTS.between(x[1],TTS.minPitch,TTS.maxPitch):1
-		const rate=x[2]?TTS.between(x[2],TTS.minRate,TTS.maxRate):1
-		
-		TTS.setVoice(user,voice,pitch,rate)
-		localStorage.setItem("user_voices",JSON.stringify(TTS.userVoices))
-		return true;
+	static speak(msg,voice,volume,pitch=1,rate=1){
+		//if(!synth.speaking)synth.cancel()
+		const x		=new SpeechSynthesisUtterance(msg)
+		x.volume	=volume
+		x.pitch		=pitch
+		x.rate		=rate
+		x.voice		=voice
+		synth.speak(x);
 	}
 }

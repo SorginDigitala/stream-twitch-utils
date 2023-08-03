@@ -83,6 +83,12 @@ function array_toggle(arr,item){	//	https://stackoverflow.com/a/39349118/3875360
 }
 
 
+function currentScriptPath(level=1){
+	let line=(new Error()).stack.split('\n')[level+1].split('@').pop();
+	return line.substr(0,line.lastIndexOf('/')+1);
+};
+
+
 
 
 

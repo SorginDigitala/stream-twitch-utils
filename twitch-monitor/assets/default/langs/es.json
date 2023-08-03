@@ -6,6 +6,7 @@
 		"enabled":"Activado",
 		"disabled":"Desactivado",
 		"volume":"Volumen",
+		"add":"Añadir",
 		"remove":"Quitar",
 		"delete":"Eliminar",
 		"join":"Entrar",
@@ -38,6 +39,11 @@
 		"options.import":"Importar",
 		"options.reset":"Reiniciar configuración",
 		"options.reset_title":"Se reiniciará la configuración y se recargará la página.",
+
+
+		"Alerts.url_rules":"Leer todas las urls: ",
+		"Alerts.ignoreNumbers":"Ignorar números.",
+
 
 		"tts.volume":"Volumen",
 

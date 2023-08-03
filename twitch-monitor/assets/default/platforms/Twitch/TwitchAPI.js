@@ -1,9 +1,33 @@
 class TwitchAPI{
 	static url;
 
-	static async get(url){
-		const r=await fetch(url,{method:"GET",headers:{"Client-ID":Twitch.config.clientId,"Authorization":"Bearer "+sessionStorage.twitchOAuthToken}});
+	static async request(url,method,params={}){
+		const options={
+			method:method,
+			headers:{
+				"Authorization"	:"Bearer "+sessionStorage.twitchOAuthToken,
+				"Client-Id"		:Twitch.config.clientId,
+				"Content-Type"	:"application/json"
+			}
+		};
+		if(method==="POST" && params)
+			options.headers.body=JSON.stringify(params);
+	console.log(options);
+		const r=await fetch(url,options);
 		return(await r.json()).data;
+	}
+
+	static get(url){
+		return this.request(url,"GET");
+	}
+
+	static post(url,params){
+		console.log("test: ----> ",url,params);
+		return this.request(url,"POST",params);
+	}
+
+	static delete(url){
+		return this.request(url,"POST");
 	}
 
 	static get_users(users){		//	https://dev.twitch.tv/docs/api/reference#get-users
@@ -16,6 +40,13 @@ class TwitchAPI{
 
 	static get_last_followers(){	//	https://dev.twitch.tv/docs/api/reference#get-users-follows
 		return TwitchAPI.get('https://api.twitch.tv/helix/users/follows?first=30&to_id='+Twitch.user.id)
+	}
+
+	static ban(channel,user){	//	https://dev.twitch.tv/docs/api/reference/#ban-user
+		this.post(
+			"https://api.twitch.tv/helix/moderation/bans?broadcaster_id="+Twitch.user.id+"&moderator_id="+Twitch.user.id,
+			{data:{user_id:user.id,duration:300,reason:"no reason"}}
+		);
 	}
 
 	static update_channels(str){
@@ -42,8 +73,10 @@ class TwitchAPI{
 	}
 
 	static login(){	//	https://dev.twitch.tv/docs/authentication/getting-tokens-oauth
-		if(location.hash.match(/access_token=(\w+)/))
-			TwitchAPI.parseFragment(location.hash)
+		const hash=location.hash;
+		location.hash="";
+		if(hash.match(/access_token=(\w+)/))
+			TwitchAPI.parseFragment(hash)
 		if(sessionStorage.twitchOAuthToken){
 			TwitchAPI.get("https://api.twitch.tv/helix/users").then(users=>{
 				Twitch.user=users[0];
@@ -66,12 +99,17 @@ class TwitchAPI{
 		const state=TwitchAPI.hashMatch(hash,/state=(\w+)/)
 		if(sessionStorage.twitchOAuthState===state)
 			sessionStorage.twitchOAuthToken=TwitchAPI.hashMatch(hash,/access_token=(\w+)/)
-		location.hash=""
 	}
 
-	static authUrl(scope="channel:moderate+chat:read+chat:edit+channel:manage:redemptions+user_read+channel:read:subscriptions"){
+	static authUrl(scope=[
+		"moderator:manage:banned_users",
+		"chat:read",
+		"chat:edit",
+		"channel:read:subscriptions",
+		"channel:manage:redemptions"
+	]){
 		sessionStorage.twitchOAuthState=nonce(15)
-		TwitchAPI.url='https://id.twitch.tv/oauth2/authorize?response_type=token&client_id='+Twitch.config.clientId+'&redirect_uri='+(location.origin+location.pathname)+'&state='+sessionStorage.twitchOAuthState+'&scope='+scope;
+		TwitchAPI.url='https://id.twitch.tv/oauth2/authorize?response_type=token&client_id='+Twitch.config.clientId+'&redirect_uri='+(location.origin+location.pathname)+'&state='+sessionStorage.twitchOAuthState+'&scope='+scope.join("+");
 		return TwitchAPI.url;
 	}
 }

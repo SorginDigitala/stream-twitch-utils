@@ -18,16 +18,6 @@ class Numerica extends App{
 	static enable(b){
 	}
 
-
-	static getPanel(){
-		const container=createElement('div',{});
-		createElement("button",{onclick:e=>{
-			this.play();
-		}},container);
-		
-		return container;
-	}
-
 	static currentScriptPath(level=0){
 		let line=(new Error()).stack.split('\n')[level+1].split('@').pop();
 		return line.substr(0,line.lastIndexOf('/')+1);
@@ -78,5 +68,15 @@ class Numerica extends App{
 			});
 		};
 	}
+
+
+	static getPanel(){
+		const container=createElement('div',{innerText:"aoeuoaeu"});
+		createElement("button",{onclick:e=>{
+			this.play();
+		}},container);
+		
+		return container;
+	}
 }
-window.modules.Numerica=Numerica;
+window.apps.Numerica=Numerica;

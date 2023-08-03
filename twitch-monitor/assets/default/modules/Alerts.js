@@ -3,6 +3,7 @@ class Alerts extends Module{
 
 	static start(){
 		this.enable(config.modules.Alerts.enabled);
+		TTS.loadVoices("","");
 	}
 
 	static remove(){
@@ -20,16 +21,32 @@ class Alerts extends Module{
 		||	data.platform!=="Twitch"
 		||	data.type!=="chat")
 			return;
-		
-		//	comprobar grupos y excepciones
+
+		if(data.msg[0]==="!"){
+			//si es !voice:
+			if(data.msg.startsWith("!voice")){
+				const v=data.msg.split(" ");
+				TTS.setVoice(data.sender.username,TTS.getRandVoice(v[1]),v[2],v[3]);
+			}
+			return;
+		}
+
+		//	ig(!comprobar grupos y excepciones)
 			//return;
 		
 		if(conf.mode===0)
 			Alerts.play();
-		//	else
-			//tts()
+		else
+			Alerts.tts(data);
 	}
 
+	static tts(data){
+		const conf=config.modules.Alerts;
+		const msg=this.parse_urls(data.msg,conf.url_rules);
+		if(conf.ignoreNumbers && !/\p{L}/u.test(msg))
+			return;
+		TTS.speak_msg(data.sender.username,msg,conf.volume*config.options.volume);
+	}
 
 	static getPanel(){
 		this.update();
@@ -67,19 +84,23 @@ class Alerts extends Module{
 			//	default voices
 		
 		//	url rules
+		const lrules=createElement("div",{classList:"flexinput"},tts_config);
+
+		Lang.set_text(createElement("div",{},lrules),"Alerts.url_rules");
+
 		const url_rules=createElement("select",{onchange:e=>{
-			console.log(url_rules.value);
 			conf.url_rules=url_rules.value;
 			ConfigManager.save();
-		}},tts_config);
+		}},lrules);
 		createElement("option",{innerText:"Ignore",value:0},url_rules);
 		createElement("option",{innerText:"Domain",value:1},url_rules);
 		createElement("option",{innerText:"All",value:2},url_rules);
 		url_rules.value=conf.url_rules;
 		
-		const sounds_config=createElement("div",{classList:conf.mode===1?"hide":""},container);
 		
 		//	sounds
+		const sounds_config=createElement("div",{classList:conf.mode===1?"hide":""},container);
+		
 		const lsounds=createElement("div",{classList:"flexinput"},sounds_config);
 		createElement("input",{type:"button",value:"🎧",onclick:()=>{this.play()}},lsounds);
 		const sounds=createElement("select",{onchange:e=>{
@@ -101,42 +122,29 @@ class Alerts extends Module{
 			ConfigManager.save();
 		}},lsounds);
 
+		const numbers=createElement("div",{classList:"flexinput"},container);
+		createElement("input",{type:"checkbox",checked:conf.ignoreNumbers,onchange:e=>{
+			const b=!conf.ignoreNumbers;
+			conf.ignoreNumbers=b;
+			e.target.checked=b;
+			ConfigManager.save();
+		}},numbers);
+		Lang.set_text(createElement("span",{},numbers),"Alerts.ignoreNumbers");
+
+
 		createElement("hr",{},container);
 
-
-		const groups=createElement("label",{classList:"label"},container);
-		Lang.set_text(createElement("h2",{},groups)	,"Grupos");
-		Lang.set_text(createElement("p",{},	groups)	,"Que grupos pueden acceder a esta función.");
-		Lang.set_placeholder(createElement("input",{type:"text",onchange:e=>{}},groups),"Déjalo en blanco para permitir a todos los usuarios.");
-
-		const expceptions=createElement("label",{classList:"label"},container);
-		Lang.set_text(createElement("h2",{},expceptions)	,"Excepciones");
-		Lang.set_text(createElement("p",{},	expceptions)	,"Usuarios a los que incluir o excluir.");
-		Lang.set_placeholder(createElement("textarea",{classList:"textarea small",onchange:e=>{}},expceptions),"Nombres de usuario a los que quieras\nactivar/desactivar las alertas.\nLos usuarios en esta lista que NO esten en un grupo activarán la alerta.\nLos usuarios en esta lista que pertenezcan a un grupo activo serán ignorados.");
-		//	Groups
-		//	exceptions
+		const exceptions=new Groups(conf.exceptions,false,container);
 		
-		/*
-		<div class="groups">
-			<label>
-				<h2>Grupos</h2>
-				<p>Que grupos pueden acceder a esta función.</p>
-				<input id="alerts_groups" type="text" placeholder="Déjalo en blanco para permitir a todos los usuarios.">
-			</label>
-			<label class="groups_textarea">
-				<h2>Excepciones</h2>
-				<p>Usuarios a los que incluir o excluir.</p>
-				<textarea type="text" id="alerts_exceptions" placeholder="Nombres de usuario a los que quieras activar/desactivar las alertas.
-Los usuarios en esta lista que NO esten en un grupo activarán la alerta.
-Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados." style="height: 67px;"></textarea>
-			</label>
-		</div>
-		*/
 
 		//Groups.display_groups(alerts_groups,alerts_exceptions,config.alerts)		
 		
 		
 		return container;
+	}
+
+	static parse_urls(msg,r){
+		return r==2?msg:msg.replace(/((?:(?:https?:\/\/)|(?:www\.))([-A-Z0-9\.]+)([-A-Z0-9+&\?@#\/%=~_\.|]+))/ig,r==1?"$2":"")
 	}
 
 	static update(){

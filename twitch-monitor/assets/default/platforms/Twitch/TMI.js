@@ -69,7 +69,7 @@ class TMI{	//	Twitch Messaging Interface
 		const n=nonce(15)
 		TMI.ws.send("@client-nonce="+n+" PRIVMSG #"+channel+" :"+msg)
 
-		const r=new Action("",'Twitch','chat',channel,n,msg,msg,{id:'@me',username:'@me',color:'#000'});
+		const r=new Action("",'Twitch','chat',"msg",channel,n,msg,msg,{id:'@me',username:'@me',color:'#000'});
 		Events.dispatch('channel.message',r)
 	}
 
@@ -108,7 +108,7 @@ class TMI{	//	Twitch Messaging Interface
 	static get_badges(params){
 		if(params.badges){
 			params.badges=params.badges.split(",").map(e=>e.split("/")[0])
-			params.badges.forEach(e=>Groups.add_to_list(e))
+			//params.badges.forEach(e=>Groups.add_to_list(e))
 		}
 	}
 
@@ -148,6 +148,7 @@ class TMI{	//	Twitch Messaging Interface
 			original,
 			'Twitch',
 			'chat',
+			'msg',
 			e.channel,
 			e.params.id??e.params["target-msg-id"],
 			e.msg,

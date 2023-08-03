@@ -2,19 +2,6 @@ class Config extends Module{
 	static name='Config';
 
 	static start(){
-
-/*
-		log_chat_form.onsubmit=e=>{
-			e.preventDefault()
-			const form=e.target,
-				channels=Array.from(form.querySelectorAll("[type=checkbox]:checked")).map(x=>[x.dataset.platform,x.dataset.channel]),
-				msg=form.querySelector("[name=msg]").value
-			if(msg==="" || channels.length===0 || e.submitter.localName==="button")// un poco cagada lo del botón pero sino no se despliega on hover
-				return;
-			form.querySelector("[name=msg]").value=""
-			Actions.send_message(channels,msg)
-		}
-		*/
 	}
 	static save(){
 		console.error("Config.save() -> ConfigManager.save()");

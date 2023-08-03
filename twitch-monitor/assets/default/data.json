@@ -81,10 +81,15 @@
 			"name":"Log",
 			"managebar":false,
 			"files":[
-				"./assets/default/modules/Log.js"
+				"./assets/default/modules/Log.js",
+				"./assets/js/Libraries/Channels.js"
 			],
 			"defaultOptions":{
-				"enabled"		:true
+				"enabled"		:true,
+				"height"		:"325px",
+				"display"		:{"system":true,"chat":true,"action":true,"monetization":true},
+				"view_channels"	:{"twitch":{"presuntamente":true}},
+				"chat_channels"	:{"twitch":{"presuntamente":true}}
 			}
 		},
 		{
@@ -93,15 +98,18 @@
 			"managebar":true,
 			"files":[
 				"./assets/default/modules/Alerts.js",
-				"./assets/js/libraries/TTS.js"
+				"./assets/js/libraries/TTS.js",
+				"./assets/js/libraries/Groups.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true,
+				"ignoreNumbers"	:true,
 				"mode"			:0,
 				"volume"		:1,
 				"sound"			:"beep",
 				"custom"		:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/bell.mp3",
-				"url_rules"		:1
+				"url_rules"		:1,
+				"exceptions"	:{}
 			}
 		},
 		{
@@ -120,7 +128,7 @@
 		{
 			"id":"Apps",
 			"name":"Apps",
-			"managebar":true,
+			"managebar":false,
 			"files":[
 				"./assets/default/modules/apps.js"
 			],
@@ -132,10 +140,26 @@
 	"apps":[
 		{
 			"id":"Numerica",
-			"name":"Numerica",
-			"managebar":false,
+			"name":"[Twitch] Numerica",
+			"permissions":{
+				"Twitch":[
+					"moderator:manage:banned_users",
+					"channel:manage:moderators",
+					"channel:manage:vips"
+				]
+			},
 			"files":[
-				"./assets/default/apps/Numerica/app.js"
+				"./assets/default/apps/Numerica/Numerica.js"
+			],
+			"defaultOptions":{
+				"enabled"		:true
+			}
+		},
+		{
+			"id":"Paint",
+			"name":"Paint",
+			"files":[
+				"./assets/default/apps/Paint/Paint.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true

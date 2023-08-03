@@ -6,6 +6,7 @@
 		"enabled":"Enabled",
 		"disabled":"Disabled",
 		"volume":"Volume",
+		"add":"Add",
 		"remove":"Remove",
 		"delete":"Delete",
 		"join":"Join",
@@ -38,6 +39,11 @@
 		"options.import":"Import",
 		"options.reset":"Reset Config",
 		"options.reset_title":"Se reiniciará la configuración y se recargará la página.",
+
+
+		"Alerts.url_rules":"Url rules: ",
+		"Alerts.ignoreNumbers":"Ignore numbers.",
+
 
 		"tts.volume":"Volume",
 

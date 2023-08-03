@@ -38,7 +38,7 @@ class Blocks{	//	Esta clase debería crear la lista de canales.
 
 
 
-
+/*
 
 
 
@@ -168,32 +168,30 @@ class Groups{
 	display(e){
 		console.log(e.groups)
 		this.input.value=e.groups.join(", ")
-		/*
-		input.value=arr.groups.join(", ")
-		input.onchange=e=>{
-			arr.groups=channels_to_array(input.value)
-			Config.save()
-		}
-		textarea.value=arr.users.join(", ")
-		*/
+		
+		//	input.value=arr.groups.join(", ")
+		//	input.onchange=e=>{
+		//		arr.groups=channels_to_array(input.value)
+		//		Config.save()
+		//	}
+		//	textarea.value=arr.users.join(", ")
 	}
 
 	display_popup(){
 		Groups.current=this
 		//	Falta actualizar los .checked con los datos del bloque
-		/*
-		group_list.querySelectorAll("input").forEach(e=>{
-			e.checked=arr.includes(e.name)
-			e.onchange=(e=>{
-				array_toggle(arr,e.target.name)
-				input.value=arr.join(", ")
-				Config.save()
-			})
-		})
-		*/
+		
+		//	group_list.querySelectorAll("input").forEach(e=>{
+		//		e.checked=arr.includes(e.name)
+		//		e.onchange=(e=>{
+		//			array_toggle(arr,e.target.name)
+		//			input.value=arr.join(", ")
+		//			Config.save()
+		//		})
+		//	})
 		Groups.popup.classList.remove("hide")
 		document.addEventListener('keydown',Groups.hide)
 	}
 }
 
-
+*/

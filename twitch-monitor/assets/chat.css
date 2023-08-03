@@ -53,10 +53,12 @@ hr{
 
 
 input:not([type="range"]),select{
-	padding:.3rem;
 	border: 1px solid #999;
 	border-radius:2px;
 	font-size: 1rem;
+}
+select{
+	padding:.3rem;
 }
 input:focus,
 textarea:focus,
@@ -76,10 +78,17 @@ legend{
 }
 
 
-details{}
+details{
+	border:1px dotted green;
+	padding:0;
+}
 summary{
 	cursor:pointer;
+	padding:10px;
 }
+details[open]{padding:0 10px 10px}
+details[open] summary{padding:10px 0}
+
 
 
 
@@ -93,6 +102,13 @@ summary{
 }
 
 
+
+
+.content:not([data-system])			[data-type=system],
+.content:not([data-chat])			[data-type=chat],
+.content:not([data-action])			[data-type=action],
+.content:not([data-monetization])	[data-type=monetization]
+{display:none}
 
 
 
@@ -241,6 +257,7 @@ body:not([data-youtube]) [data-require="youtube"]{
 	flex-direction:row-reverse
 }
 
+.flexgrow,
 .flexinput>input[type="text"],
 .flexinputrtl>input[type="text"]{
 	flex-grow:1;
@@ -335,6 +352,7 @@ body:not([data-youtube]) [data-require="youtube"]{
 	gap:4px;
 	padding:6px 15px;
 	user-select:none;
+	white-space: nowrap;
 }
 .button.on{border:1px solid darkgreen}
 .button:not(.on){border:1px dotted gray}
@@ -388,9 +406,9 @@ body:not([data-youtube]) [data-require="youtube"]{
 	border:1px solid darkgreen;
 
 	resize:vertical;
-	min-height:14.4rem;
-	height:20.4rem;
-	max-height:50.4rem;
+	min-height:12rem;
+	height:20rem;
+	max-height:95vh;
 	scrollbar-width:thin;
 }
 
@@ -484,5 +502,6 @@ body:not([data-youtube]) [data-require="youtube"]{
 
 
 
-
+.pad0{padding:0}
+.padrevert{padding:revert}
 

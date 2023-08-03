@@ -15,8 +15,6 @@ class ModuleManager{
 		//SEvents.start();
 		//Commands.start();
 		//Timers.start();
-		//TTS.start();
-		//Alerts.start();
 	}
 
 	static load(module,column=0){

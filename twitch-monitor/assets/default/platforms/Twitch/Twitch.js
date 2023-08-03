@@ -1,4 +1,4 @@
-class Twitch extends Platforms{
+class Twitch extends Platform{
 	static user;
 	static config;
 	static data;

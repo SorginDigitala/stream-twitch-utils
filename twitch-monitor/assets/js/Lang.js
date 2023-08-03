@@ -53,7 +53,7 @@ class Lang{
 			return key;
 		if(this.data && this.data[key])
 			return this.data[key];
-		console.log("["+this.current+"]","Lang value not found",key);
+		console.log("["+this.current+"]","Lang value not found:",key);
 		return key;
 	}
 

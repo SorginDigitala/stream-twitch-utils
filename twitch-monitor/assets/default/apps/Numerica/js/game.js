@@ -32,49 +32,49 @@ class Game{
 		if(data.type!=="chat")
 			return;
 		const score=Number(data.raw_msg),
-			username=data.sender.username;
+			user=data.sender;
 		if(
 			!Number.isInteger(score)
 		||	score<1
 		||	(Game.score===0 && score!==1)
 		//||	(!this.options.ban_mods && data.isMod)
-		||	(Game.options.ignore_lastplayer && username===Game.lastPlayer)
+		||	(Game.options.ignore_lastplayer && user.username===Game.lastPlayer.username)
 		)
 			return;
 
-		if(Game.lastPlayer && username===Game.lastPlayer){
-			Game.ban(username,Game.options.ban_min);
+		if(Game.lastPlayer && user.username===Game.lastPlayer.username){
+			Game.ban(user,Game.options.ban_min);
 			return;
 		}
 
-		Game.play(username,score);
+		Game.play(user,score);
 	}
 
-	static play(username,score){
-		console.log("score:",username,score);
+	static play(user,score){
+		console.log("score:",user,score);
 		
 		if(this.score+1===score){
-			this.lastPlayer=username;
+			this.lastPlayer=user;
 			this.score=score;
 			window.score.innerText=score.toString();
-			lastPlayer.innerText=username;
+			lastPlayer.innerText=user.username;
 			lastPlayer.classList.toggle("fail",false);
 		}else
-			this.gameover(username);
+			this.gameover(user);
 	}
 
-	static gameover(loser){
-		console.log("gameover",loser);
+	static gameover(user){
+		console.log("gameover",user);
 		this.enable(false);
 		
-		lastPlayer.innerText=loser;
+		lastPlayer.innerText=user.username;
 		lastPlayer.classList.toggle("fail",true);
 		window.score.innerText="0";
 
 		if(this.score>this.options.data.highscore)
 			this.updateHighScore(this.lastPlayer,this.score);
 
-		this.ban(loser,Math.min(this.score*this.options.ban_multiplier,this.options.ban_min));
+		this.ban(user,Math.min(this.score*this.options.ban_multiplier,this.options.ban_min));
 		setTimeout(()=>{
 			this.start();
 		},3000);
@@ -100,14 +100,14 @@ class Game{
 		this.options.data.highscore_player=player;
 
 		highscore.innerText=score.toString();
-		highscore_player.innerText=player;
+		highscore_player.innerText=user.username;
 		
 		this.vip(this.options.data.lastVip,false);
 		
 		if(this.options.reward_vip
 		//&&	!["vip","mod"].includes(userrole)?
 		)
-			this.vip(player,true);
+			this.vip(user,true);
 	}
 }
 window.intercom=Game;

@@ -6,16 +6,10 @@
 		"scripts2":["./assets/defaults/data.json"]
 	},
 	"mymodules":[
-		["Log"],
+		["Log","ChatGPT"],
 		["Apps","Alerts"]
 	],
-	"modules":{
-		"Platforms":{
-			"default":null
-		},
-		"Log":{
-			"chat_channels":[["twitch","presuntamente"]]
-		}
-	},
-	"platforms":{}
+	"modules":{},
+	"platforms":{},
+	"apps":{}
 }

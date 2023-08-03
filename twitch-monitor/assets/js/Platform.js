@@ -3,7 +3,13 @@ class Platform{
 
 	//	
 	static start(data){
-		Platforms.add(data,createElement('div',{innerText:'Comming soon...'}));
+		let html="Estás intentando cargar una plataforma ("+this.name+") que no contiene el método start()."
+		+"<br>Se ha cargado el método Platform.start()."
+		+"<br><a href=\""+currentScriptPath(1)+"/Platform.js\" target=_blank>Platform.js</a>";
+		window.data.platforms.find(e=>e.id===this.name).files.forEach(e=>{
+			html+="<br><a href=\""+e+"\" target=_blank>"+e.split("/").slice(-1)+"</a>";
+		});
+		Platforms.add(data,createElement('div',{innerHTML:html}));
 		console.error(this.name+".start()",data);
 	}
 
@@ -26,6 +32,8 @@ class Platform{
 	static getPanel(){
 		// throw para evitar que se genere un panel
 		throw new Error(this.name+".getPanel()");
+		const container=createElement("div",{innerHTML:"aoeu"});
+		return container;
 	}
 
 
@@ -58,7 +66,14 @@ class Platform{
 		console.error(this.name+".unban(channel,username)",channel,username);
 	}
 
-	static set_roles(channel,username,roles){
-		console.error(this.name+".set_roles(channel,username,roles)",channel,username,roles);
+	static setRoles(channel,username,roles){
+		console.error(this.name+".setRoles(channel,username,roles)",channel,username,roles);
+	}
+
+
+	//	Obtener info
+	static getChannels(){
+		console.error(this.name+".getChannels()");
+		return [];
 	}
 }

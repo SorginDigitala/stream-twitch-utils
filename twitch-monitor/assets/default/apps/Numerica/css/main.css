@@ -8,6 +8,54 @@ html,body{
 	background:transparent;
 	margin:0;
 	padding:0;
+	color:#fff;
+	overflow:hidden;
+}
+
+canvas{
+	height:100vh;
+	width:100vw;
+	position:absolute;
+}
+
+#game{
+	position:absolute;
+	display:flex;
+	flex-direction:column;
+	height:100%;
+	width:100%;
+	pointer-events:none;
+}
+
+
+#topmenu{
+	height:20vh;
+	width:100vw;
+}
+#topmenu>div{
+	height:10vh;
+	width:100%;
+	line-height:10vh;
+	text-align:center;
+}
+
+
+#table{
+	display:flex;
+	flex-grow:1;
+	width:100%;
+	text-align:center;
+}
+#score{
+	margin:auto;
+}
+
+
+#lastPlayer{
+	height:15vh;
+	width:100%;
+	line-height:15vh;
+	text-align:center;
 }
 
 
