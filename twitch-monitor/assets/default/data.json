@@ -130,7 +130,7 @@
 			"name":"Apps",
 			"managebar":false,
 			"files":[
-				"./assets/default/modules/apps.js"
+				"./assets/default/modules/Apps.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true
