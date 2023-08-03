@@ -82,7 +82,7 @@
 			"managebar":false,
 			"files":[
 				"./assets/default/modules/Log.js",
-				"./assets/js/Libraries/Channels.js"
+				"./assets/js/libraries/Channels.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true,
