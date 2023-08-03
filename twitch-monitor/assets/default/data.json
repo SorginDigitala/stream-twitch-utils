@@ -149,7 +149,7 @@
 				]
 			},
 			"files":[
-				"./assets/default/apps/Numerica/Numerica.js"
+				"./assets/default/apps/numerica/Numerica.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true
