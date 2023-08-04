@@ -105,9 +105,11 @@ class TTS{
 	}
 
 	static speak_msg(user,msg){
+		if(conf.ignoreNumbers && !/\p{L}/u.test(msg))
+			return;
 		if(TTS.lastVoiceUser!==user){
 			TTS.lastVoiceUser=user;
-			TTS.speak(user,TTS.defaultVoice,1.2,1.2);
+			TTS.speak(user.replaceAll("_"," "),TTS.defaultVoice,1.2,1.2);
 		}
 		const mVoice=TTS.get_user_voice(user);
 		TTS.speak(msg,synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0]) || e.name.toLowerCase().includes(mVoice[0])),mVoice[1],mVoice[2]);
