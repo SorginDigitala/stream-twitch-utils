@@ -105,7 +105,7 @@ class TTS{
 	}
 
 	static speak_msg(user,msg){
-		if(conf.ignoreNumbers && !/\p{L}/u.test(msg))
+		if(!/\p{L}/u.test(msg))
 			return;
 		if(TTS.lastVoiceUser!==user){
 			TTS.lastVoiceUser=user;
