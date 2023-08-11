@@ -64,7 +64,7 @@ class TTS{
 
 	static enable(b){
 		if(b)
-			Events.add("PRIVMSG",e=>{this.play(...e)});
+			Events.add("PRIVMSG",TTS.play);
 		else
 			Events.remove("PRIVMSG",TTS.play);
 		tts.classList.toggle("hide",!b);
@@ -99,10 +99,10 @@ class TTS{
 			return;
 		
 		if(d.msg.includes("*quack*")){
-			if(!this.quacks)
+			if(!TTS.quacks)
 				for(let i=6;i>0;i--)
-					this.quacks.push(new Audio("./assets/audios/cats/cat"+i+".mp3"));
-			this.quacks[Math.floor(Math.random()*(1-5)+5)].play();
+					TTS.quacks.push(new Audio("./assets/audios/cats/cat"+i+".mp3"));
+			TTS.quacks[Math.floor(Math.random()*(1-5)+5)].play();
 			return;
 		}
 
