@@ -93,7 +93,7 @@ class TTS{
 		localStorage.setItem("user_voices",JSON.stringify(TTS.userVoices));
 	}
 
-	quacks=[]
+	static quacks=[]
 	static play(d){
 		if(d && (d.params["emote-only"] || !xor_msg(d.params,config.tts)))
 			return;
