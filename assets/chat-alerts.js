@@ -100,10 +100,8 @@ class TTS{
 		
 		if(d.msg.includes("*quack*")){
 			if(TTS.quacks.length===0)
-				for(let i=6;i>0;i--){
-					console.log(i)
+				for(let i=6;i>0;i--)
 					TTS.quacks.push(new Audio("./assets/audios/cats/cat"+i+".mp3"));
-				}
 			TTS.quacks[Math.floor(Math.random()*(1-5)+5)].play();
 			return;
 		}
