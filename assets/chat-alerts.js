@@ -64,7 +64,7 @@ class TTS{
 
 	static enable(b){
 		if(b)
-			Events.add("PRIVMSG",TTS.play);
+			Events.add("PRIVMSG",e=>{this.play(...e)});
 		else
 			Events.remove("PRIVMSG",TTS.play);
 		tts.classList.toggle("hide",!b);
