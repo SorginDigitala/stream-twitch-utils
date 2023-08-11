@@ -5,8 +5,7 @@ class ConfigManager{
 		//	Obtenemos la configuración de usuario
 		const x=localStorage.getItem("chat-config");
 		config=x?JSON.parse(x):(await fetch("./assets/config.json",{cache:"force-cache"}).then(r=>r.json()).then(r=>r));
-		
-		console.log(config.options.lang);
+
 		//	Cargamos el idioma (lo hacemos aquí para que sea asincrono mientras se cargan el resto de datos)
 		Lang.start(config.options.lang);
 
@@ -16,7 +15,7 @@ class ConfigManager{
 			await this.getConfigData(x);
 
 		//	Ordenamos los módulos/plataformas/... alfabeticamente
-		[data.platforms,data.modules,data.media].forEach(e=>e.sort((a,b)=>a.name.localeCompare(b.name)));
+		[data.platforms,data.modules,data.apps,data.media].forEach(e=>e.sort((a,b)=>a.id.localeCompare(b.id)));
 	}
 
 	static async getConfigData(url){

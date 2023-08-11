@@ -1,6 +1,5 @@
 class Platform{
 
-
 	//	
 	static start(data){
 		let html="Estás intentando cargar una plataforma ("+this.name+") que no contiene el método start()."
@@ -17,23 +16,38 @@ class Platform{
 		console.error(this.name+".enable(b)",b);
 	}
 
-	static remove(){
-		console.error(this.name+".remove()");
-	}
-
-	static login(){
-		console.error(this.name+".login()");
+	static onremove(){
+		console.error(this.name+".onremove()");
 	}
 
 	static logout(){
-		console.error(this.name+".logout()");
+		console.error(this.name+".logout()","Se requiere para cuando se fuerza el borrado de datos");
+		throw new Error(this.name+".logout()");
 	}
+
 
 	static getPanel(){
 		// throw para evitar que se genere un panel
 		throw new Error(this.name+".getPanel()");
 		const container=createElement("div",{innerHTML:"aoeu"});
 		return container;
+	}
+
+
+	//	Obtener info
+	static getChannels(){
+		console.error(this.name+".getChannels()");
+		return [];
+	}
+
+
+	//	chat actions
+	static send(channels,msg){
+		console.error(this.name+".send(channels,msg)",channels,msg);
+	}
+
+	static action(channel,action){
+		console.error(this.name+".action(channel,action)",channel,action);
 	}
 
 
@@ -46,18 +60,6 @@ class Platform{
 		console.error(this.name+".leave(channel)",channel);
 	}
 
-
-	//	chat actions
-	static msg(channel,msg){
-		console.error(this.name+".msg(channel,msg)",channel,msg);
-	}
-
-	static action(channel,action){
-		console.error(this.name+".action(channel,action)",channel,action);
-	}
-
-
-	//	chat admin
 	static ban(channel,username,time=0){
 		console.error(this.name+".ban(channel,username,time=0)",channel,username,time);
 	}
@@ -68,12 +70,5 @@ class Platform{
 
 	static setRoles(channel,username,roles){
 		console.error(this.name+".setRoles(channel,username,roles)",channel,username,roles);
-	}
-
-
-	//	Obtener info
-	static getChannels(){
-		console.error(this.name+".getChannels()");
-		return [];
 	}
 }

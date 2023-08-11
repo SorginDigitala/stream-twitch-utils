@@ -36,6 +36,7 @@
 			"color1":"#ff0000",
 			"color2":"#fff",
 			"defaultOptions":{
+				"load"			:true,
 				"enabled"		:true,
 				"channels"		:[]
 			}
@@ -50,6 +51,7 @@
 			"color1":"#21b36c",
 			"color2":"#fff",
 			"defaultOptions":{
+				"load"			:true,
 				"enabled"		:true,
 				"channels"		:[]
 			}
@@ -58,7 +60,6 @@
 	"modules":[
 		{
 			"id":"Platforms",
-			"name":"Platforms",
 			"managebar":false,
 			"files":[
 				"./assets/default/modules/Platforms.js"
@@ -69,7 +70,6 @@
 		},
 		{
 			"id":"Config",
-			"name":"Config",
 			"managebar":false,
 			"files":[
 				"./assets/default/modules/Config.js"
@@ -78,28 +78,26 @@
 		},
 		{
 			"id":"Log",
-			"name":"Log",
 			"managebar":false,
 			"files":[
 				"./assets/default/modules/Log.js",
-				"./assets/js/libraries/Channels.js"
+				"./assets/js/components/Channels.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true,
 				"height"		:"325px",
-				"display"		:{"system":true,"chat":true,"action":true,"monetization":true},
-				"view_channels"	:{"twitch":{"presuntamente":true}},
-				"chat_channels"	:{"twitch":{"presuntamente":true}}
+				"display"		:{"show_emotes":true,"system":true,"chat":true,"action":true,"monetization":true},
+				"view_channels"	:{"Twitch":{"presuntamente":true}},
+				"chat_channels"	:{"Twitch":{"presuntamente":true}}
 			}
 		},
 		{
 			"id":"Alerts",
-			"name":"Alerts",
 			"managebar":true,
 			"files":[
 				"./assets/default/modules/Alerts.js",
-				"./assets/js/libraries/TTS.js",
-				"./assets/js/libraries/Groups.js"
+				"./assets/js/components/TTS.js",
+				"./assets/js/components/Groups.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true,
@@ -108,13 +106,13 @@
 				"volume"		:1,
 				"sound"			:"beep",
 				"custom"		:"https://sorgindigitala.github.io/stream-twitch-utils/assets/audios/alerts/bell.mp3",
+				"defaultVoice"	:"",
 				"url_rules"		:1,
 				"exceptions"	:{}
 			}
 		},
 		{
 			"id":"ChatGPT",
-			"name":"ChatGPT",
 			"managebar":true,
 			"files":[
 				"./assets/default/modules/ChatGPT.js"
@@ -127,8 +125,7 @@
 		},
 		{
 			"id":"Apps",
-			"name":"Apps",
-			"managebar":false,
+			"managebar":true,
 			"files":[
 				"./assets/default/modules/Apps.js"
 			],
@@ -148,8 +145,8 @@
 					"channel:manage:vips"
 				]
 			},
-			"files":[
-				"./assets/default/apps/numerica/Numerica.js"
+			"path":[
+				"./assets/default/apps/numerica/"
 			],
 			"defaultOptions":{
 				"enabled"		:true
@@ -158,8 +155,8 @@
 		{
 			"id":"Paint",
 			"name":"Paint",
-			"files":[
-				"./assets/default/apps/Paint/Paint.js"
+			"path":[
+				"./assets/default/apps/paint/"
 			],
 			"defaultOptions":{
 				"enabled"		:true

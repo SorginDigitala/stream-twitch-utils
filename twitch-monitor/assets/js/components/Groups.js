@@ -12,7 +12,7 @@ class Groups{
 			this.create(container);
 
 		//	chequear cuando se añaden nuevos grupos
-		//	Events.on("Twitch.channels.update",this.update);
+		//	Events.on("channels.update",this.update);
 	}
 
 	create(c){

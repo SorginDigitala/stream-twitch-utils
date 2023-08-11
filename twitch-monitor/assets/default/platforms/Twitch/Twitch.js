@@ -5,16 +5,13 @@ class Twitch extends Platform{
 
 	static start(data){
 		this.data=data;
-		if(config.platforms.Twitch){
-			this.config=config.platforms.Twitch;
-		}else
-			config.platforms.Twitch=this.config=data.defaultOptions;
+		this.config=config.platforms.Twitch;
 
-		Events.on("Twitch.login",		this.on_login);
-		Events.on("on.platform.login",	this.on_login);
+		Events.on("Twitch.login",this.on_login);
 
 		TwitchAPI.login();
 		TwitchBuilder.start();
+		TwitchAPI.update_channels(this.config.channels.join(", "));
 	}
 
 	static enable(b){
@@ -22,32 +19,17 @@ class Twitch extends Platform{
 		Events.dispatch("on.platform.enable",this.data,b);
 	}
 
-	static remove(){
+	static onremove(){
 		//borrar Platform
-		console.log("remove twitch platform")
 	}
 
 	static logout(){
-		sessionStorage.clear();
-		location.reload();
-		/*
-		TMI.enable(false);
-		PubSub.enable(false);
-		TwitchBuilder.update_auth_html(false);
-		*/
+		TwitchAPI.logout();
 	}
 
-
-
-
-
-
-	static on_login(b){
-		TMI.start()
-		if(b)
-			PubSub.start();
+	static getChannels(){
+		return Twitch.config.channels;
 	}
-
 
 	static getPanel(){
 		
@@ -55,6 +37,20 @@ class Twitch extends Platform{
 
 
 
+
+
+	static on_login(b){
+		TMI.start()
+		b && PubSub.start();
+	}
+
+
+
+	static send(channels,msg){
+		channels.forEach(c=>{
+			TMI.send(c,msg);
+		});
+	}
 
 
 	//	chat admin
@@ -68,4 +64,4 @@ class Twitch extends Platform{
 		console.error(this.name+".unban(channel,username)",channel,username);
 	}
 }
-window.platforms['Twitch']=Twitch;
+platforms.Twitch=Twitch;

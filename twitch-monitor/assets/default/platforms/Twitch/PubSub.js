@@ -2,7 +2,7 @@ class PubSub{
 	static ws
 
 	static start(){
-		Events.on("Twitch.channels.update",PubSub.on_channels_update)
+		Events.on("channels.update",PubSub.on_channels_update)
 		Events.on("Twitch.enable",PubSub.enable)
 		PubSub.connect()
 	}
@@ -13,7 +13,7 @@ class PubSub{
 		b?PubSub.connect():PubSub.ws.close()
 	}
 
-	static on_channels_update(leave,join,current){
+	static on_channels_update(platform,currentleave,join){
 		//PubSub.send_command("UNLISTEN",leave)
 		//PubSub.send_command("LISTEN",join)
 	}
@@ -31,7 +31,7 @@ class PubSub{
 			heartbeatHandle=setInterval(e=>PubSub.ws.send('{"type":"PING"}'),heartbeatInterval)
 			PubSub.send_command("LISTEN",["channel-points-channel-v1." +Twitch.user.id,"raid."+Twitch.user.id])
 			Events.dispatch("PubSub.ws",true)
-			Events.on("Twitch.channels.update",PubSub.on_channels_update)
+			Events.on("channels.update",PubSub.on_channels_update)
 		}
 
 		PubSub.ws.onmessage=function(event){
@@ -45,7 +45,7 @@ class PubSub{
 			if(Twitch.config.enabled)
 				setTimeout(PubSub.connect,reconnectInterval)
 			Events.dispatch("PubSub.ws",false)
-			Events.remove("Twitch.channels.update",PubSub.on_channels_update)
+			Events.remove("channels.update",PubSub.on_channels_update)
 		}
 
 		PubSub.ws.onerror=e=>console.log("[pubsub-edge] error:",e)

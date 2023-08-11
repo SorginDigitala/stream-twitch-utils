@@ -9,12 +9,12 @@ class StreamList{
 
 	static build_twitch(twitch){
 		StreamList.on_update_twitch_channels([],twitch,twitch)
-		Events.add("Twitch.channels.update",StreamList.on_update_twitch_channels)
-		Events.add("Twitch.login",StreamList.get_streams_info)
+		Events.on("channels.update",StreamList.on_update_twitch_channels)
+		Events.on("Twitch.login",StreamList.get_streams_info)
 		setInterval(StreamList.get_streams_info,12000)
 	}
 
-	static on_update_twitch_channels(leave,join,current){
+	static on_update_twitch_channels(platform,currentleave,join){
 		leave.forEach(e=>{
 			const i=StreamList.twitch_channels.findIndex(c=>c[0]===e)
 			if(i>=0){

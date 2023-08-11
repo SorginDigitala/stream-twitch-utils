@@ -47,6 +47,27 @@ function nonce(length){	// https://www.thepolyglotdeveloper.com/2015/03/create-a
 }
 
 
+function multimenu_click(div,onClick){
+	div.querySelectorAll(".menu>*").forEach(b=>{
+		b.onclick=e=>{
+			let i=0;
+			div.querySelectorAll(".menu>*").forEach((b2,i2)=>{
+				b2.classList.toggle("on",b===b2);
+				if(b===b2)
+					i=i2;
+			});
+			div.querySelectorAll(".content>div").forEach((c,i2)=>c.classList.toggle("hide",i!==i2))
+			onClick && onClick(b,!!e);
+		}
+	});
+}
+
+
+
+
+
+
+
 
 
 
@@ -62,7 +83,7 @@ function normalize_channel(c){
 	return c.trim().toLowerCase();
 }
 
-String.prototype.splice = function(start,length,replacement) {
+String.prototype.splice=function(start,length,replacement){
     return this.substr(0,start)+replacement+this.substr(start+length);
 }
 
@@ -87,85 +108,5 @@ function currentScriptPath(level=1){
 	let line=(new Error()).stack.split('\n')[level+1].split('@').pop();
 	return line.substr(0,line.lastIndexOf('/')+1);
 };
-
-
-
-
-
-function multimenu_click(div,onClick){
-	div.querySelectorAll(".menu>*").forEach(b=>{
-		b.onclick=e=>{
-			let i=0;
-			div.querySelectorAll(".menu>*").forEach((b2,i2)=>{
-				b2.classList.toggle("on",b===b2);
-				if(b===b2)
-					i=i2;
-			});
-			div.querySelectorAll(".content>div").forEach((c,i2)=>c.classList.toggle("hide",i!==i2))
-			onClick && onClick(b);
-		}
-	});
-}
-
-
-
-
-
-
-class Media{
-	static list=[]
-	static current
-
-	static start(){
-		//	hay que pensar en como agregar un video player de una forma elegante, con absolute y centrado.
-		//	https://stackoverflow.com/questions/15286407/in-javascript-what-is-the-video-equivalent-of-new-audio/49558085
-	}
-
-
-
-	static play(){
-		let c=Media.current
-		if(c && !c.content.paused || Media.list.length===0)
-			return;
-		c=Media.list.shift()
-		c.content.onended=e=>{c.onend(c.data);Media.play()}
-		c.onstart(c.data)
-		Media.set_volume()
-		c.content.play()
-	}
-
-	static play_alert(){
-		
-	}
-
-	static play_sound(url,data,onstart,onend){
-		//comprobar si la url existe.
-		Media.list.push({
-			"type"		:"audio",
-			"content"	:new Audio(url),
-			"onstart"	:onstart,
-			"onend"		:onend,
-			"data"		:data,
-		});
-		Media.play()
-	}
-
-	static play_video(url){
-		//comprobar si la url existe.
-	}
-
-	static set_volume(){
-		if(Media.current)
-			Media.current.content.volume=config.volume
-	}
-}
-/*
-document.body.onclick=e=>{
-	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/beep.mp3");
-	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/beep.mp3");
-	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/wololo.mp3");
-	Media.play_sound("file:///C:/Users/c/Desktop/NodeJS/stream-twitch-utils/assets/audios/alerts/beep.mp3");
-}
-*/
 
 

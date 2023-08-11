@@ -3,7 +3,7 @@ class Numerica extends App{
 	static height	=400;
 
 	static start(){
-		this.enable(config.modules.Numerica.enabled);
+		this.enable(config.modules[this.name].enabled);
 		
 		window.addEventListener('load', () => {
 			const popup = window;
@@ -24,13 +24,14 @@ class Numerica extends App{
 	};
 
 	static play(){
+		const app=data.apps.find(e=>e.id==="Numerica");
 		
 		const params=
 			"width="+this.width+","+
 			"height="+this.height+","+
 			"left=0,"+
 			"top=0";
-		const w=window.open(this.currentScriptPath(0)+"index.htm","_myTarget__"+this.name,params);
+		const w=window.open(app.path+"index.htm","_myTarget__"+this.name,params);
 		
 		if(!w){
 			console.error("Sin permisos para abrir popups");

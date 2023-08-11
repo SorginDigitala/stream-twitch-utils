@@ -9,51 +9,26 @@ class ModuleManager{
 		config.mymodules.forEach((list,i)=>{
 			list.forEach(m=>this.load(data.modules.find(x=>x.id===m),i+1));
 		});
-		
-		//	código antiguo:
-		//StreamList.start(config.platforms.Twitch.channels,config.platforms.Youtube.channels)
-		//SEvents.start();
-		//Commands.start();
-		//Timers.start();
 	}
 
 	static load(module,column=0){
+		//	Si no tiene columna, se le asigna una.
 		if(column===0)
 			column=this.getSmallerColumn();
 		const col=panelgrid.querySelector('.column:nth-child('+(column)+')');
 
-		const fieldset=createElement('fieldset',{});
+		//	Se genera el html (se crea antes para que mantenga el orden)
+		const fieldset=createElement("fieldset",{},col);
 		fieldset.dataset.module=module.id;
-		createElement('legend',{innerText:module.name},fieldset);
-		col.append(fieldset);
-		
-		let filecount=0;
+		Lang.set_text(createElement("legend",{},fieldset),"module."+module.id);
+
+		//	Se cargan los scripts y una vez cargados se llama a la función this.onload();
+		let i=module.files.length;
 		module.files.forEach(f=>{
-			filecount++;
 			createElement("script",{src:f,onload:()=>{
-				--filecount===0 && this.add(module);
+				--i===0 && this.onload(module,fieldset);
 			}},document.body);
 		})
-	}
-
-	static manageBar(module,container){
-		const isOn=config.modules[module.id]?.enabled;
-		
-		const controls=createElement('div',{style:'height:30px;display:flex;background:rgba(.9,.9,.9,.05);margin:5px 0'},container);
-
-		const label=createElement('label',{style:'height:30px;flex-grow:1'},controls);
-		createElement('input',{type:'checkbox',style:'line-height:30px;',checked:isOn,onclick:e=>{
-			const b=e.target.checked;
-			config.modules.Alerts.enabled=b;
-			modules[module.id].enable(b);
-			ConfigManager.save();
-		}},label);
-		Lang.set_text(createElement('span',{style:'line-height:30px;'},label),'enabled');
-
-		Lang.set_title(createElement('button',{innerText:'X',className:'button',onclick:e=>{
-			ModuleManager.rmv(module.id);
-			ConfigManager.save();
-		}},controls),"remove");
 	}
 
 	static getSmallerColumn(){
@@ -61,30 +36,54 @@ class ModuleManager{
 		return columns[0].offsetHeight>columns[1].offsetHeight?2:1;
 	}
 
-	static add(module){
-		const id=module.id;
+	static onload(data,fieldset){
+		const id=data.id;
 		const m=modules[id];
 		
-		if(!config.modules[id]){
-			const m2=data.modules.find(e=>e.id===id);
-			console.log(m2);
-			config.modules[id]=m2.defaultOptions;
-		}
+		//	Si no existe una configuración guardada, se carga una por defecto.
+		if(!config.modules[id])
+			config.modules[id]=data.defaultOptions;
 
-		const fieldset=document.querySelector("[data-module="+id+"]");
-
-		if(module.managebar)
-			this.manageBar(module,fieldset);
+		//	Si el módulo tiene una barra de opciones, la cargamos
+		if(data.managebar)
+			fieldset.append(this.manageBar(data));
 		
 		fieldset.append(m.getPanel());
 		m.start();
 	}
 
-	static rmv(id){
-		modules[id].remove();
+	static remove(id){
+		//	Avisamos al módulo de que se debe borrar.
+		modules[id].onremove();
+
+		//	Eliminamos el html del módulo
 		document.querySelector("[data-module="+id+"]").remove();
 		
-		config.mymodules[0]=config.mymodules[0].filter(e=>e!==id);
-		config.mymodules[1]=config.mymodules[1].filter(e=>e!==id);
+		//	Lo eliminamos de la configuración del usuario
+		const m=config.mymodules;
+		m[0]=m[0].filter(e=>e!==id);
+		m[1]=m[1].filter(e=>e!==id);
+	}
+
+	static manageBar(data){
+		const conf=config.modules[data.id];
+		const isOn=conf.enabled;
+		
+		const container=createElement("div",{classList:"manageBar"});
+
+		const label=createElement("label",{},container);
+		createElement("input",{type:"checkbox",checked:isOn,onclick:e=>{
+			const b=e.target.checked;
+			conf.enabled=b;
+			modules[data.id].enable(b);
+			ConfigManager.save();
+		}},label);
+		Lang.set_text(createElement("span",{},label),"enabled");
+
+		Lang.set_title(createElement("button",{innerText:"X",className:"button",onclick:e=>{
+			ModuleManager.remove(data.id);
+			ConfigManager.save();
+		}},container),"remove");
+		return container;
 	}
 }

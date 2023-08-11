@@ -9,11 +9,12 @@ class Module{
 		console.error(this.name+".enable(b)",b);
 	}
 
-	static remove(){
-		console.error(this.name+".remove()");
+	static onremove(){
+		console.error(this.name+".onremove()");
 	}
 
 	static getPanel(){
 		console.error(this.name+".getPanel()");
+		return createElement("div");
 	}
 }

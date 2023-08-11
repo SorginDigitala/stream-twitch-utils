@@ -13,23 +13,15 @@
 		"login":"Login",
 		"update":"Update",
 		"send":"Send",
+		"channels":"Channels",
 
-		"platforms":"Plataforms",
+
+		"module.Platforms":"Platforms",
 		"twitch.placeholder":"Channel names, separated by comma.",
 		"twitch.description":"Puedes entrar a varios canales separandolos por comas. A partir de 20 canales puede dar problemas. Acerca de los límites: <a href='https://dev.twitch.tv/docs/irc/guide#rate-limits' target=_blank>IRC</a>, <a href='https://dev.twitch.tv/docs/pubsub#api-limits' target=_blank>PubSub</a>.",
 
-		"channels":"Channels",
 
-		"log":"Log",
-		"log.system":"System",
-		"log.chat":"Chat",
-		"log.action":"Actions",
-		"log.monetization":"Monetization",
-
-		"log.connected":"Connected.",
-		"log.disconnected":"Disconnected.",
-
-		"options":"Options",
+		"module.Options":"Options",
 		"options.volume":"Master Volume",
 		"options.speech_url_rules":"Reglas del TTS para URLs",
 		"options.speech_rule_ignore":"Ignore",
@@ -41,15 +33,40 @@
 		"options.reset_title":"Se reiniciará la configuración y se recargará la página.",
 
 
+		"module.Log":"Log",
+		"log.show_emotes":"Emotes",
+		"log.system":"System",
+		"log.chat":"Chat",
+		"log.action":"Actions",
+		"log.monetization":"Monetization",
+
+		"log.connected":"Connected.",
+		"log.disconnected":"Disconnected.",
+
+
+		"module.Alerts":"Alerts",
 		"Alerts.url_rules":"Url rules: ",
 		"Alerts.ignoreNumbers":"Ignore numbers.",
+		"alerts.mode.title":"Modo",
+		"alerts.mode.desc":"Select the alert mode.",
 
 
+		"module.Config":"Config",
+		"credits_home":"Index",
+		"credits_docs":"Docs",
 		"tts.volume":"Volume",
 
-		"events":"Events",
+
+		"module.Events":"Events",
 		"events.on_message":"Al recibir un mensaje de chat. Excluye comandos, donaciones, recompensas.",
 		"events.on_sub":"Al recibir una sub.",
+
+
+		"module.Apps":"Apps",
+
+
+		"module.ChatGPT":"module.ChatGPT",
+
 
 		"commands":"Comamnds",
 
@@ -66,12 +83,6 @@
 		"exceptions.exceptions_placeholder":"Nombres de usuario a los que quieras activar/desactivar las alertas.&#10;Los usuarios en esta lista que NO esten en un grupo activarán la alerta.&#10;Los usuarios en esta lista que pertenezcan a un grupo activo serán ignorados.",
 		"exceptions.popup_desc":"Qué grupos pueden activar esta función.",
 		"exceptions.popup_placeholder":"Buscar...",
-		"exceptions.popup_close":"Close",
-
-		"credits_home":"Index",
-		"credits_docs":"Docs",
-
-		"alerts.mode.title":"Modo",
-		"alerts.mode.desc":"Select the alert mode."
+		"exceptions.popup_close":"Close"
 	}
 }

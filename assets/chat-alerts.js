@@ -71,6 +71,12 @@ class TTS{
 	}
 
 	static onCommand(d){
+		if(d.msg==="*quack*"){
+			const audio=new Audio("./assets/audios/cats/cat"+Math.floor(Math.random()*(1-5)+5)+".mp3");
+			return;
+		}
+
+
 		if(!d.msg.startsWith("!voice "))
 			return;
 		var x=d.msg.split(" ").slice(1,4);

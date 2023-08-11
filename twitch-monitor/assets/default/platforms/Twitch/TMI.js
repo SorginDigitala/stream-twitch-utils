@@ -5,7 +5,7 @@ class TMI{	//	Twitch Messaging Interface
 
 	static start(){
 		Events.on("Twitch.enable",TMI.enable);
-		Events.on("Twitch.channels.update",TMI.on_channels_update);
+		Events.on("channels.update",TMI.on_channels_update);
 		TMI.connect();
 	}
 
@@ -13,7 +13,9 @@ class TMI{	//	Twitch Messaging Interface
 		b?TMI.connect():TMI.disconnect();
 	}
 
-	static on_channels_update(leave,join,current){
+	static on_channels_update(platform,current,leave,join){
+		if(platform!=="Twitch")
+			return;
 		if(TMI.ws && TMI.ws.readyState===WebSocket.OPEN){
 			leave.forEach(c=>TMI.leave(c));
 			join.forEach(c=>TMI.join(c));
@@ -69,7 +71,7 @@ class TMI{	//	Twitch Messaging Interface
 		const n=nonce(15)
 		TMI.ws.send("@client-nonce="+n+" PRIVMSG #"+channel+" :"+msg)
 
-		const r=new Action("",'Twitch','chat',"msg",channel,n,msg,msg,{id:'@me',username:'@me',color:'#000'});
+		const r=new Action("",'Twitch','chat',"",channel,n,msg,msg,msg,{id:'@me',username:'@me',color:'#000'});
 		Events.dispatch('channel.message',r)
 	}
 
@@ -93,8 +95,8 @@ class TMI{	//	Twitch Messaging Interface
 			"type"		:x[3],
 			"channel"	:x[4],
 			"user"		:x[2]?x[2].split("!")[0]:"",
+			"msg"		:TMI.format_msg(x[5],params),
 			"raw_msg"	:x[5],
-			"msg"		:TMI.clear_emotes(x[5],params),
 			"params"	:params,
 		}
 	}
@@ -112,13 +114,21 @@ class TMI{	//	Twitch Messaging Interface
 		}
 	}
 
-	static clear_emotes(msg,params){
+	static format_msg(msg,params){
 		if(params.emotes){
-			const emotes=params.emotes.split("/").reverse().map(x=>x.split(":").map(y=>y.split(",").map(z=>z.split("-"))))
-			emotes.forEach(x=>x[1].forEach(y=>{
-				const size=parseInt(y[1])+2-parseInt(y[0])
-				msg=msg.splice(parseInt(y[0]),size," ".repeat(size))
-			}))
+			let emotes=[];
+			params.emotes.split("/").map(x=>x.split(":").map(y=>y.split(",").map(z=>z.split("-")))).forEach(x=>{
+				x[1].forEach(e=>{
+					emotes.push([x[0][0][0],parseInt(e[0]),parseInt(e[1])]);
+				});
+			});
+			emotes.sort((a,b)=>a[1]<b[1]).forEach(x=>{
+				msg=msg.splice(
+					x[1],
+					x[2]+2-x[1],
+					"<img class=\"emote\" src=\"https://static-cdn.jtvnw.net/emoticons/v2/"+x[0]+"/default/light/1.0\">"
+				);
+			});
 		}
 		return msg.replace(/\s{2,}/g," ").trim()
 	}
@@ -126,24 +136,20 @@ class TMI{	//	Twitch Messaging Interface
 
 	static process_msg(e,original){
 		if(e.type==="USERSTATE"){
+			/*
+			Confirmación de que la acción se ha recibido.
+			Si contiene e.params["client-nonce"] significa que contiene un mensaje.
+			En caso contrario, puede ser una acción como la conexión a un canal
+			console.log(e);
 			const div=document.querySelector("[data-nonce='"+e.params["client-nonce"]+"']")
 			if(div){
 				delete div.dataset.nonce
 				// poner color al usuario
 			}
+			*/
 			return;
 		}
 
-/*
-		const response={
-			"platform"	:"twitch",
-			"type"		:"",		//	system,		chat,		action,		monetization
-			"channel"	:e.channel,
-			"id"		:e.params.id??e.params["target-msg-id"],
-			"msg"		:e.msg,
-			"raw_msg"	:e.raw_msg,
-		}
-		*/
 		const response=new Action(
 			original,
 			'Twitch',
@@ -153,7 +159,25 @@ class TMI{	//	Twitch Messaging Interface
 			e.params.id??e.params["target-msg-id"],
 			e.msg,
 			e.raw_msg,
+			e.params["emote-only"]==="1"
 		);
+
+
+		if(["PRIVMSG","USERNOTICE"].includes(e.type)){
+			if(e.type==="USERNOTICE"){
+				console.log(e)
+			}
+			if(e.params.bits){		//	e.params.bits contiene la cantidad total
+				console.log("bits",e)
+				response.type="monetization"
+			}else{
+				response.type="chat"
+			}
+			response.sender=new User(e.params.id,e.user,e.params["display-name"],e.params.color);
+			delete response.subtype;
+			Events.dispatch("channel.message",response)
+			return;
+		}
 
 		if(["JOIN","PART","NOTICE"].includes(e.type)){
 			["NOTICE"].includes(e.type) && console.log(e);
@@ -177,40 +201,16 @@ class TMI{	//	Twitch Messaging Interface
 		}
 
 		if(e.type==="USERNOTICE" && e.params["msg-id"]==="raid"){
-			response.type="system"
-			response.subtype="RAID"
+			response.type="action";
+			response.subtype="RAID";
 			response.msg="from "+e.params["msg-param-displayName"]+" ("+e.params["msg-param-viewerCount"]+")"
 			Events.dispatch("chat.action",response)
-/*BORRAR*/	if(["loisdefazouro","seyacat"].includes(e.channel))lois_raid(e)	// borrar
 			return;
 		}
 
-		if(["HOSTTARGET","ROOMSTATE",].includes(e.type))
+		if(["HOSTTARGET","ROOMSTATE",].includes(e.type)){
+			//console.log(e)
 			return;
-
-
-		if(["PRIVMSG","USERNOTICE"].includes(e.type)){
-			if(e.type==="USERNOTICE")
-				console.log(e)
-			if(e.params.bits){		//	e.params.bits contiene la cantidad total
-				console.log("bits",e)
-				response.type="monetization"
-			}else{
-				response.type="chat"
-			}
-			response.sender={"id":e.params.id,"username":e.user,"color":e.params.color}
-			delete response.subtype
-			Events.dispatch("channel.message",response)
-			return;
-
-			/*
-			if(isMsg){//esto debería ir en EventSystem
-				if(config.mode==="tts" && xor_msg(e.params,config.tts))
-					TTS.speak_msg(e.user,e.msg)
-				else if(config.mode==="alerts" && xor_msg(e.params,config.alerts))
-					Alerts.audio_alert.play()
-			}
-			*/
 		}
 
 		console.log(e.type,e)	// Por alguna razón no se está procesando este mensaje.

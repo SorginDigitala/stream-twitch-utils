@@ -3,30 +3,26 @@ class Alerts extends Module{
 
 	static start(){
 		this.enable(config.modules.Alerts.enabled);
-		TTS.loadVoices("","");
-	}
-
-	static remove(){
-		this.enable(false);
 	}
 
 	static enable(b){
 		Events[b?"on":"remove"]("channel.message",this.onMsg);
 	}
 
+	static onremove(){
+		this.enable(false);
+	}
+
 	static onMsg(data){
 		const conf=config.modules.Alerts;
-		if(
-			!conf.enabled
-		||	data.platform!=="Twitch"
-		||	data.type!=="chat")
+
+		if(!conf.enabled || data.type!=="chat")
 			return;
 
 		if(data.msg[0]==="!"){
-			//si es !voice:
 			if(data.msg.startsWith("!voice")){
 				const v=data.msg.split(" ");
-				TTS.setVoice(data.sender.username,TTS.getRandVoice(v[1]),v[2],v[3]);
+				TTS.setVoice(data.sender.username,TTS.getRandVoice(v[1]),parseFloat(v[2]),parseFloat(v[3]));
 			}
 			return;
 		}
@@ -59,7 +55,7 @@ class Alerts extends Module{
 		Lang.set_text(createElement("span",{},lvolume),"volume");
 		createElement("input",{type:"range",min:0,max:100,value:conf.volume*100,onchange:e=>{
 			conf.volume=e.srcElement.value/100;
-			Alerts.update();
+			this.update();
 			ConfigManager.save();
 		}},lvolume);
 
@@ -76,12 +72,28 @@ class Alerts extends Module{
 		createElement("option",{innerText:"Sound",value:0},mode);
 		createElement("option",{innerText:"TTS",value:1},mode);
 		mode.value=conf.mode;
-		//	HTMLHelper.label("alerts.mode.title","alerts.mode.desc",mode,container);
 		
 
 		const tts_config=createElement("div",{classList:conf.mode===0?"hide":""},container);
-		//	TTS:
-			//	default voices
+		
+		createElement("div",{innerText:"Default voice: "},tts_config);
+		const dvoices=createElement("select",{onchange:e=>{
+			conf.defaultVoice=dvoices.value;
+			TTS.defaultVoice=synth.getVoices().find(v=>v.voiceURI.includes(dvoices.value));
+			if(e)
+				ConfigManager.save();
+		}},tts_config);
+		
+		synth.onvoiceschanged=()=>{
+			TTS.defaultVoices=synth.getVoices().filter(e=>e.name.toLowerCase().includes("spanish"))
+			dvoices.innerHTML="";
+			synth.getVoices().forEach(async e=>{
+				createElement("option",{innerText:e.name,value:e.voiceURI},dvoices);
+			});
+			dvoices.value=conf.defaultVoice;
+			dvoices.onchange();
+		}
+		synth.onvoiceschanged();
 		
 		//	url rules
 		const lrules=createElement("div",{classList:"flexinput"},tts_config);
@@ -106,8 +118,8 @@ class Alerts extends Module{
 		const sounds=createElement("select",{onchange:e=>{
 			custom_sound.classList.toggle("hide",sounds.value!=="custom");
 			conf.sound=sounds.value;
-			Alerts.update();
-			Alerts.play();
+			this.update();
+			this.play();
 			ConfigManager.save();
 		}},lsounds);
 		createElement("option",{innerText:"custom"},sounds);
@@ -132,13 +144,8 @@ class Alerts extends Module{
 		Lang.set_text(createElement("span",{},numbers),"Alerts.ignoreNumbers");
 
 
-		createElement("hr",{},container);
-
-		const exceptions=new Groups(conf.exceptions,false,container);
-		
-
-		//Groups.display_groups(alerts_groups,alerts_exceptions,config.alerts)		
-		
+		//createElement("hr",{},container);
+		//const exceptions=new Groups(conf.exceptions,false,container);	
 		
 		return container;
 	}

@@ -7,21 +7,21 @@ class ChatGPT extends Module{
 
 	static maricarmenbot;
 	static async onMsg(data){
-		if(data.channel==='rafalagoon' && data.msg==='!redes'){
-			ChatGPT.maricarmenbot=setTimeout(()=>{
-				TMI.send(data.channel,`Podéis seguir a Rafa en: Follow Twitter https://twitter.com/rafalagoon Youtube: https://www.youtube.com/rafalagoon Entra al Discord: https://discord.com/invite/34z7dca Mastodon: https://mastodon.gamedev.place/@rafalagoon TikTok: https://www.tiktok.com/@rafalagoon Más redes sociales: https://linktr.ee/rafalagoon`);
+		if(data.platform==="Twitch" && data.channel==="rafalagoon"){
+			if(data.msg==='!redes')
+				ChatGPT.maricarmenbot=setTimeout(()=>{
+					TMI.send(data.channel,`Podéis seguir a Rafa en: Follow Twitter https://twitter.com/rafalagoon Youtube: https://www.youtube.com/rafalagoon Entra al Discord: https://discord.com/invite/34z7dca Mastodon: https://mastodon.gamedev.place/@rafalagoon TikTok: https://www.tiktok.com/@rafalagoon Más redes sociales: https://linktr.ee/rafalagoon`);
 				},500);
-			return;
-		}else if(data.channel==='rafalagoon' && data.msg==='!tareas'){
-			ChatGPT.maricarmenbot=setTimeout(()=>{
-				TMI.send(data.channel,`Las tareas del canal son un listado de proyectos que tienen en marcha los espectadores del canal y cada semana hacemos un repaso de las mismas. ¿Quieres saber más? Mira este vídeo: https://www.youtube.com/watch?v=i1jxtiBIXiM`);
+			else if(data.msg==='!tareas')
+				ChatGPT.maricarmenbot=setTimeout(()=>{
+					TMI.send(data.channel,`Las tareas del canal son un listado de proyectos que tienen en marcha los espectadores del canal y cada semana hacemos un repaso de las mismas. ¿Quieres saber más? Mira este vídeo: https://www.youtube.com/watch?v=i1jxtiBIXiM`);
 				},500);
-			return;
-		}else if(data.channel==='rafalagoon' && (
-			data.msg.includes("linktr.ee/rafalagoon")
-		||	data.sender.username==='maricarmenbot')){
-		//&& data.sender.username==='maricarmenbot' && ChatGPT.maricarmenbot){
-			clearTimeout(ChatGPT.maricarmenbot);
+			else if((
+				data.msg.includes("linktr.ee/rafalagoon")
+			||	data.sender.username==="maricarmenbot")
+			){
+				clearTimeout(ChatGPT.maricarmenbot);
+			}
 			return;
 		}
 
@@ -148,7 +148,7 @@ ChatGPT.get('¿Cuál es la capital de España?').then(respuesta => {
 
 		keyform.onsubmit=e=>{
 			e.preventDefault();
-			if(input.value==='')
+			if(input.value==="")
 				input.value=data.modules.ChatGPT.defaultOptions.defaultOptions.key;
 			config.modules.ChatGPT.key=input.value;
 			ConfigManager.save();

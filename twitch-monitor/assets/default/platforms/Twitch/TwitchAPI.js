@@ -11,8 +11,7 @@ class TwitchAPI{
 			}
 		};
 		if(method==="POST" && params)
-			options.headers.body=JSON.stringify(params);
-	console.log(options);
+			options.body=JSON.stringify(params);
 		const r=await fetch(url,options);
 		return(await r.json()).data;
 	}
@@ -49,26 +48,26 @@ class TwitchAPI{
 		);
 	}
 
-	static update_channels(str){
-		let oldchannels=channels_to_array(str)
-		if(oldchannels.length===0){
-			Twitch.config.channels=[]
-			Events.dispatch("Twitch.channels.update",Twitch.config.channels,[],[])
+	static async update_channels(str,save=false){
+		const newchannels=channels_to_array(str);
+		if(newchannels.length===0){
+			Twitch.config.channels=[];
+			Events.dispatch("channels.update","Twitch",Twitch.config.channels,[],[]);
 			return
 		}
-		TwitchAPI.get_users(oldchannels).then(data=>{
-			const channels=data.map(e=>e.login)
-			const leave=Twitch.config.channels.filter(c=>!channels.includes(c));
-			const join=channels.filter(c=>!Twitch.config.channels.includes(c));
-			Twitch.config.channels=oldchannels.filter(e=>channels.includes(e));
-			Events.dispatch("Twitch.channels.update",leave,join,Twitch.config.channels)
-		})
+		
+		const channels=Twitch.user?await TwitchAPI.get_users(newchannels).then(data=>data.map(e=>e.login)):newchannels;
+		const leave=Twitch.config.channels.filter(c=>!channels.includes(c));
+		const join=channels.filter(c=>!Twitch.config.channels.includes(c));
+		Twitch.config.channels=newchannels.filter(e=>channels.includes(e));//	esto mantiene el orden dado por el user
+		Events.dispatch("channels.update","Twitch",Twitch.config.channels,leave,join);
+		save && ConfigManager.save();
 	}
 
 	static check_last_follows(){
 		TwitchAPI.get_last_followers().then(users=>{
 			//	habría que guardar el último o ultimos seguidores + fecha para evitar que de follow + unfollow y salte multiples veces el penultimo
-			console.log("follows",users)
+			console.log("follows",users);
 		})
 	}
 
@@ -90,6 +89,17 @@ class TwitchAPI{
 		}
 	}
 
+	static async logout(){
+		await fetch(
+			"https://id.twitch.tv/oauth2/revoke?client_id="+Twitch.config.clientId+"&token="+sessionStorage.twitchOAuthToken,
+			{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"}},
+		);
+		
+		delete sessionStorage.twitchOAuthState;
+		delete sessionStorage.twitchOAuthToken;
+		location.reload();
+	}
+
 	static hashMatch(hash,expr){
 		const match=hash.match(expr)
 		return match?match[1]:null;
@@ -102,13 +112,15 @@ class TwitchAPI{
 	}
 
 	static authUrl(scope=[
-		"moderator:manage:banned_users",
 		"chat:read",
 		"chat:edit",
 		"channel:read:subscriptions",
-		"channel:manage:redemptions"
+		"channel:manage:redemptions",
+		"moderator:read:followers",
+		"moderator:manage:banned_users",
 	]){
-		sessionStorage.twitchOAuthState=nonce(15)
+		if(!sessionStorage.twitchOAuthState)
+			sessionStorage.twitchOAuthState=nonce(15);
 		TwitchAPI.url='https://id.twitch.tv/oauth2/authorize?response_type=token&client_id='+Twitch.config.clientId+'&redirect_uri='+(location.origin+location.pathname)+'&state='+sessionStorage.twitchOAuthState+'&scope='+scope.join("+");
 		return TwitchAPI.url;
 	}

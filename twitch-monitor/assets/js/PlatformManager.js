@@ -7,35 +7,30 @@ class PlatformManager{
 	}
 
 	static load(p){
-		let filecount=0;
-		if(platforms[p.id] || data.platforms[p.id]?.files.length===0){
-			this.add(p);
+		if(!config.platforms[p.id])
+			config.platforms[p.id]=p.defaultOptions;
+
+		if(p.files.length===0){
+			this.onload(p);
 			return;
 		}
+
+		let i=p.files.length;
 		p.files.forEach(f=>{
-			filecount++;
 			createElement('script',{src:f,onload:()=>{
-				--filecount===0 && this.add(p);
+				--i===0 && this.onload(p);
 			}},document.body);
 		})
 	}
 
-	static add(p){
-		config.platforms[p.id].load=true;
-/*
-		mPlatforms.forEach(e=>{
-			if(!config.platforms[e.name])
-				config.platforms[e.name]=e.defaultOptions;
-		});
-		*/
+	static onload(p){
 		platforms[p.id].start(p,config.platforms[p.id]);
 		Events.dispatch('platform.add',p);
 	}
 
-	static rmv(p){
+	static remove(p){
 		config.platforms[p.id].load=false;
-		platforms[p.id].remove();
+		platforms[p.id].onremove();
 		Events.dispatch('platform.remove',p);
-		ConfigManager.save();
 	}
 }

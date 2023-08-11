@@ -1,7 +1,5 @@
 :root{
 	--header-height:2rem;
-	--primary:#fff;
-	--secondary:#003;
 }
 
 
@@ -89,26 +87,15 @@ summary{
 details[open]{padding:0 10px 10px}
 details[open] summary{padding:10px 0}
 
-
-
-
-
-
+details+details{
+	margin-top:8px;
+}
 
 
 
 .hide{
 	display:none !important;
 }
-
-
-
-
-.content:not([data-system])			[data-type=system],
-.content:not([data-chat])			[data-type=chat],
-.content:not([data-action])			[data-type=action],
-.content:not([data-monetization])	[data-type=monetization]
-{display:none}
 
 
 
@@ -129,14 +116,14 @@ details[open] summary{padding:10px 0}
 	display:none;
 	position:absolute;
 	z-index:2;
-	background:var(--primary);
+	background:#fff;
 	border-radius:0 0 3px 3px;
 }
 .dropdownMenu:not(.right){left:0}
 .dropdownMenu.right{right:0}
 
 /*
-.dropdown:focus-within{background:var(--secondary)}
+.dropdown:focus-within{background:#003}
 */
 .dropdown:hover .dropdownMenu,
 .dropdown:focus-within .dropdownMenu{
@@ -144,8 +131,8 @@ details[open] summary{padding:10px 0}
 	display:block;
 	max-height:480px;
 	width:max-content;
-	box-shadow:0 2px 4px -1px var(--primary);
-	color:var(--primary);
+	box-shadow:0 2px 4px -1px #fff;
+	color:#fff;
 	cursor:auto;
 }
 
@@ -157,14 +144,14 @@ details[open] summary{padding:10px 0}
 .dropdownMenu label,
 .dropdownMenu a,
 .dropdownMenu a:visited{
-	color:var(--secondary);
+	color:#003;
 }
 .dropdownMenu li:last-child a{
 	border-radius:0 0 3px 3px;
 }
 .dropdownMenu a:hover{
-	background:var(--secondary);
-	color:var(--primary);
+	background:#003;
+	color:#fff;
 }
 .dropdownMenu a,.dropdownMenu>span{
 	padding:0 12px;
@@ -411,6 +398,7 @@ body:not([data-youtube]) [data-require="youtube"]{
 	max-height:95vh;
 	scrollbar-width:thin;
 }
+#log_chat{padding:0 0 5px}
 
 .textarea.small{
 	height:4.7rem;
@@ -430,6 +418,56 @@ body:not([data-youtube]) [data-require="youtube"]{
 #log_chat span{
 	overflow-wrap:anywhere;
 }
+
+
+
+.content:not([data-system])			[data-type=system],
+.content:not([data-chat])			[data-type=chat],
+.content:not([data-action])			[data-type=action],
+.content:not([data-monetization])	[data-type=monetization]
+{display:none}
+
+.content:not([data-show_emotes]) .msg .emote,
+.content:not([data-show_emotes]) [data-emoteonly]{display:none}
+
+
+
+.chat>span+span{margin-left:5px}
+.chat:nth-child(2n+1){background:#f3f3f3}
+.chat:hover{background:#eaeaea}
+.chatuser{font-weight:bold}
+.chatuser:after{content:":"}
+.date{
+	color: #bbb;
+	font-weight: bold;
+}
+.green{color:darkgreen}
+.red{color:darkred}
+
+.emote{height:24px;width:24px}
+
+
+
+
+
+
+
+.manageBar{
+	height:30px;
+	display:flex;
+	background:rgba(.9,.9,.9,.05);
+	margin:5px 0
+}
+.manageBar label{
+	height:30px;
+	flex-grow:1
+}
+.manageBar span,
+.manageBar .input{line-height:30px}
+
+
+
+
 
 
 .panel{

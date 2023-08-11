@@ -1,6 +1,7 @@
 class Log extends Module{	// Esta clase registra la actividad. También permite enviar mensajes si estás autentificado.
 	static chat_channels;
 	static view_channels;
+	static log_chat;
 
 	static config={
 		"index":0,
@@ -8,61 +9,75 @@ class Log extends Module{	// Esta clase registra la actividad. También permite 
 	}
 
 	static start(){
-		Events.on("channel.message",Log.on_channel_message)
-		Events.on("chat.action",Log.on_chat_action)
-		Events.on("chat.clearchat",Log.on_chat_clear)
-		Events.on("chat.clearmsg",Log.on_chat_clear_msg)
+		this.enable(config.modules.Log.enabled);
+	}
+	
+	static enable(b){
+		Events[b?"on":"remove"]("channel.message",	this.on_channel_message);
+		Events[b?"on":"remove"]("chat.action",		this.on_chat_action);
+		Events[b?"on":"remove"]("chat.clearchat",	this.on_chat_clear);
+		Events[b?"on":"remove"]("chat.clearmsg",	this.on_chat_clear_msg);
+	}
+	
+	static onremove(){
+		this.enable(false);
 	}
 
 	static on_chat_clear(response){
-		const x=chat_area.querySelectorAll("#log_chat [data-channel='"+response.channel+"']"+(response.msg?"[data-user='"+response.msg+"']":"")).forEach(e=>{
+		const x=Log.log_chat.querySelectorAll("[data-platform='"+response.platform+"'][data-channel='"+response.channel+"']"+(response.msg?"[data-user='"+response.msg+"']":"")+":not([data-type=system])").forEach(e=>{
 			e.style="text-decoration:line-through"
 		})
-		//Log.system(platform,"CLEARCHAT",channel,user)
 	}
 
-	static on_chat_clear_msg(response){
-		const x=chat_area.querySelector("#log_chat [data-msg-id='"+response.id+"']")
+	static on_chat_clear_msg(r){
+		const x=chat_area.querySelector("#log_chat [data-msg-id='"+r.id+"']")
 		if(x)
 			x.style="text-decoration:line-through"
-		//insertar registro en system
 	}
 
-	static on_channel_message(response){
-		Log.on_chat_action(response);
+	static on_channel_message(r){
+		Log.on_chat_action(r);
 	}
 
-	static on_chat_action(response){
-		const content=document.createElement("div")
-		content.dataset.type=response.type
-		content.dataset.platform=response.platform
-		content.dataset.channel=response.channel
+	static on_chat_action(r){
+		const conf=config.modules.Log;
+		const d=new Date();
+		const hours=d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");
 
-		const time=document.createElement("span")
-		time.innerText=new Date().toLocaleTimeString()
-		content.append(time)
+		const content=createElement("div",{classList:"chat",title:d.toLocaleTimeString().padStart(8,"0")});
+		content.dataset.type=r.type;
+		content.dataset.platform=r.platform;
+		content.dataset.channel=r.channel;
+		if(r.emoteonly)
+			content.dataset.emoteonly="";
+		if(r.channel)
+			content.classList.toggle("hide",!Log.view_channels.isOn(r.platform,r.channel));
+
+		createElement("span",{classList:"date",innerText:hours},content);
 		
-		if(response.subtype){
-			const subtype=document.createElement("span")
-			subtype.innerText="["+response.subtype+"]"
-			content.append(subtype)
+		if(r.subtype){
+			if(r.subtype==="JOIN")
+				createElement("span",{innerText:"🢂",classList:"green"},content);
+			else if(r.subtype==="PART")
+				createElement("span",{innerText:"🢀",classList:"red"},content);
+			else
+				createElement("span",{innerText:"["+r.subtype+"]"},content);
 		}
 		
-		const channel=document.createElement("span")
-		channel.innerHTML=Log.getChannelUrl(response.platform,response.channel)
-		content.append(channel)
+		const span=createElement("span",{},content);
+		Log.getChannelUrl(r,span);
 		
-		if(response.sender){
-			const sender=document.createElement("b")
-			sender.innerHTML=response.sender.username
-			if(response.sender.color)
-				sender.style.color=response.sender.color
-			content.append(sender)
+		if(r.sender){
+			content.dataset.user=r.sender.username;
+			const sender=createElement("span",{classList:"chatuser",innerHTML:r.sender.displayname},content);
+			sender.dataset.platform=r.platform;
+			sender.dataset.username=r.sender.username;
+			if(r.sender.color)
+				sender.style.color=r.sender.color;
 		}
-		
-		const msg=document.createElement("span")
-		msg.innerText=response.msg	// .innerHTML permite html, .innerText protege de inyecciones
-		content.append(msg)
+
+
+		createElement("span",{classList:"msg",innerHTML:r.msg},content);
 		
 		
 		const h=Log.log_chat.scrollHeight
@@ -70,36 +85,18 @@ class Log extends Module{	// Esta clase registra la actividad. También permite 
 		Log.log_chat.scrollTop+=Log.log_chat.scrollHeight-h;
 	}
 
-
-	static system(platform,action,channel,msg){
-		let x=new Date().toLocaleTimeString()+" <span>["+action+"]</span>"
-		if(channel)	x+=Log.getChannelUrl(platform,channel)
-		if(msg)		x+=" "+msg
-		Log.insert("<div>"+x+"</div>")
-	}
-
-	static chat(platform,channel,user,user_color,msg,msg_id,nonce){
-		Log.insert("<div data-channel='"+channel+"' data-user='"+user+"' data-msg-id='"+msg_id+"'"+(nonce?"data-nonce="+nonce:"")+">"+new Date().toLocaleTimeString()+Log.getChannelUrl(platform,channel)+" <b "+(user_color?"style='color:"+user_color+"'":"")+">"+user+"</b>: <span>"+msg+"</span></div>")
-	}
-
-	static rewards(platform,action,channel,user,data){}
-
-	static monetization(platform,action,channel,user,data){}
-
-	static insert(msg){
-		this.config.index++;
-		if(this.config.index>=this.config.max_entries)	// En vez de borrar debería cambiar y añadir al final con 
-			this.log_chat.querySelector("div").remove();
-		Log.log_chat.append(createElement("div",{innerHTML:msg}))
-		
-	}
-
-	static getChannelUrl(platform,channel){
-		return " "+(platform==="Twitch"?"<a href='https://www.twitch.tv/"+channel+"' target=_blank class="+platform+">#"+channel+"</a>":"<b class="+platform+">#"+channel+"</b>")
+	static getChannelUrl(d,c){
+		return createElement("a",{href:"https://www.twitch.tv/"+d.channel,target:"_blank",classList:d.platform,innerText:d.channel},c);
 	}
 
 
-
+	
+	static on_view_channels_update(){
+		const v=config.modules.Log.view_channels;
+		Log.log_chat.parentNode.querySelectorAll("#log_chat>div").forEach(e=>{
+			e.classList.toggle("hide",!Log.view_channels.isOn(e.dataset.platform,e.dataset.channel));
+		});
+	}
 
 	static getPanel(){
 		const conf=config.modules.Log;
@@ -108,9 +105,10 @@ class Log extends Module{	// Esta clase registra la actividad. También permite 
 		const log_menu=createElement("div",{className:"menu"},container);
 		const content=createElement('div',{className:'content'},container);
 		
-		this.view_channels=new Channels(conf.view_channels,true,log_menu);
+		this.view_channels=new Channels(conf.view_channels,true,log_menu,this.on_view_channels_update);
 
-		ACTION_TYPES.forEach(e=>{
+
+		function button(e){
 			Lang.set_text(createElement("button",{className:"button"+(conf.display[e]?" on":""),onclick:x=>{
 				const b=!conf.display[e];
 				conf.display[e]=b;
@@ -123,9 +121,11 @@ class Log extends Module{	// Esta clase registra la actividad. También permite 
 			}},log_menu),'log.'+e);
 			if(conf.display[e])
 				content.dataset[e]="";
-		})
+		}
+		button("show_emotes");
+		ACTION_TYPES.forEach(e=>button(e))
 
-		this.log_chat=createElement('div',{classList:"textarea",onmouseup:e=>{
+		this.log_chat=createElement('div',{classList:"textarea",id:"log_chat",onmouseup:e=>{
 			if(conf.height==e.target.style.height)
 				return;
 			conf.height=e.target.style.height;
@@ -137,12 +137,16 @@ class Log extends Module{	// Esta clase registra la actividad. También permite 
 			e.preventDefault();
 
 			const form=e.target;
-			const channels=[];//=this.view_channels.getChannels();
+			const channels=this.chat_channels.getChannels();
 			const msg=form.querySelector("[name=msg]").value;
 
 			if(msg==="" || channels.length===0 || e.submitter.localName==="button")
 				return;
-			Actions.send_message(channels,msg);
+			Object.entries(channels).forEach(entry=>{
+				const [platform,channels]=entry;
+				platforms[platform].send(channels,msg);
+				
+			});
 			form.querySelector("[name=msg]").value="";
 		}},container);
 
@@ -150,7 +154,7 @@ class Log extends Module{	// Esta clase registra la actividad. También permite 
 		Lang.set_value(createElement("input",{type:"submit"},form),"send");
 		createElement("input",{type:"text",name:"msg"},form);
 		
-		this.chat_channels=new Channels(conf.chat_channels,false,form);
+		this.chat_channels=new Channels(conf.chat_channels,false,form,null);
 		return container;
 	}
 }

@@ -6,7 +6,6 @@ class Apps extends Module{
 	}
 
 	static load(app){
-		console.log("load:",app,app.id);
 		const details=createElement("details",{},this.appContainer);
 		const summary=createElement("summary",{classList:"flex"},details);
 		createElement("span",{innerText:app.name,classList:"flexgrow"},summary);
@@ -18,14 +17,10 @@ class Apps extends Module{
 			config.apps[app.id]=app.defaultOptions;
 			ConfigManager.save();
 		}
-		
-		let filecount=0;
-		app.files.forEach(f=>{
-			filecount++;
-			createElement("script",{src:f,onload:()=>{
-				--filecount===0 && details.append(apps[app.id].getPanel());
-			}},document.body);
-		})
+	
+		createElement("script",{src:app.path+(app.id)+".js",onload:()=>{
+			details.append(apps[app.id].getPanel());
+		}},document.body);
 	}
 
 	static getPanel(){

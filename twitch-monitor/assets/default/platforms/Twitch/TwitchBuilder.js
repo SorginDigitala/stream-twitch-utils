@@ -8,38 +8,42 @@ class TwitchBuilder{
 
 	static start(){
 		TwitchBuilder.build();
-		Events.on("Twitch.channels.update",TwitchBuilder.on_update_channels)
-		Events.on("Twitch.login",TwitchBuilder.on_login)
+		Events.on("channels.update",TwitchBuilder.on_update_channels)
+		Events.on("Twitch.login",TwitchBuilder.on_login);
 		Events.on("PubSub.ws",TwitchBuilder.on_pubsub_state)
 		Events.on("TMI.ws",TwitchBuilder.on_tmi_state)
 	}
 
 	static on_pubsub_state(b){
 		TwitchBuilder.pubsub_state.classList.toggle("on",b)
+		/*
 		if(b)
 			Log.system("twitch","PubSub",null,"<span data-lang_text=log.connected>"+Lang.get("log.connected")+"</span>")
 		else
 			Log.system("twitch","PubSub",null,"<span data-lang_text=log.disconnected>"+Lang.get("log.disconnected")+"</span>")
+		*/
 	}
 
 	static on_tmi_state(b){
 		TwitchBuilder.tmi_state.classList.toggle("on",b)
+		/*
 		if(b)
 			Log.system("twitch","TMI",null,"<span data-lang_text=log.connected>"+Lang.get("log.connected")+"</span>")
 		else
-			Log.system("twitch","TMI",null,"<span data-lang_text=log.disconnected>"+Lang.get("log.disconnected")+"</span>")
+			Log.system("twitch","TMI",null,"<span data-lang_text=log.disconnected>"+Lang.get("log.disconnected")+"</span>");
+		*/
 	}
 
 	static on_login(b){
 		if(!b)
 			return;
-		document.body.dataset.twitch=""
-		document.body.dataset.login=""
+		document.body.dataset.twitch="";
+		document.body.dataset.login="";
+		//	Si los canales son los que vienen por defecto: agregamos al usuario y a presuntamente para que la gente pueda testear
 		if(Twitch.data.defaultOptions.channels.toString()===Twitch.config.channels.toString()){
-			// Si los canales son los que vienen por defecto: agregamos al usuario y a presuntamente para que la gente pueda testear
 			Twitch.config.channels.push(Twitch.user.login);
 			Twitch.config.channels=[...new Set(Twitch.config.channels)];
-			TwitchBuilder.channels.value=Twitch.config.channels.toString();
+			TwitchBuilder.channels.value=Twitch.config.channels.join(", ");
 			TwitchBuilder.form.onsubmit();
 		}
 		
@@ -48,8 +52,10 @@ class TwitchBuilder{
 		TwitchBuilder.pubsub_state.classList.toggle("hide",false)
 	}
 
-	static on_update_channels(){
-		TwitchBuilder.channels.value=Twitch.config.channels.join(", ")
+	static on_update_channels(platform){
+		if(platform!=="Twitch")
+			return;
+		TwitchBuilder.channels.value=Twitch.config.channels.join(", ");
 	}
 
 	static update_auth_html(b){
@@ -77,7 +83,7 @@ class TwitchBuilder{
 		form.onsubmit=e=>{
 			if(e){
 				e.preventDefault();
-				TwitchAPI.update_channels(TwitchBuilder.channels.value);
+				TwitchAPI.update_channels(TwitchBuilder.channels.value,true);
 			}
 		}
 		
@@ -114,13 +120,17 @@ class TwitchBuilder{
 			}
 		}
 		
+		createElement("div",{innerHTML:"Puedes eliminar los permisos ya dados en <a href=\"https://www.twitch.tv/settings/connections\" target=_blank>Conexiones</a>"},div);
+		
+		const lpermissions=createElement("label",{innerText:"Permisos"},details);
+		createElement("p",{innerHTML:"Lista de permisos requeridos por la app de twitch"},lpermissions);
+		//	falta toda esta mierda
 		
 		Platforms.add(Twitch.data,twitch,Twitch.config.enabled);
 	}
 
 	static check_enable(b){
 		Twitch.config.enabled=b
-		Config.save()
 		Events.dispatch("Twitch.enable",b)
 	}
 }
