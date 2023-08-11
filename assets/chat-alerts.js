@@ -97,7 +97,7 @@ class TTS{
 		if(d && (d.params["emote-only"] || !xor_msg(d.params,config.tts)))
 			return;
 		
-		if(d.msg==="*quack*"){
+		if(d.msg.includes("*quack*")){
 			new Audio("./assets/audios/cats/cat"+Math.floor(Math.random()*(1-5)+5)+".mp3").play();
 			return;
 		}
