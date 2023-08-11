@@ -71,12 +71,6 @@ class TTS{
 	}
 
 	static onCommand(d){
-		if(d.msg==="*quack*"){
-			const audio=new Audio("./assets/audios/cats/cat"+Math.floor(Math.random()*(1-5)+5)+".mp3");
-			return;
-		}
-
-
 		if(!d.msg.startsWith("!voice "))
 			return;
 		var x=d.msg.split(" ").slice(1,4);
@@ -102,6 +96,12 @@ class TTS{
 	static play(d){
 		if(d && (d.params["emote-only"] || !xor_msg(d.params,config.tts)))
 			return;
+		
+		if(d.msg==="*quack*"){
+			new Audio("./assets/audios/cats/cat"+Math.floor(Math.random()*(1-5)+5)+".mp3").play();
+			return;
+		}
+
 		TTS.speak_msg(d.user,d.msg)
 	}
 
