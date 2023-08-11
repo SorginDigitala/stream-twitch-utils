@@ -93,15 +93,17 @@ class TTS{
 		localStorage.setItem("user_voices",JSON.stringify(TTS.userVoices));
 	}
 
-	static quacks=[]
+	static quacks=[];
 	static play(d){
 		if(d && (d.params["emote-only"] || !xor_msg(d.params,config.tts)))
 			return;
 		
 		if(d.msg.includes("*quack*")){
-			if(!TTS.quacks)
-				for(let i=6;i>0;i--)
+			if(TTS.quacks.length===0)
+				for(let i=6;i>0;i--){
+					console.log(i)
 					TTS.quacks.push(new Audio("./assets/audios/cats/cat"+i+".mp3"));
+				}
 			TTS.quacks[Math.floor(Math.random()*(1-5)+5)].play();
 			return;
 		}
