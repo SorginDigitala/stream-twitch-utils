@@ -12,13 +12,13 @@ modules={},				//	Referencia a los módulos
 apps={};				//	Referencia a las aplicaciones
 
 
-class ChatMonitor{
+class Main{
 	static async start(){
 		await ConfigManager.load();
-		ModuleManager.start();
 		PlatformManager.start();
+		ModuleManager.start();
 
-		ChatMonitor.checkAudio();
+		this.checkAudio();
 
 		background.onclick=e=>panel.classList.remove('hide');
 		createElement('input',{type:'button',value:'X',id:'hide_button',onclick:e=>panel.classList.add('hide')},panel);
@@ -75,6 +75,4 @@ class User{
 }
 
 
-
-const loader=new Promise(r=>{window.onload=r});
-loader.then(e=>{ChatMonitor.start()});
+new Promise(r=>{window.onload=r}).then(e=>{Main.start()});

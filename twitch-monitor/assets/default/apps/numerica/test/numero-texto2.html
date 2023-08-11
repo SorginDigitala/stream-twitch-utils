@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+</head>
+<body>
+
+<div id=content>
+	<input type=text id=n2t_input style="flex-grow:1" autofocus>
+</div>
+
+<style>
+#content{
+	max-width:800px;
+	margin:auto;
+	display:flex
+}
+
+</style>
+
+
+<script>
+window.onload=()=>{
+	n2t_input.oninput=e=>Play(n2t_input.value);
+
+	function Play(s){
+		const t=s.normalize('NFD').replace(/\p{Diacritic}/gu,"").trim().toLowerCase().replace(/\s+/g," ");
+		if(t==="")
+			return;
+
+		const n=Deconstruct.find(t);
+		if(!n)
+			return;
+
+		const results=Construct.find(n[1]);
+		console.log(t," a ",results.find(e=>e[0]===n[0])[1]," a ",n[0],results);
+	}
+}
+
+
+
+class Construct{
+	static find(n){
+		return rules.map(r=>[r,this[r.method](n)]).filter(e=>e[1]);
+	}
+
+	static arabic(n){return n}
+
+	static earabic(n){
+		//						/*
+		return n.toLocaleString("ar-EG",{useGrouping:false});
+		/*/
+		let t=n.toString();
+		const 	a=["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"],
+				e=["0","1","2","3","4","5","6","7","8","9"];
+		e.forEach((y,i)=>{
+			t=t.replaceAll(y,a[i]);
+		})
+		return t;
+		//*/
+	}
+
+	static chinese(n){
+		return n.toLocaleString("zh-Hans-CN-u-nu-hanidec",{useGrouping:false});
+	}
+
+	static roman(n){		//	http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+		if(n<1 || n>99999)
+			return n===0?"N":null;
+		const digits=String(+n).split(""),
+			key=[
+				"","M","MM","MMM","I̅V̅","V̅","V̅I̅","V̅I̅I̅","V̅I̅I̅I̅","I̅X̅",
+				"","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+				"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+				"","I","II","III","IV","V","VI","VII","VIII","IX"];
+		let i=4,roman="";
+		while(i--)
+			roman=(key[+digits.pop() + (i * 10)] || "")+roman;	
+		return Array(+digits.join("") + 1).join("M")+roman;
+	}
+}
+
+
+class Deconstruct{
+	static find(text){
+		for(let r of rules){
+			const x=this[r.method](text)
+			if(x || x===0)
+				return [r,x];
+		}
+	}
+
+	static arabic(t){
+		const n=Number(t);
+		if(Number.isInteger(n))
+			return n;
+		return;
+	}
+
+	static earabic(t){
+		const 	e=["٠","١","٢","٣","٤","٥","٦","٧","٨","٩","۴","۴","۵","۷"],
+				a=["0","1","2","3","4","5","6","7","8","9","4","4","5","6"];
+		e.forEach((y,i)=>{
+			t=t.replaceAll(y,a[i]);
+		})
+		const n=Number(t);
+		return n;
+	}
+
+
+	static chinese(t){
+	[
+	"〇","一","二","三","四","五","六","七","八","九",
+	"一〇","一一","一二","一三","一四","一五","一六","一七","一八","一九",
+	"二〇","二一","二二","二三","二四","二五","二六","二七","二八","二九",
+	"三〇","三一","三二","三三","三四","三五","三六","三七","三八","三九",
+	"四〇","四一","四二","四三","四四","四五","四六","四七","四八","四九",
+	"五〇","五一","五二","五三","五四","五五","五六","五七","五八","五九",
+	"六〇","六一","六二","六三","六四","六五","六六","六七","六八","六九",
+	"七〇","七一","七二","七三","七四","七五","七六","七七","七八","七九",
+	"八〇","八一","八二","八三","八四","八五","八六","八七","八八","八九",
+	"九〇","九一","九二","九三","九四","九五","九六","九七","九八","九九"
+]
+		const a=["０","〇","一","二","三","四","五","六","七","八","九"];
+		const e=["0","0","1","2","3","4","5","6","7","8","9"];
+		
+		
+	}
+
+	static roman(w){	//	https://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+		if(w==="n")
+			return 0;
+		const validator=/^m*(?:d?c{0,3}|c[md])(?:l?x{0,3}|x[cl])(?:v?i{0,3}|i[xv])$/,
+			token=/[mdlv]|c[md]?|x[cl]?|i[xv]?/g,
+			key={m:1000,cm:900,d:500,cd:400,c:100,xc:90,l:50,xl:40,x:10,ix:9,v:5,iv:4,i:1}
+		if(!validator.test(w))
+			return
+		let n=0;
+		let m;
+		while(m=token.exec(w))
+			n+=key[m[0]]
+		return n
+	}
+}
+
+
+
+
+
+let input={};
+const rules=[
+{
+	type:"arabic",
+	method:"arabic"
+},
+{
+	type:"earabic",
+	method:"earabic"
+},
+{
+	type:"chinese",
+	method:"chinese"
+},
+{
+	type:"roman",
+	method:"roman",
+},
+]
+</script>
+</body>
+</html>

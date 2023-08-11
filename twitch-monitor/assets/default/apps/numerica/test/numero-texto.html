@@ -1,0 +1,803 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+</head>
+<body>
+
+<div id=content>
+	<input type=text id=n2t_input style="flex-grow:1" autofocus>
+</div>
+
+<div>M̅̅̅M̅̅M̅MXI   ̅  ̅̅  ̅̅̅  ̅̅̅̅   </div>
+
+<style>
+#content{
+	max-width:800px;
+	margin:auto;
+	display:flex
+}
+
+</style>
+
+
+<script>
+window.onload=()=>{
+	n2t_input.oninput=e=>Play(n2t_input.value);
+	if(location.hash){
+		n2t_input.value=location.hash.substring(1);
+		n2t_input.oninput();
+	}
+
+	function Play(s){
+		process_input(s);
+
+		if(input.string===""){
+			location.hash && (location.hash="");
+			console.log("mostrar pantalla de inicio");
+			return;
+		}
+
+		Deconstruct.start();
+		if(!input.isValid)
+			return;
+
+		const results=Construct.start();
+		location.hash=results.find(e=>e)[1];
+		console.log(input,results);
+	}
+}
+
+
+
+class Construct{
+	static start(){
+		const n=input.int;
+		if(Number.isInteger(n))
+			return rules.map(r=>[r.type,this[r.method](n,r)]).filter(e=>e[1]);
+		else
+			return rules.map(r=>["cardinals"].includes(r.method)?this[r.method](n,r):null).filter(e=>e[1])
+	}
+
+	static number(n,r){return n}
+
+	static cardinals(n,r){
+		if(n===0)
+			return "cero";
+		n=input.split;
+
+		let x=""
+		for(let k in n){
+			let a=r.roots[3][n.length-k-2];
+			let v=n[k];
+			x+=check(v<0?-v:v) + (v===0 || k==n.length-1?"":(v===1?" "+a+"illón ":" "+a+"illones "));
+		}
+		const n2=n[n.length-1];
+		return (n[0]<0?"menos ":"")+x.trim()+(n2%100!=11 && n2%10===1?"o":"");
+		function check(i){
+			console.log(i);	
+			if(i===0)
+				return "";
+			if(i<30)
+				return r.roots[0][i-1];
+			if(i<=100)
+				return r.roots[1][Math.floor(i/10)-1]+(i%10>0?" y "+check(i%10):"");
+			if(i<1000)
+				return r.roots[2][Math.floor(i/100)-1]+(i%100>0?" "+check(i%100):"");
+			const m=Math.floor(i/1000)
+			return (m>1?check(m)+" ":"")+"mil"+(i%1000>0?" "+check(i%1000):"");
+		}
+	}
+
+	static ordinals(n,r){
+	}
+
+	static simple(n,r){
+		if(n<r.from || n>r.to)
+			return;
+		return r.variations.map(v=>{
+			return {
+				name:v.func(r.roots[n-r.from]+r.ego),
+				props:v.prop
+			}
+		})
+	}
+
+	static exact(n,r){
+		const s=r.roots[n.toString()]
+		if(!s)
+			return;
+		return r.variations.map(v=>{
+			return {
+				name:v.func(s),
+				props:v.prop
+			}
+		})
+	}
+
+	static higher(n,r){
+		const x=r.roots.find(root=>n>=root.from)
+		if(!x || !x.name)
+			return;
+		return r.variations.map(v=>{
+			return {
+				name:v.func(x.name),
+				props:v.prop
+			}
+		})
+	}
+
+	static roman(n,r){		//	http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+		if(n<1 || n>999999999)
+			return n===0?"N":null
+		const digits=String(+n).split(""),
+			key=[
+				"","M","MM","MMM","I̅V̅","V̅","V̅I̅","V̅I̅I̅","V̅I̅I̅I̅","I̅X̅",
+				"","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+				"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+				"","I","II","III","IV","V","VI","VII","VIII","IX"];
+		let i=4,roman="";
+		while(i--)
+			roman=(key[+digits.pop() + (i * 10)] || "")+roman;	
+		return Array(+digits.join("") + 1).join("M")+roman;
+	}
+}
+
+
+class Deconstruct{
+	static start(){
+		if(input.string==="")
+			return;
+		for(let r of rules){
+			const x=Deconstruct[r.method](r)
+			if(x || x===0){
+				process_input(x.toString(),r.type,true)
+				return;
+			}
+		}
+	}
+
+	static number(r){return input.int || input.bigint || input.split}
+
+	static cardinals(r){	//	Todo: debería ser laxo para permitir ciertas faltas e incoherencias pero no permitir "uno uno" o cosas así
+		const x=input.string.replaceAll(" y "," ").replaceAll("uno","un").split(" ");
+		let i=x.length;
+		if(i===1 && x[0]==="cero")
+			return 0;
+		for(let i=0;i<x.length;i++){
+			let o=r.roots[0].findIndex(e=>e===x[i])
+			if(o!==-1)
+				console.log(x[i])
+		}
+		return null
+	}
+
+	static ordinals(r){
+		return null
+	}
+
+	static simple(r){
+		const i=r.roots.findIndex(root=>r.variations.find(v=>input.string===v.func(root+r.ego).normalize('NFD').replace(/\p{Diacritic}/gu,"")))
+		return i===-1?null:i+r.from
+	}
+
+	static exact(r){
+		const n=Object.keys(r.roots).find(k=>r.roots[k] && r.variations.find(v=>input.string===v.func(r.roots[k]).normalize('NFD').replace(/\p{Diacritic}/gu,"")))
+		return n?parseInt(n):null
+	}
+
+	static higher(r){
+		const i=r.roots.find(root=>root.name && r.variations.find(v=>input.string===v.func(root.name).normalize('NFD').replace(/\p{Diacritic}/gu,"")))
+		return i?.from
+	}
+
+	static roman(r){	//	https://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+		const w=input.string;
+		if(w==="n")
+			return 0;
+		const validator=/^m*(?:d?c{0,3}|c[md])(?:l?x{0,3}|x[cl])(?:v?i{0,3}|i[xv])$/,
+			token=/[mdlv]|c[md]?|x[cl]?|i[xv]?/g,
+			key={m:1000,cm:900,d:500,cd:400,c:100,xc:90,l:50,xl:40,x:10,ix:9,v:5,iv:4,i:1}
+		if(!validator.test(w))
+			return
+		let n=0,m;
+		while(m=token.exec(w))
+			n+=key[m[0]]
+		return n
+	}
+}
+
+
+function process_input(s,type="number",valid=false){
+	s=s.normalize('NFD').replace(/\p{Diacritic}/gu,"").trim().toLowerCase().replace(/\s+/g," ");
+	input={
+		isValid:valid,
+		type:type,
+		string:s,
+		int:/^[0]+$/.test(s)?0:(String(parseInt(s))===s?parseInt(s):null),
+		bigint:/^[0-9]+$/.test(s)?BigInt(s):null,
+		split:/^[0-9]+$/.test(s)?split_num(s,6):null,
+		exp:null
+	}
+	if(input.bigint)input.exp=input.bigint.toLocaleString("en-US",{notation:"scientific"})
+	console.log(input)
+}
+
+function split_num(s,n) {
+	const a=[];
+	if(s.length%n>0)
+		s=" ".repeat(n-(s.length%n))+s;
+	for(let i=0;i<s.length;i+=n)
+		a.push(parseInt(s.slice(i,i+n)));
+	return a;
+}
+
+
+
+
+let input={};
+const variations={
+	default:[
+		{func:s=>s+"o",prop:["masculino","singular"]},
+		{func:s=>s+"a",prop:["femenino","singular"]},
+		{func:s=>s+"os",prop:["masculino","plural"]},
+		{func:s=>s+"as",prop:["femenino","plural"]}
+	],
+	empty:[
+		{func:s=>s,prop:["femenino","plural"]}
+	],
+	neutral:[
+		{func:s=>s,prop:["masculino","singular"]},
+		{func:s=>s+(["l","r"].includes(s.at(-1))?"es":"s"),prop:["masculino","plural"]},
+	]
+},
+numbers=["un","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez",
+		"once","doce","trece","catorce","quince","dieciseis","diecisiete","dieciocho","diecinueve","veinte",
+		"veintiun","veintidos","veintitres","veinticuatro","veinticinco","veintiseis","veintisiete","veintiocho","veintinueve"],
+rules=[
+{
+	type:"number",
+	method:"number"
+},
+{
+	type:"cardinals",
+	prop:"expresión",
+	method:"cardinals",
+	roots:[
+		numbers,
+		["diez","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa","cien"],
+		["ciento","doscientos","trescientos","cuatrocientos","quinientos","seiscientos","setecientos","ochocientos","novecientos"],
+		["m","b","tr","cuatr","quint","sext","sept","oct","non","dec","undec","duodec","tredec","cuatordec","quindec"]
+	],
+	variations:variations.empty
+},
+{
+	type:"cardinals",
+	prop:"expresión",
+	method:"exact",
+	roots:{
+		"1000000000":"un millardo",
+		"1000000000000000":"un billardo",
+		"1000000000000000000000":"un trillardo",
+	},
+	variations:variations.empty
+},
+{	//todo
+	type:"ordinals",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{},
+	variations:variations.empty
+},
+{	//todo
+	type:"potencias",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{},
+	variations:variations.empty
+},
+{	//todo
+	type:"decimal",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{},
+	variations:variations.empty
+},
+{	//todo
+	type:"fraccionario",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{},
+	variations:variations.empty
+},
+{
+	type:"multiplicativo",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{
+		"2":"duplo",
+		"3":"triplo",
+		"4":"cuádruplo",
+		"5":"quíntuplo",
+		"6":"séxtuplo",
+		"7":"séptuplo",
+		"8":"óctuplo",
+		"9":"nónuplo",
+		"10":"décupla",
+		"11":"undécupla",
+		"12":"duodécupla",
+		"13":"tercidécupla"
+	},
+	variations:variations.neutral
+},
+{
+	type:"roman",
+	prop:"Roman",
+	method:"roman",
+},
+{
+	type:"base",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{
+		"2":"binario",
+		"3":"ternario",
+		"4":"cuaternario",
+		"5":"quinario",
+		"6":"senario",
+		"7":"heptal",
+		"8":"octal",
+		"9":"nonario",
+		"10":"decimal",
+		"11":"undecimal",
+		"12":"duodecimal",
+		"13":"tridecimal",
+		"14":"tetradecimal",
+		"15":"pentadecimal",
+		"16":"hexadecimal",
+		"20":"vigesimal",
+		"30":"trigesimal",
+		"32":"duotrigesimal",
+	},
+	variations:variations.neutral
+},
+{
+	type:"vowel",
+	prop:"Sustantivo y adjetivo",
+	method:"simple",
+	roots:["mono","bi","tri","tetra","penta","hexa","hepta","octo","enea","deca","endeca","dodeca"],
+	ego:"sílab",
+	variations:variations.default,
+	from:1,
+	to:12
+},
+{	//todo: x veces a partir de 14
+	type:"multiplicativo",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{
+		"2":"doble",
+		"3":"triple",
+		"4":"cuádruple",
+		"5":"quíntuple",
+		"6":"séxtuple",
+		"7":"séptuple",
+		"8":"óctuple",
+		"9":"nónuple",
+		"10":"décuplo",
+		"11":"undécuplo",
+		"12":"duodécuplo",
+		"13":"terciodécuplo"
+	},
+	variations:variations.neutral
+},
+{
+	type:"poligonos",
+	prop:"sustantivo y adjetivo",
+	method:"exact",
+	roots:{
+		"3":"trígono",
+		"4":"tetrágono",
+		"5":"pentágono",
+		"6":"hexágono",
+		"7":"heptágono",
+		"8":"octógono",
+		"9":"eneágono",
+		"10":"decágono",
+		"11":"endecágono",
+		"12":"dodecágono",
+		"13":"tridecágono",
+		"14":"tetradecágono",
+		"15":"pentadecágono",
+		"16":"hexadecágono",
+		"17":"heptadecágono",
+		"18":"octodecágono",
+		"19":"eneadecágono",
+		"20":"isodecágono",
+		"21":"henicoságono",
+		"22":"doicoságono",
+		"23":"triaicoságono",
+		"24":"tetraicoságono",
+		"25":"pentaicoságono",
+		"26":"hexaicoságono",
+		"27":"heptaicoságono",
+		"28":"octaicoságono",
+		"29":"eneaicoságono",
+		"30":"triacontágono",
+		"31":"triacontakaihenágono",
+		"32":"triacontakaidígono",
+		"33":"triacontakaitrígono",
+		"34":"triacontakaitetrágono",
+		"35":"triacontakaipentágono",
+		"36":"triacontakaihexágono",
+		"37":"triacontakaiheptágono",
+		"38":"triacontakaioctágono",
+		"39":"triacontakaieneágono",
+		"40":"tetracontágono",
+		"50":"pentacontágono",
+		"60":"hexacontágono",
+		"70":"heptacontágono",
+		"80":"octocontágono",
+		"90":"eneacontágono",
+		"100":"hectágono",
+	},
+	variations:variations.neutral
+},
+{
+	type:"poligonos",
+	prop:"sustantivo y adjetivo",
+	method:"exact",
+	roots:{
+		"3":"triángulo",
+		"4":"cuadrángulo",
+		"8":"octágono",
+		"9":"nonágono",
+		"11":"undecágono",
+		"13":"triskaidecágono",
+		"15":"pentedecágono",
+		"18":"octadecágono",
+		"19":"nonadecágono",
+		"20":"icoságono",
+		"21":"icosakaihenágono",
+		"22":"icosakaidígono",
+		"23":"icosakaitrígono",
+		"24":"icosakaitetrágono",
+		"25":"icosakaipentágono",
+		"26":"icosakaihexágono",
+		"27":"icosakaiheptágono",
+		"28":"icosakaioctágono",
+		"29":"icosakaieneágono",
+		"80":"octacontágono",
+		"90":"nonacontágono",
+		"100":"hecatontágono",
+	},
+	variations:variations.neutral
+},
+{
+	type:"poligonos",
+	prop:"sustantivo y adjetivo",
+	method:"exact",
+	roots:{
+		"4":"cuadrilátero",
+	},
+	variations:variations.neutral
+},
+{
+	type:"poliedros",
+	prop:"sustantivo y adjetivo",
+	method:"exact",
+	roots:{
+		"4":"tetraedro",
+		"5":"pentaedro",
+		"6":"hexaedro",
+		"7":"heptaedro",
+		"8":"octaedro",
+		"9":"eneaedro",
+		"10":"decaedro",
+		"11":"endecaedro",
+		"12":"dodecaedro",
+		"13":"tridecaedro",
+		"14":"tetradecaedro",
+		"15":"pentadecaedro",
+		"16":"hexadecaedro",
+		"17":"heptadecaedro",
+		"18":"octadecaedro",
+		"19":"eneadecaedro",
+		"20":"icosaedro",
+		"21":"icosamonoedro",
+		"22":"icosadiedro",
+		"24":"icosatetraedro",
+		"26":"icosahexaedro",
+		"28":"icosaoctaedro",
+		"30":"triacontaedro",
+		"32":"tricontidiedro",
+		"36":"tricontihexaedro",
+		"38":"tricontaoctaedro",
+		"40":"tetracontaedro",
+		"50":"pentacontaedro",
+		"51":"pentacontamonoedro",
+		"52":"pentacontadiedro",
+		"56":"pentacontahexaedro",
+		"60":"hexacontaedro",
+		"62":"hexecontadiedro",
+		"70":"heptacontaedro",
+		"72":"heptacontadiedro",
+		"80":"octacontaedro",
+		"90":"eneacontaedro",
+		"92":"eneacontadiedro",
+		"100":"hectaedro",
+		"112":"hectododecaedro",
+		"162":"hectohexecontadiedro"
+	},
+	variations:variations.neutral
+},
+{
+	type:"poliedros",
+	prop:"sustantivo y adjetivo",
+	method:"exact",
+	roots:{
+		"6":"ortoedro",
+		"8":"octoedro",
+		"9":"nonaedro",
+		"11":"undecaedro",
+		"14":"tetracaidecaedro",
+		"15":"pentedecaedro",
+		"18":"octodecaedro",
+		"19":"nonadecaedro",
+		"20":"isodecaedro",
+		"28":"icosaoctoedro",
+		"80":"octocontaedro",
+		"90":"nonacontaedro"
+	},
+	variations:variations.neutral
+},
+{
+	type:"collectives",
+	prop:"Sustantivo femenino",
+	method:"simple",
+	roots:["do","tre","cator","quin","dieciseis","diecisiete"],
+	ego:"cena",
+	variations:variations.neutral,
+	from:10,
+	to:18
+},
+{
+	type:"collectives",
+	prop:"Sustantivo femenino",
+	method:"exact",
+	roots:{
+		"18":"dieciochena",
+		"19":"diecinovena",
+		"20":"veintena",
+		"30":"treintena",
+		"40":"cuarentena",
+		"50":"cincuentena",
+		"60":"sesentena",
+		"70":"setentena",
+		"80":"ochentena",
+		"90":"noventena",
+		"100":"centena",
+	},
+	variations:variations.neutral,
+},
+{
+	type:"collectives",
+	prop:"Sustantivo masculino",
+	method:"exact",
+	roots:{
+		"100":"centenar",
+		"1000":"millar",
+		"1000000000":"millardo"
+	},
+	variations:variations.neutral,
+},
+{
+	type:"collectives",
+	prop:"Sustantivo masculino",
+	method:"exact",
+	roots:{
+		"2":"par",
+		"3":"trio",
+	},
+	variations:variations.neutral,
+},
+{
+	type:"collectives",
+	prop:"Sustantivo femenino",
+	method:"exact",
+	roots:{
+		"2":"pareja",
+		"3":"tripleta",
+	},
+	variations:variations.neutral,
+},
+{
+	type:"collectives",
+	prop:"Sustantivo masculino",
+	method:"exact",
+	roots:{
+		"2":"dueto",
+		"4":"cuarteto",
+		"5":"quinteto",
+		"6":"sexteto",
+		"7":"septeto",
+		"8":"octeto",
+		"9":"noneto"
+	},
+	variations:variations.neutral,
+},
+{
+	type:"ages",
+	prop:"Sustantivo y adjetivo",
+	method:"simple",
+	roots:numbers,
+	ego:"añer",
+	variations:variations.default,
+	from:1,
+	to:19
+},
+{
+	type:"ages",
+	prop:"adjetivo",
+	method:"simple",
+	roots:["un","dos","tres","cuatro","cinco","seis","siet","ocho","nueve"],
+	ego:"añal",
+	variations:variations.neutral,
+	from:1,
+	to:9
+},
+{
+	type:"ages",
+	prop:"Sustantivo y adjetivo",
+	method:"higher",
+	roots:[
+		{from:1000,	name:"milenari"			},
+		{from:100,	name:"centenari"		},
+		{from:90,	name:"nonagenari"		},
+		{from:80,	name:"octogenari"		},
+		{from:70,	name:"septuagenari"		},
+		{from:60,	name:"sexagenari"		},
+		{from:50,	name:"quincuagenari"	},
+		{from:40,	name:"cuadragenari"		},
+		{from:30,	name:"treintañer"		},
+		{from:20,	name:"veinteañer"		},
+	],
+	variations:variations.default
+},
+{
+	type:"ages",
+	prop:"adjetivo",
+	method:"higher",
+	roots:[
+		{from:1000,	name:null				},
+		{from:100,	name:"cienañal"			},
+		{from:90,	name:"noventañal"		},
+		{from:80,	name:"ochentañal"		},
+		{from:70,	name:"setentañal"		},
+		{from:60,	name:"sesentañal"		},
+		{from:50,	name:"cincuentañal"		},
+		{from:40,	name:"cuarentañal"		},
+		{from:30,	name:"treintañal"		},
+		{from:20,	name:"veinteñal"		},
+	],
+	variations:variations.neutral
+},
+{
+	type:"ages",
+	prop:"sustantivo y adjetivo",
+	method:"higher",
+	roots:[
+		{from:1000,	name:null				},
+		{from:100,	name:"quintañón"		},
+		{from:90,	name:"noventón"			},
+		{from:80,	name:"ochentón"			},
+		{from:70,	name:"setentón"			},
+		{from:60,	name:"sesentón"			},
+		{from:50,	name:"cincuentón"		},
+		{from:40,	name:"cuarentón"		},
+		{from:30,	name:"treintón"			},
+		{from:20,	name:"veintón"			},
+	],
+	variations:variations.empty
+},
+{
+	type:"ages",
+	prop:"adjetivo en desuso",
+	method:"simple",
+	roots:["catorcen"],
+	ego:"",
+	variations:variations.default,
+	from:14,
+	to:14
+},
+{
+	type:"period_year",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{
+		"4":"cuadrienio",
+		"5":"lustro",
+		"10":"década",
+		"100":"siglo"
+	},
+	variations:variations.neutral
+},
+{
+	type:"period_year",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{
+		"2":"bienio",
+		"3":"trienio",
+		"4":"cuatrienio",
+		"5":"quinquenio",
+		"6":"sexenio",
+		"7":"septenio",
+		"10":"decenio",
+		"15":"quindenio",
+		"1000":"milenio"
+	},
+	variations:variations.neutral
+},
+{
+	type:"period_year",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{
+		"0.5":"bianual",
+		"1":"anual",
+		"2":"bienal",
+		"3":"trieanual",
+		"4":"cuatrienal",
+		"5":"quinquenal",
+		"6":"sexenal"
+	},
+	variations:variations.neutral
+},
+{
+	type:"period_month",
+	prop:"adjetivo",
+	method:"exact",
+	roots:{
+		"1":"mensual",
+		"2":"bimensual",
+		"3":"trimestral",
+		"4":"cuatrimestral",
+		"6":"semestral"
+	},
+	variations:variations.neutral
+},
+{
+	type:"nato",
+	prop:"Sustantivo y adjetivo",
+	method:"simple",
+	roots:numbers,
+	ego:"mesin",
+	variations:variations.default,
+	from:1,
+	to:12
+},
+{
+	type:"birth",
+	prop:"Sustantivo y adjetivo",
+	method:"simple",
+	roots:["me","tri","cuatri","quinti","sexti","septi","octi","noni","deca","undeca","dodeca"],
+	ego:"lliz",
+	variations:variations.default,
+	from:2,
+	to:12
+},
+{
+	type:"birth",
+	prop:"Sustantivo y adjetivo",
+	method:"exact",
+	roots:{
+		"2":"gemel"
+	},
+	ego:"",
+	variations:variations.default,
+}
+]
+</script>
+</body>
+</html>

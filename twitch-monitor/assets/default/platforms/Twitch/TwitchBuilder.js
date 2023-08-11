@@ -7,9 +7,7 @@ class TwitchBuilder{
 	static auth
 
 	static start(){
-		TwitchBuilder.build();
 		Events.on("channels.update",TwitchBuilder.on_update_channels)
-		Events.on("Twitch.login",TwitchBuilder.on_login);
 		Events.on("PubSub.ws",TwitchBuilder.on_pubsub_state)
 		Events.on("TMI.ws",TwitchBuilder.on_tmi_state)
 	}
@@ -17,24 +15,23 @@ class TwitchBuilder{
 	static on_pubsub_state(b){
 		TwitchBuilder.pubsub_state.classList.toggle("on",b)
 		/*
-		if(b)
-			Log.system("twitch","PubSub",null,"<span data-lang_text=log.connected>"+Lang.get("log.connected")+"</span>")
-		else
-			Log.system("twitch","PubSub",null,"<span data-lang_text=log.disconnected>"+Lang.get("log.disconnected")+"</span>")
+		const x=b?"log.connected":"log.disconnected";
+		const msg="<span data-lang_text=\""+x+"\">"+Lang.get(x)+"</span>";
+		new Action(
+			"",
+			"Twitch",
+			"System",
+			"PubSub",
+			null,
+			"",
+			msg,
+			msg,
+			null
+		);
 		*/
 	}
 
-	static on_tmi_state(b){
-		TwitchBuilder.tmi_state.classList.toggle("on",b)
-		/*
-		if(b)
-			Log.system("twitch","TMI",null,"<span data-lang_text=log.connected>"+Lang.get("log.connected")+"</span>")
-		else
-			Log.system("twitch","TMI",null,"<span data-lang_text=log.disconnected>"+Lang.get("log.disconnected")+"</span>");
-		*/
-	}
-
-	static on_login(b){
+	static onLogin(b){
 		if(!b)
 			return;
 		document.body.dataset.twitch="";
@@ -48,13 +45,21 @@ class TwitchBuilder{
 		}
 		
 		TwitchBuilder.update_auth_html(b);
-		
 		TwitchBuilder.pubsub_state.classList.toggle("hide",false)
+	}
+
+	static on_tmi_state(b){
+		TwitchBuilder.tmi_state.classList.toggle("on",b)
+		/*
+		if(b)
+			Log.system("twitch","TMI",null,"<span data-lang_text=log.connected>"+Lang.get("log.connected")+"</span>")
+		else
+			Log.system("twitch","TMI",null,"<span data-lang_text=log.disconnected>"+Lang.get("log.disconnected")+"</span>");
+		*/
 	}
 
 	static on_update_channels(platform){
 		if(platform!=="Twitch")
-			return;
 		TwitchBuilder.channels.value=Twitch.config.channels.join(", ");
 	}
 
@@ -63,18 +68,20 @@ class TwitchBuilder{
 		if(!b)
 			Lang.set_text(createElement("a",{href:TwitchAPI.url},TwitchBuilder.auth),"login");
 		else{
-			createElement('a',{innerText:'Logout',onclick:Twitch.logout,href:'#',style:'margin:0 5px'},TwitchBuilder.auth);
+			createElement("a",{innerText:'Logout',onclick:Twitch.logout,href:'#',style:'margin:0 5px'},TwitchBuilder.auth);
 			createElement("span",{innerText:Twitch.user.login+" ("+Twitch.user.display_name	+")"},TwitchBuilder.auth);
 		}
 	}
 
 	static build(){
+		const conf=config.platforms.Twitch;
+		
 		const form=createElement("form",{className:"flexinput"});
 		
 		
 		TwitchBuilder.tmi_state=createElement("div",{className:"ws_status",title:"TMI State"},form);
 		TwitchBuilder.pubsub_state=createElement("div",{className:"ws_status hide",title:"PubSub State"},form);
-		TwitchBuilder.channels=createElement("input",{type:"text",name:"channels",value:Twitch.config.channels.join(", ")},form);
+		TwitchBuilder.channels=createElement("input",{type:"text",name:"channels",value:conf.channels.join(", ")},form);
 		Lang.set_placeholder(TwitchBuilder.channels,"twitch.placeholder");
 
 		const button=createElement("input",{type:'submit',className:'button'},form);
@@ -104,7 +111,7 @@ class TwitchBuilder{
 		const label=createElement('label',{innerText:'ClientId'},div);
 		createElement('p',{innerHTML:'Requerido para la autenticación del usuario. Déjalo en blanco para usar el valor por defecto. Mas info en <a href="https://dev.twitch.tv/console" target=_blank>Twitch Developers</a>'},label);
 		const div2=createElement('form',{className:'flex'},label);
-		const input=createElement('input',{type:'text',value:Twitch.config.clientId},div2);
+		const input=createElement('input',{type:'text',value:conf.clientId},div2);
 		const submit=createElement('button',{type:'submit',className:'button'},div2);
 		Lang.set_text(submit,'update');
 		
@@ -112,7 +119,7 @@ class TwitchBuilder{
 			e.preventDefault();
 			if(input.value==='')
 				input.value=Twitch.data.defaultOptions.clientId;
-			Twitch.config.clientId=input.value;
+			conf.clientId=input.value;
 			Config.save();
 			const a=TwitchBuilder.auth.querySelector('a');
 			if(a){
@@ -126,7 +133,7 @@ class TwitchBuilder{
 		createElement("p",{innerHTML:"Lista de permisos requeridos por la app de twitch"},lpermissions);
 		//	falta toda esta mierda
 		
-		Platforms.add(Twitch.data,twitch,Twitch.config.enabled);
+		return twitch;
 	}
 
 	static check_enable(b){

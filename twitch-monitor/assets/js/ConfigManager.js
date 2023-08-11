@@ -30,6 +30,29 @@ class ConfigManager{
 		});
 	}
 
+
+	static loadScripts(files,onload){
+		//	Aunque en teoría no debería haber un módulo/plataforma sin archivos únicos, podría dar un error
+		//	Quizá con promesas
+
+		if(files.length===0){
+			onload();
+			return;
+		}
+
+		let i=files.length;
+		files.forEach(f=>{
+			const x=new URL(f,document.baseURI).href;
+			const script=document.querySelector("script[src='"+x+"']");
+			if(script)
+				--i===0 && onload();
+			else
+				createElement("script",{src:x,onload:()=>{
+					--i===0 && onload();
+				}},document.body);
+		})
+	}
+
 	static save(){
 		localStorage.setItem("chat-config",JSON.stringify(config));
 		console.warn("save");

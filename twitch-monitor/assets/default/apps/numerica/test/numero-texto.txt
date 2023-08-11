@@ -1,0 +1,116 @@
+mas numeros
+https://www.google.com/search?client=firefox-b-d&q=99+en+numeros+romanos
+
+
+
+https://github.com/asosab/esp_verbos
+	https://www.helloworld.com.es/English/quick%20reference/verbs/LazyMood/abastar.htm
+https://www.esfacil.eu/es/verbos/conjugacion/150-poder.html
+
+
+
+
+
+//	Páginas similares:
+	//	https://tulengua.es/numeros-texto/
+	//	https://www.buscapalabra.com/numeros-a-letras.html?cifra=2#resultados
+	//	https://www.convertworld.com/es/sistemas-de-numeracion/sistema-cuaternario.html
+
+//	Notas:
+	//	Algunas palabras no salen en la rae: https://forum.wordreference.com/threads/ochomesino.3068997/
+
+
+//	Roman:
+	//	https://capitalizemytitle.com/generador-de-numeros-romanos/99
+	//	https://es.wikipedia.org/wiki/Numeraci%C3%B3n_romana
+		//	Aunque los romanos no usaban el número 0 actualmente se usa la letra N, proveniente de Nullus, para designar el 0.
+		//	Es incorrecto añadir una I antes de C para 99 o poner IXX en vez de XIX para 19
+		//	M̅ ̅  ̅̅  ̅̅̅  M̅̅
+
+//	numeral systems
+	//	https://en.wikipedia.org/wiki/List_of_numeral_systems#Standard_positional_numeral_systems
+	//	https://www.convertworld.com/es/sistemas-de-numeracion/sistema-cuaternario.html
+
+/*
+poligonos:
+	https://es.wikipedia.org/wiki/Pol%C3%ADgono#Nombres_de_pol%C3%ADgonos_seg%C3%BAn_su_n%C3%BAmero_de_lados
+
+poliedros
+	https://es.wikipedia.org/wiki/Poliedro#Clasificaci%C3%B3n_seg%C3%BAn_el_n%C3%BAmero_de_caras
+	https://dle.rae.es/ortoedro
+	faltan poliedros a partir del 24, que serían los poliedros irregulares.
+	11 y 12 no siguen el patrón, del 13 al 19 están del revés (heptadeca en vez de decahepta) y a partir del 23 no todos los números existen.
+	todo: habría que buscar en toda la rae por "poliedro" para encontrar todas las palabras alternativas y poliedros posibles
+	roots:["tetra","penta","hexa","hepta","octa","enea","deca","endeca","dodeca","trideca","tetradeca","pentadeca","hexadeca","heptadeca","octadeca","eneadeca","icosa","icosamono","icosadi"],
+
+multiplicativo
+	sustantivo+adj			adjetivo
+	doble					duplo
+	triple					triplo
+	cuádruple				cuádruplo
+	quíntuple				quíntuplo
+	séxtuple				séxtuplo
+	séptuple				séptuplo
+	óctuple					óctuplo
+	nónuple					nónuplo
+	décuplo					décupla
+	undécuplo				undécupla
+	duodécuplo				duodécupla
+	terciodécuplo			tercidécupla
+	a partir de 13: "cardinal* veces"
+
+collectives
+	2: par (Sustantivo masculino), pareja (Sustantivo femenino), [dúo, dueto, tándem] (Otros sustantivos masculinos con usos marcados), díada (Otros sustantivos femeninos con usos marcados)
+	3: trío (Sustantivo masculino), tripleta (Sustantivo femenino) terno (Otros sustantivos masculinos con usos marcados), [terna,tríada, trinidad] Otros sustantivos femeninos con usos marcados
+	4: cuarteto (Sustantivo masculino)
+	5: quinteto (Sustantivo masculino)
+	6: sexteto (Sustantivo masculino)
+	7: septeto (Sustantivo masculino)
+	8: octeto (Sustantivo masculino)
+	9: noneto (Sustantivo masculino)
+	10: decena (Sustantivo femenino)
+	11: oncena (Sustantivo femenino)
+	12: docena (Sustantivo femenino)
+	13: trecena (Sustantivo femenino)
+	14: catorcena (Sustantivo femenino)
+	15: quincena (Sustantivo femenino)
+	16: dieciseiscena (Sustantivo femenino)
+	17: diecisietecena (Sustantivo femenino)
+	18: dieciochena (Sustantivo femenino)
+	19: diecinovena (Sustantivo femenino)
+	20: veintena (Sustantivo femenino)
+	30: treintena (Sustantivo femenino)
+	40: cuarentena (Sustantivo femenino)
+	50: cincuentena (Sustantivo femenino)
+	60: sesentena (Sustantivo femenino)
+	70: setentena (Sustantivo femenino)
+	80: ochentena (Sustantivo femenino)
+	90: noventena (Sustantivo femenino)
+	100: centena (Sustantivo femenino), centenar (Sustantivo masculino)
+	1000: millar (Sustantivo masculino)
+
+
+Ages
+	Del 1 al 9:
+		numero + añal	= adjetivo (excepción en sieteñal)
+	Del 1 al 19:
+		numero + añero	= sustantivo y adjetivo
+	14:
+		catorceno (sustantivo y adjetivo en desuso)
+	Rangos:
+		20:		(sustantivo y adjetivo)	veinteañero/veintón				(adjetivo)	veinteñal
+		30:		(sustantivo y adjetivo)	treintañero/treintón			(adjetivo)	treintañal
+		40:		(sustantivo y adjetivo)	cuadragenario/cuarentón			(adjetivo)	curentañal
+		50:		(sustantivo y adjetivo)	quincuagenario/cincuentón		(adjetivo)	cincuentañal
+		60:		(sustantivo y adjetivo)	sexagenario/sesentón			(adjetivo)	sesentañal
+		70:		(sustantivo y adjetivo)	septuagenario/setentón			(adjetivo)	setentañal
+		80:		(sustantivo y adjetivo)	octogenario/ochentón			(adjetivo)	ochentañal
+		90:		(sustantivo y adjetivo)	nonagenario/noventón			(adjetivo)	noventañal
+		100:	(sustantivo y adjetivo)	centenario/quintañón			(adjetivo)	cienañal
+		1000:	(sustantivo y adjetivo)	milenario
+
+años
+	https://twitter.com/raeinforma/status/386105503270830081
+	https://es.wiktionary.org/wiki/quindenial
+	bienal, trienal, cuadrienal, cuatrienal, quinquenal, sexenal, decenal, vicenal, trecenal, cuadricenal
+*/

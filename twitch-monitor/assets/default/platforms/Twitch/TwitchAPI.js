@@ -81,12 +81,17 @@ class TwitchAPI{
 				Twitch.user=users[0];
 				delete Twitch.user.email	// borramos datos personales por seguridad
 				//setInterval(Twitch.check_last_follows,5000)
-				Events.dispatch("Twitch.login",true);
+				this.onLogin(true);
 			})
 		}else{
-			TwitchAPI.authUrl();
-			Events.dispatch("Twitch.login",false);
+			TwitchAPI.url=TwitchAPI.authUrl();
+			this.onLogin(false);
 		}
+	}
+
+	static onLogin(b){
+		Twitch.onLogin(b);
+		TwitchBuilder.onLogin(b);
 	}
 
 	static async logout(){
@@ -121,7 +126,6 @@ class TwitchAPI{
 	]){
 		if(!sessionStorage.twitchOAuthState)
 			sessionStorage.twitchOAuthState=nonce(15);
-		TwitchAPI.url='https://id.twitch.tv/oauth2/authorize?response_type=token&client_id='+Twitch.config.clientId+'&redirect_uri='+(location.origin+location.pathname)+'&state='+sessionStorage.twitchOAuthState+'&scope='+scope.join("+");
-		return TwitchAPI.url;
+		return 'https://id.twitch.tv/oauth2/authorize?response_type=token&client_id='+Twitch.config.clientId+'&redirect_uri='+(location.origin+location.pathname)+'&state='+sessionStorage.twitchOAuthState+'&scope='+scope.join("+");
 	}
 }

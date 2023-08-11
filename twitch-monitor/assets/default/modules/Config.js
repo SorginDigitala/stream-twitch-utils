@@ -16,6 +16,7 @@ class Config extends Module{
 			const d=createElement('div',{title:l.title,innerText:l.icon,onclick:x=>{
 				config.options.lang=l.id;
 				Lang.load(l.id);
+			ConfigManager.save();
 			}},lang_selector);
 			d.dataset.lang	=l.id;
 		});

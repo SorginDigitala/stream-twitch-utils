@@ -23,12 +23,9 @@ class ModuleManager{
 		Lang.set_text(createElement("legend",{},fieldset),"module."+module.id);
 
 		//	Se cargan los scripts y una vez cargados se llama a la función this.onload();
-		let i=module.files.length;
-		module.files.forEach(f=>{
-			createElement("script",{src:f,onload:()=>{
-				--i===0 && this.onload(module,fieldset);
-			}},document.body);
-		})
+		ConfigManager.loadScripts(module.files,()=>{
+			this.onload(module,fieldset)
+		});
 	}
 
 	static getSmallerColumn(){

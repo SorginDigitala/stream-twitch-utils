@@ -4,22 +4,26 @@ class Twitch extends Platform{
 	static data;
 
 	static start(data){
+		this.enable(true);
+
+		if(this.data)
+			return;
+
 		this.data=data;
 		this.config=config.platforms.Twitch;
 
-		Events.on("Twitch.login",this.on_login);
-
 		TwitchAPI.login();
 		TwitchBuilder.start();
-		TwitchAPI.update_channels(this.config.channels.join(", "));
+		//TwitchAPI.update_channels(this.config.channels.join(", "));
 	}
 
 	static enable(b){
-		TwitchBuilder.check_enable(b);
+		//TwitchBuilder.check_enable(b);
 		Events.dispatch("on.platform.enable",this.data,b);
 	}
 
 	static onremove(){
+		this.enable(false);
 		//borrar Platform
 	}
 
@@ -32,14 +36,17 @@ class Twitch extends Platform{
 	}
 
 	static getPanel(){
-		
+		return TwitchBuilder.build();
+		const container=createElement("div",{innerHTML:"aoeu"});
+		return container;
 	}
 
 
 
 
 
-	static on_login(b){
+
+	static onLogin(b){
 		TMI.start()
 		b && PubSub.start();
 	}

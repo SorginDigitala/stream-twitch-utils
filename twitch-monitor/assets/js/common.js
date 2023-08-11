@@ -28,8 +28,12 @@ class Events{
 			this.events[e].forEach(e=>e(...p))
 	}
 }
+//		Cut 🡻 Here
+//					/*
 window.Events=Events;	//	Para poder llamarse desde Apps
+/*/
 
+//*/
 
 function createElement(type,attrs={},parent=null){
 	const e=document.createElement(type);

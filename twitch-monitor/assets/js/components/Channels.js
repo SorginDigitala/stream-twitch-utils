@@ -13,6 +13,9 @@ class Channels{
 			this.create(container);
 
 		Events.on("channels.update",(...x)=>{this.update(...x)})
+		PlatformManager.getChannels().forEach(p=>{
+			this.update(p[0],p[1],[],[])
+		});
 	}
 
 	create(c){
@@ -45,7 +48,7 @@ class Channels{
 		return channels;
 	}
 
-	update(platform,channels,leave,join){
+	update(platform,channels,leave,join,xx){
 		let container=this.container.querySelector("[data-platform="+platform+"]")
 		if(!container){
 			container=createElement("div",{},this.container.querySelector("ul"));
@@ -70,6 +73,6 @@ class Channels{
 		
 		this.counter.innerText=count.toString();
 
-		this.onchange && this.onchange();
+		xx && this.onchange && this.onchange();
 	}
 }

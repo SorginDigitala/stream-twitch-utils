@@ -105,7 +105,7 @@ class Log extends Module{	// Esta clase registra la actividad. También permite 
 		const log_menu=createElement("div",{className:"menu"},container);
 		const content=createElement('div',{className:'content'},container);
 		
-		this.view_channels=new Channels(conf.view_channels,true,log_menu,this.on_view_channels_update);
+		this.view_channels=new Channels(conf.view_channels,true,log_menu,this.on_view_channels_update,true);
 
 
 		function button(e){

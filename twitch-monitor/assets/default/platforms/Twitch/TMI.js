@@ -77,14 +77,10 @@ class TMI{	//	Twitch Messaging Interface
 
 
 
-	static pattern=/(.*?):(?:([a-zA-Z0-9_]{3,25}![a-zA-Z0-9_]{3,25}@[a-zA-Z0-9_]{3,25}.tmi.twitch.tv)|tmi.twitch.tv) (JOIN|PART|PRIVMSG|CLEARMSG|CLEARCHAT|HOSTTARGET|NOTICE|USERSTATE|USERNOTICE|ROOMSTATE|GLOBALUSERSTATE)? (?:#([a-zA-Z0-9_]{3,25}))[?:\s:]{0,}(.*?)$/si;
-
 	static process_data(data){
-		const x=data.match(TMI.pattern);
+		const x=data.match(/(.*?):(?:([a-zA-Z0-9_]{3,25}![a-zA-Z0-9_]{3,25}@[a-zA-Z0-9_]{3,25}.tmi.twitch.tv)|tmi.twitch.tv) ([A-Z]{2,20})? (?:#([a-zA-Z0-9_]{3,25}))[?:\s:]{0,}(.*?)$/si);
 		if(!x){
-			if(!data.startsWith(":"+(Twitch.user?Twitch.user.login:"justinfan29530")+".tmi.twitch.tv")
-			&& !data.startsWith(":tmi.twitch.tv"))
-				console.log(data)
+			//console.log("unknown message: ",data)
 			return;
 		}
 		if(x[5].startsWith("\u0001ACTION "))
@@ -150,6 +146,10 @@ class TMI{	//	Twitch Messaging Interface
 			return;
 		}
 
+		if(e.type==="ROOMSTATE"){
+			return;
+		}
+
 		const response=new Action(
 			original,
 			'Twitch',
@@ -168,8 +168,14 @@ class TMI{	//	Twitch Messaging Interface
 				console.log(e)
 			}
 			if(e.params.bits){		//	e.params.bits contiene la cantidad total
-				console.log("bits",e)
-				response.type="monetization"
+				console.log("bits",e);
+				response.type="monetization";
+			}else if(e.params["msg-id"]==="raid"){
+				response.type="action";
+				response.subtype="RAID";
+				response.msg="from "+e.params["msg-param-displayName"]+" ("+e.params["msg-param-viewerCount"]+")";
+				Events.dispatch("chat.action",response)
+				return;
 			}else{
 				response.type="chat"
 			}
@@ -179,16 +185,12 @@ class TMI{	//	Twitch Messaging Interface
 			return;
 		}
 
-		if(["JOIN","PART","NOTICE"].includes(e.type)){
-			["NOTICE"].includes(e.type) && console.log(e);
-			if(!["JOIN","PART"].includes(e.type))
-				return;
+		if(["JOIN","PART"].includes(e.type)){
 			response.type="system";
 			response.subtype=e.type;
 			if(Twitch.user && e.user!==Twitch.user.login || !Twitch.user && e.user!=="justinfan29530"){
-				Events.dispatch("channel."+(e.type==='JOIN'?'join':'leave'),response)
+				//	Un usuario abandona/entra al chat
 			}else{
-				Events.dispatch('channel.'+(e.type==='JOIN'?'connect':'disconect'),response)
 				Events.dispatch('chat.action',response)
 			}
 			return;
@@ -200,19 +202,6 @@ class TMI{	//	Twitch Messaging Interface
 			return;
 		}
 
-		if(e.type==="USERNOTICE" && e.params["msg-id"]==="raid"){
-			response.type="action";
-			response.subtype="RAID";
-			response.msg="from "+e.params["msg-param-displayName"]+" ("+e.params["msg-param-viewerCount"]+")"
-			Events.dispatch("chat.action",response)
-			return;
-		}
-
-		if(["HOSTTARGET","ROOMSTATE",].includes(e.type)){
-			//console.log(e)
-			return;
-		}
-
-		console.log(e.type,e)	// Por alguna razón no se está procesando este mensaje.
+		console.log(e.type,e,original)	// Por alguna razón no se está procesando este mensaje.
 	}
 }

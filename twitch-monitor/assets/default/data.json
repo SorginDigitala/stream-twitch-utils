@@ -97,7 +97,9 @@
 			"files":[
 				"./assets/default/modules/Alerts.js",
 				"./assets/js/components/TTS.js",
-				"./assets/js/components/Groups.js"
+				"./assets/js/components/Media.js",
+				"./assets/js/components/Groups.js",
+				"./assets/js/components/Channels.js"
 			],
 			"defaultOptions":{
 				"enabled"		:true,
@@ -125,7 +127,7 @@
 		},
 		{
 			"id":"Apps",
-			"managebar":true,
+			"managebar":false,
 			"files":[
 				"./assets/default/modules/Apps.js"
 			],

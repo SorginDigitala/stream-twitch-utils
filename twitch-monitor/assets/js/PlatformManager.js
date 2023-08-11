@@ -9,28 +9,31 @@ class PlatformManager{
 	static load(p){
 		if(!config.platforms[p.id])
 			config.platforms[p.id]=p.defaultOptions;
+		config.platforms[p.id].load=true;
 
-		if(p.files.length===0){
+		ConfigManager.loadScripts(p.files,()=>{
 			this.onload(p);
-			return;
-		}
-
-		let i=p.files.length;
-		p.files.forEach(f=>{
-			createElement('script',{src:f,onload:()=>{
-				--i===0 && this.onload(p);
-			}},document.body);
-		})
+		});
 	}
 
 	static onload(p){
 		platforms[p.id].start(p,config.platforms[p.id]);
-		Events.dispatch('platform.add',p);
+		Events.dispatch("on.platform.add",p);
 	}
 
 	static remove(p){
 		config.platforms[p.id].load=false;
 		platforms[p.id].onremove();
-		Events.dispatch('platform.remove',p);
+		Events.dispatch("on.platform.remove",p);
+	}
+
+
+
+	static getChannels(){
+		let ch=[];
+		data.platforms.filter(p=>config.platforms[p.id]?.load).forEach(p=>{
+			ch.push([p.id,platforms[p.id].getChannels()]);
+		});
+		return ch;
 	}
 }

@@ -10,7 +10,7 @@ class StreamList{
 	static build_twitch(twitch){
 		StreamList.on_update_twitch_channels([],twitch,twitch)
 		Events.on("channels.update",StreamList.on_update_twitch_channels)
-		Events.on("Twitch.login",StreamList.get_streams_info)
+		//Events.on("Twitch.login",StreamList.get_streams_info)
 		setInterval(StreamList.get_streams_info,12000)
 	}
 

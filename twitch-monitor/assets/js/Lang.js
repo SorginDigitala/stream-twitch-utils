@@ -36,7 +36,6 @@ class Lang{
 		if(this.current && lang===this.current)
 			return;
 		this.loadFile(lang);
-		ConfigManager.save();
 	}
 
 	static loadFile(lang){

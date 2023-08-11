@@ -1,26 +1,41 @@
 class Apps extends Module{
 	appContainer;
+	select;
 
 	static start(){
-		data.apps.forEach(app=>config.apps[app.id] && this.load(app));
+		data.apps.forEach(app=>config.apps[app.id]?.enabled && this.load(app));
 	}
 
 	static load(app){
+		if(!config.apps[app.id])
+			config.apps[app.id]=app.defaultOptions;
+		const conf=config.apps[app.id];
+		conf.enabled=true;
+
 		const details=createElement("details",{},this.appContainer);
+		details.dataset.app=app.id;
 		const summary=createElement("summary",{classList:"flex"},details);
 		createElement("span",{innerText:app.name,classList:"flexgrow"},summary);
+		const option=this.select.querySelector("[value="+app.id+"]");
 		Lang.set_title(createElement("button",{innerText:"X",classList:"button padrevert",onclick:e=>{
 			e.preventDefault();
+			this.remove(app);
+			conf.enabled=false;
+			option.disabled=false;
+			ConfigManager.save();
 		}},summary),"remove");
 		
-		if(!config.apps[app.id]){
-			config.apps[app.id]=app.defaultOptions;
-			ConfigManager.save();
-		}
-	
-		createElement("script",{src:app.path+(app.id)+".js",onload:()=>{
+		option.disabled=true;
+
+		ConfigManager.loadScripts([app.path+app.id+".js"],()=>{
 			details.append(apps[app.id].getPanel());
-		}},document.body);
+		});
+	}
+
+	static remove(app){
+		//	desactivar el panel, para que se cierre la pestaña
+		//	elminar html
+		document.querySelector("[data-module="+this.name+"] details[data-app="+app.id+"]").remove();
 	}
 
 	static getPanel(){
@@ -30,12 +45,14 @@ class Apps extends Module{
 
 		const form=createElement("form",{classList:"flexinput",onsubmit:e=>{
 			e.preventDefault();
-			const app=data.apps.find(e=>e.id===select.value);
-			if(app && !config.apps[app.id])
-				this.load(app)
+			const app=data.apps.find(e=>e.id===this.select.value);
+			if(app && !config.apps[app.id]?.enabled){
+				this.load(app);
+				ConfigManager.save();
+			}
 		}},container);
-		const select=createElement("select",{classList:"flexgrow"},form);
-		data.apps.forEach(e=>createElement("option",{value:e.id,innerText:e.name,disabled:config.apps[e.id]},select));
+		this.select=createElement("select",{classList:"flexgrow"},form);
+		data.apps.forEach(e=>createElement("option",{value:e.id,innerText:e.name,disabled:config.apps[e.id]?.enabled},this.select));
 		Lang.set_value(createElement("input",{type:"submit",classList:"button"},form),"add");
 		
 		return container;

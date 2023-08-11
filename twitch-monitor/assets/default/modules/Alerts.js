@@ -38,9 +38,10 @@ class Alerts extends Module{
 
 	static tts(data){
 		const conf=config.modules.Alerts;
-		const msg=this.parse_urls(data.msg,conf.url_rules);
-		if(conf.ignoreNumbers && !/\p{L}/u.test(msg))
+		const msg=this.parse_urls(data.msg,conf.url_rules).replace(/(<([^>]+)>)/ig,"").trim();
+		if(msg==="" || conf.ignoreNumbers && !/\p{L}/u.test(msg))
 			return;
+		console.log(msg)
 		TTS.speak_msg(data.sender.username,msg,conf.volume*config.options.volume);
 	}
 
