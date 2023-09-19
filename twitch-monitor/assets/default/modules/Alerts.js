@@ -22,7 +22,12 @@ class Alerts extends Module{
 		if(data.msg[0]==="!"){
 			if(data.msg.startsWith("!voice")){
 				const v=data.msg.split(" ");
-				TTS.setVoice(data.sender.username,TTS.getRandVoice(v[1]),parseFloat(v[2]),parseFloat(v[3]));
+				TTS.setVoice(
+					data.sender.username,
+					TTS.getRandVoice(v[1]),
+					v[2]?parseFloat(v[2]):1,
+					v[3]?parseFloat(v[3]):1
+				);
 			}
 			return;
 		}

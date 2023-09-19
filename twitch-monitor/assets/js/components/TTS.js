@@ -30,9 +30,9 @@ class TTS{
 	}
 
 	static getVoice(user){
-		if(!TTS.userVoices[user])
-			TTS.setVoice(user,TTS.randVal(TTS.defaultVoices),TTS.getRandomPitch(),TTS.getRandomRate());
-		return TTS.userVoices[user];
+		if(!this.userVoices[user])
+			this.setVoice(user,this.randVal(this.defaultVoices),this.getRandomPitch(),this.getRandomRate());
+		return this.userVoices[user];
 	}
 
 	static getRandVoice(str){
@@ -41,17 +41,29 @@ class TTS{
 	}
 
 	static setVoice(username,voice,pitch=1,rate=1){
-		TTS.userVoices[username]=[voice,pitch,rate]
-		localStorage.setItem("user_voices",JSON.stringify(TTS.userVoices))
+		this.userVoices[username]=[
+			voice,
+			this.between(pitch,this.minPitch,this.maxPitch),
+			this.between(rate,this.minRate,this.maxRate)
+		];
+			console.log(this.userVoices[username])
+		localStorage.setItem("user_voices",JSON.stringify(this.userVoices))
 	}
 
 	static speak_msg(user,msg,volume){
-		if(TTS.lastVoiceUser!==user){
-			TTS.lastVoiceUser=user;
-			TTS.speak(user.replaceAll("_"," "),TTS.defaultVoice,volume,1.2,1.2)
+		if(this.lastVoiceUser!==user){
+			this.lastVoiceUser=user;
+			this.speak(user.replaceAll("_"," "),this.defaultVoice,volume,1.2,1.2)
 		}
-		const mVoice=TTS.getVoice(user)
-		TTS.speak(msg,mVoice[0],volume,mVoice[1],mVoice[2])
+		const mVoice=this.getVoice(user)
+		this.speak(
+			msg,
+			synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0]) || e.name.toLowerCase().includes(mVoice[0])),
+			//mVoice[0],
+			volume,
+			mVoice[1],
+			mVoice[2]
+		)
 	}
 
 	static speak(msg,voice,volume,pitch=1,rate=1){
