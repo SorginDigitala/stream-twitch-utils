@@ -189,7 +189,8 @@ class TMI{	//	Twitch Messaging Interface
 			response.type="system";
 			response.subtype=e.type;
 			if(Twitch.user && e.user!==Twitch.user.login || !Twitch.user && e.user!=="justinfan29530"){
-				//	Un usuario abandona/entra al chat
+				//	response.sender=new User(e.user,e.user,e.user);
+				//	Events.dispatch('chat.action',response)
 			}else{
 				Events.dispatch('chat.action',response)
 			}

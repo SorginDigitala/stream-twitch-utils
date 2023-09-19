@@ -163,6 +163,16 @@
 			"defaultOptions":{
 				"enabled"		:true
 			}
+		},
+		{
+			"id":"Giphy",
+			"name":"Giphy",
+			"path":[
+				"./assets/default/apps/giphy/"
+			],
+			"defaultOptions":{
+				"enabled"		:true
+			}
 		}
 	],
 	"media":[

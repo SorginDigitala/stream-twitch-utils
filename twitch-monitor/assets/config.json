@@ -6,8 +6,8 @@
 		"scripts2":["./assets/defaults/data.json"]
 	},
 	"mymodules":[
-		["Log","ChatGPT"],
-		["Apps","Alerts"]
+		["Log"],
+		["Alerts"]
 	],
 	"modules":{},
 	"platforms":{},

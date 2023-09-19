@@ -40,6 +40,7 @@ class Apps extends Module{
 
 	static getPanel(){
 		const container=createElement('div',{});
+		createElement("p",{innerText:"Las aplicaciones blah blah blah..."},container);
 		
 		this.appContainer=createElement("div",{},container);
 

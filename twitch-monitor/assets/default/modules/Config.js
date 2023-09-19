@@ -1,3 +1,25 @@
+
+
+
+// record de seyacat
+var seyacatMaxViewers=localStorage.getItem("seyacatMaxViewers");
+const midudevRecord=10000;
+setInterval(async ()=>{
+	const data=await TwitchAPI.get_streams(["seyacat"]);
+	console.log(data)
+	const m=data[0].viewer_count;
+	if(m>seyacatMaxViewers){
+		console.log(m)
+		Twitch.send(["seyacat"],"Ya solo quedan "+(midudevRecord-m)+" espectadores mas para superar a Midudev.");
+		seyacatMaxViewers=m;
+		localStorage.setItem("seyacatMaxViewers",m);
+	}
+},10000);
+
+
+
+
+
 class Config extends Module{
 	static name='Config';
 

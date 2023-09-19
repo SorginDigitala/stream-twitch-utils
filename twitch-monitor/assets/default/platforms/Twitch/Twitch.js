@@ -37,8 +37,6 @@ class Twitch extends Platform{
 
 	static getPanel(){
 		return TwitchBuilder.build();
-		const container=createElement("div",{innerHTML:"aoeu"});
-		return container;
 	}
 
 
