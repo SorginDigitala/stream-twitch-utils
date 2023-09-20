@@ -5,6 +5,8 @@
 var seyacatMaxViewers=localStorage.getItem("seyacatMaxViewers");
 const midudevRecord=10000;
 setInterval(async ()=>{
+	if(Twitch.user?.login!=="seyacat")
+		return;
 	const data=await TwitchAPI.get_streams(["seyacat"]);
 	console.log(data)
 	const m=data[0].viewer_count;
@@ -14,7 +16,7 @@ setInterval(async ()=>{
 		seyacatMaxViewers=m;
 		localStorage.setItem("seyacatMaxViewers",m);
 	}
-},10000);
+},30000);
 
 
 
