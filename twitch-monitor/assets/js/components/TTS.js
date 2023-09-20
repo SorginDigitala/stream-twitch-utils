@@ -31,7 +31,7 @@ class TTS{
 
 	static getVoice(user){
 		if(!this.userVoices[user])
-			this.setVoice(user,this.randVal(this.defaultVoices),this.getRandomPitch(),this.getRandomRate());
+			this.setVoice(user,this.randVal(this.defaultVoices).voiceURI,this.getRandomPitch(),this.getRandomRate());
 		return this.userVoices[user];
 	}
 
@@ -42,7 +42,7 @@ class TTS{
 
 	static setVoice(username,voice,pitch=1,rate=1){
 		this.userVoices[username]=[
-			voice,
+			voice.toLowerCase(),
 			this.between(pitch,this.minPitch,this.maxPitch),
 			this.between(rate,this.minRate,this.maxRate)
 		];
@@ -56,9 +56,10 @@ class TTS{
 			this.speak(user.replaceAll("_"," "),this.defaultVoice,volume,1.2,1.2)
 		}
 		const mVoice=this.getVoice(user)
+		
 		this.speak(
 			msg,
-			synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0]) || e.name.toLowerCase().includes(mVoice[0])),
+			synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0])  || e.name.toLowerCase().includes(mVoice[0])),
 			//mVoice[0],
 			volume,
 			mVoice[1],
@@ -68,6 +69,7 @@ class TTS{
 
 	static speak(msg,voice,volume,pitch=1,rate=1){
 		//if(!synth.speaking)synth.cancel()
+			console.log("voz:",voice)
 		const x		=new SpeechSynthesisUtterance(msg)
 		x.volume	=volume
 		x.pitch		=pitch

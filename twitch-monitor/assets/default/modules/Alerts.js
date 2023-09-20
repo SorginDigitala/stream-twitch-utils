@@ -24,7 +24,7 @@ class Alerts extends Module{
 				const v=data.msg.split(" ");
 				TTS.setVoice(
 					data.sender.username,
-					TTS.getRandVoice(v[1]),
+					TTS.getRandVoice(v[1]).voiceURI,
 					v[2]?parseFloat(v[2]):1,
 					v[3]?parseFloat(v[3]):1
 				);
