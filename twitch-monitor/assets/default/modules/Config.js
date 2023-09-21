@@ -18,6 +18,11 @@ setInterval(async ()=>{
 	}
 },30000);
 
+quacks=[];
+for(let i=6;i>0;i--)
+	quacks.push(new Audio("./assets/audios/cats/cat"+i+".mp3"));
+
+
 
 
 

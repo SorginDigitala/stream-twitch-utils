@@ -124,7 +124,12 @@ class TMI{	//	Twitch Messaging Interface
 					x[2]+2-x[1],
 					"<img class=\"emote\" src=\"https://static-cdn.jtvnw.net/emoticons/v2/"+x[0]+"/default/light/1.0\">"
 				);
-			});
+			})
+		}
+
+		if(Twitch.user?.login!=="seyacat" & msg.includes("*quack*")){
+			quacks[Math.floor(Math.random()*(1-5)+5)].play();
+			msg=msg.replace("*quack*"," ")
 		}
 		return msg.replace(/\s{2,}/g," ").trim()
 	}
