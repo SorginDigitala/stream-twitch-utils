@@ -127,7 +127,7 @@ class TMI{	//	Twitch Messaging Interface
 			})
 		}
 
-		if(Twitch.user?.login!=="seyacat" & msg.includes("*quack*")){
+		if(Twitch.user?.login==="seyacat" & msg.includes("*quack*")){
 			quacks[Math.floor(Math.random()*(1-5)+5)].play();
 			msg=msg.replace("*quack*"," ")
 		}
