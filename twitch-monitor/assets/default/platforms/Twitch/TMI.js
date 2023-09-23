@@ -91,7 +91,7 @@ class TMI{	//	Twitch Messaging Interface
 			"type"		:x[3],
 			"channel"	:x[4],
 			"user"		:x[2]?x[2].split("!")[0]:"",
-			"msg"		:TMI.format_msg(x[4],(x[5],params),
+			"msg"		:TMI.format_msg(x[4],x[5],params),
 			"raw_msg"	:x[5],
 			"params"	:params,
 		}
