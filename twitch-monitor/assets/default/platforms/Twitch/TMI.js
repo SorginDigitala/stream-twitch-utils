@@ -91,7 +91,7 @@ class TMI{	//	Twitch Messaging Interface
 			"type"		:x[3],
 			"channel"	:x[4],
 			"user"		:x[2]?x[2].split("!")[0]:"",
-			"msg"		:TMI.format_msg(x[5],params),
+			"msg"		:TMI.format_msg(x[4],(x[5],params),
 			"raw_msg"	:x[5],
 			"params"	:params,
 		}
@@ -110,7 +110,7 @@ class TMI{	//	Twitch Messaging Interface
 		}
 	}
 
-	static format_msg(msg,params){
+	static format_msg(channel,msg,params){
 		if(params.emotes){
 			let emotes=[];
 			params.emotes.split("/").map(x=>x.split(":").map(y=>y.split(",").map(z=>z.split("-")))).forEach(x=>{
@@ -127,7 +127,7 @@ class TMI{	//	Twitch Messaging Interface
 			})
 		}
 
-		if(Twitch.user?.login==="seyacat" & msg.includes("*quack*")){
+		if(channel==="seyacat" & msg.includes("*quack*")){
 			quacks[Math.floor(Math.random()*(1-5)+5)].play();
 			msg=msg.replace("*quack*"," ")
 		}
