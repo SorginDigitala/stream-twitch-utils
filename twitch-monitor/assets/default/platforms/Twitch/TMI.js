@@ -92,6 +92,7 @@ class TMI{	//	Twitch Messaging Interface
 			"channel"	:x[4],
 			"user"		:x[2]?x[2].split("!")[0]:"",
 			"msg"		:TMI.format_msg(x[4],x[5],params),
+			"msg_clean"	:TMI.format_msg_emotes(x[5],params),
 			"raw_msg"	:x[5],
 			"params"	:params,
 		}
@@ -108,6 +109,14 @@ class TMI{	//	Twitch Messaging Interface
 			params.badges=params.badges.split(",").map(e=>e.split("/")[0])
 			//params.badges.forEach(e=>Groups.add_to_list(e))
 		}
+	}
+
+	static format_msg_emotes(msg,params){
+		if(params.emotes){
+			let emotes=params.emotes.split("/").reverse().map(x=>x.split(":").map(y=>y.split(",").map(z=>z.split("-"))));
+			emotes.forEach(x=>x[1].forEach(y=>{const size=parseInt(y[1])+2-parseInt(y[0]);msg=msg.splice(parseInt(y[0]),size," ".repeat(size))}));
+		}
+		return msg.replace(/\s{2,}/g," ").trim();
 	}
 
 	static format_msg(channel,msg,params){

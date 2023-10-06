@@ -43,7 +43,7 @@ class Alerts extends Module{
 
 	static tts(data){
 		const conf=config.modules.Alerts;
-		const msg=this.parse_urls(data.msg,conf.url_rules).replace(/(<([^>]+)>)/ig,"").trim();
+		const msg=this.parse_urls(data.msg_clean,conf.url_rules).replace(/(<([^>]+)>)/ig,"").trim();
 		if(msg==="" || conf.ignoreNumbers && !/\p{L}/u.test(msg))
 			return;
 		console.log(msg)
