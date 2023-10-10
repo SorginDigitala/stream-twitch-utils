@@ -42,11 +42,12 @@ class Action{
 	channel;		//	(String)	canal
 	id;				//	(String)	id del mensaje
 	msg;			//	(String)	mensaje formateado
+	raw_clean;		//	(String)	mensaje sin emotes ni cosas raras
 	raw_msg;		//	(String)	mensaje original
 	emoteonly;		//	(Boolean)	el mensaje solo contiene emoticonos?
 	sender;			//	(User)		Autor
 
-	constructor(r,p,t,st,c,id,msg,raw_msg,emoteonly,sender=null){
+	constructor(r,p,t,st,c,id,msg,msg_clean,raw_msg,emoteonly,sender=null){
 		this.response	=r;
 		this.platform	=p;
 		this.type		=t;
@@ -54,6 +55,7 @@ class Action{
 		this.channel	=c;
 		this.id			=id;
 		this.msg		=msg;
+		this.msg_clean	=msg_clean;
 		this.raw_msg	=raw_msg;
 		this.emoteonly	=emoteonly;
 		this.sender		=sender;

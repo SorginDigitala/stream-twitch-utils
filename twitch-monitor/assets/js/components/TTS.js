@@ -60,7 +60,6 @@ class TTS{
 		this.speak(
 			msg,
 			synth.getVoices().find(e=>e.lang.toLowerCase().includes(mVoice[0])  || e.name.toLowerCase().includes(mVoice[0])),
-			//mVoice[0],
 			volume,
 			mVoice[1],
 			mVoice[2]
@@ -68,8 +67,8 @@ class TTS{
 	}
 
 	static speak(msg,voice,volume,pitch=1,rate=1){
-		//if(!synth.speaking)synth.cancel()
-			console.log("voz:",voice)
+		//if(!synth.speaking)
+		//	synth.cancel()
 		const x		=new SpeechSynthesisUtterance(msg)
 		x.volume	=volume
 		x.pitch		=pitch

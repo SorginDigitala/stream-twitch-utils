@@ -172,6 +172,7 @@ class TMI{	//	Twitch Messaging Interface
 			e.channel,
 			e.params.id??e.params["target-msg-id"],
 			e.msg,
+			e.msg_clean,
 			e.raw_msg,
 			e.params["emote-only"]==="1"
 		);
